@@ -12,9 +12,7 @@
  */
 
 require_once 'core/cache.php';
-require_once 'vendor/autoload.php';
-
-use GuzzleHttp\Psr7 as Psr7;
+require_once 'lib/gizzle/autoloader.php';
 
 /**
  * Reads a saved HTTP response from a cachefile.
@@ -54,29 +52,61 @@ function putHTTPcache($url, $data)
 }
 
 /**
+ * httpClient helper function to convert array of cookies to http header
+ */
+function cookies2header($cookies)
+{
+    global $request_cookies;
+
+    // concatenate cookie string
+    foreach ($cookies as $key => $val)
+    {
+        // remember cookies for next request
+        $request_cookies[$key] = $val;
+
+        if ($headers) $headers .= '; ';
+        $headers .= $key.'='.$val;
+    }
+
+    // build header
+    if ($headers) $headers = 'Cookie: '.$headers."\r\n";
+    return $headers;
+}
+
+/**
+ * Extract all headers of a specific type from the request
+ */
+function http_get_headers($response, $header)
+{
+    return GuzzleHttp\Psr7\parse_header($response->getHeader($header));
+}
+
+/**
+ * Collect cookies from httpclient response and add them to an existing array
+ *
+ * @param  mixed    $response   HTTP response
+ * @param  array    $oldcookies old cookies
+ * @return array                new and old cookies
+ */
+function get_cookies_from_response($response, $oldcookies = null)
+{
+    $cookies = GuzzleHttp\Psr7\parse_header($response->getHeader('Set-Cookie'));
+    foreach ($cookies[0] as $key => $value)
+    {
+        $oldcookies[$key] = $value;
+    }
+
+    return $oldcookies;
+}
+
+/**
  * Extract source encoding from HTML code or HTTP header otherwise
  */
 function get_response_encoding($response)
 {
-    $header = $encoding = null;
-
-    // response array from cache
-    if (is_array($response)) {
-        if (isset($response['header']['Content-Type'])) {
-            $header = $response['header']['Content-Type'];
-        }
-    }
-    else {
-        // Psr response
-        $header = $response->getHeader('Content-Type');
-    }
-
-    if ($header) {
-        $parsed = Psr7\parse_header($header);
-        $encoding = strtolower($parsed[0]['charset']);
-    }
-
-    if (!$encoding)
+    $parsed = GuzzleHttp\Psr7\parse_header($response->getHeader('Content-Type'));
+    $encoding = strtolower($parsed[0]['charset']);
+    if (!encoding)
     {
         $encoding = 'iso-8859-1';
     }
@@ -102,23 +132,30 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
     global $config;
     $client = new GuzzleHttp\Client();
 
-    $requestConfig = [];
     $headers = '';  // additional HTTP headers, used for post data
 
+    $requestConfig;
+    $requestConfig = ['timeout' => 15];
     if ($para['cookies'])
     {
         $jar = new GuzzleHttp\Cookie\CookieJar();
         $requestConfig += ['cookies' => $jar];
     }
 
-    $method  = 'GET';
-
-    $post = isset($para['post']) ? $para['post'] : '';
-    if ($post)
+    $post = $para['post'];
+    if (is_array($post))
     {
+        $post = http_build_query($post);
+    }
+
+    $method  = 'GET';
+    if (!empty($post))
+    {
+        //  POST request
         $method = 'POST';
+
         $requestConfig += ['headers' => ['Content-Type' => 'application/x-www-form-urlencoded']];
-        $requestConfig += ['body' => $post];
+        $requestConfig += ['headers' => ['Content-Length' => strlen($post)]];
     }
 
     // get data from cache?
@@ -132,26 +169,70 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
         }
     }
 
+    $uri = parse_url($url);
+    $server = $uri['host'];
+    $path = $uri['path'];
+    if (empty($path))
+    {
+        $path = '/';
+    }
+
+    if (!empty($uri['query']))
+    {
+        $path .= '?'.$uri['query'];
+    }
+    $port = @$uri['port'];
+
     // proxy setup
     if (!empty($config['proxy_host']) && !$para['no_proxy'])
     {
+        $request_url = $url;
         $server = $config['proxy_host'];
-        if (!($port = @$config['proxy_port']))
+        $port = @$config['proxy_port'];
+        if (!$port)
         {
             $port = 8080;
         }
-        $requestConfig += ['proxy' => sprintf('tcp://%s:%d', $server, $port)];
+    }
+    else
+    {
+        $request_url = $url; //path;  // cpuidle@gmx.de: use $path instead of $url if HTTP/1.0
+        $server = $server;
+        if (!$port)
+        {
+            $port = 80;
+        }
+    }
+
+    // build request
+    $request = '';
+    if (extension_loaded('zlib')) {
+        $requestConfig += ['headers'        => ['Accept-Encoding' => 'gzip'],
+                           'decode_content' => true];
     }
 
     // additional request headers
+    $request .= $headers;
     if ($para['header'])
     {
-        $requestConfig += ['headers' => $para['header']];
+        $requestConfig += ['headers' => $para[header]];
     }
 
-    $resp = $client->request($method, $url, $requestConfig);
+    if ($config['debug']) echo "request:<br>".nl2br($request)."<p>";
+
+    // log request
+    if ($config['httpclientlog'])
+    {
+        $log = fopen('httpClient.log', 'a');
+        fwrite($log, $request."\n");
+        fclose($log);
+    }
+
+    $resp = $client->request($method, $request_url, $requestConfig);
 
     $response['error'] = '';
+    $response['header'] = '';
+    $response['data'] = '';
     $response['url'] = $url;
     $response['success'] = false;
     $response['encoding'] = get_response_encoding($resp);
@@ -167,6 +248,65 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
         $log = fopen('httpClient.log', 'a');
         fwrite($log, headers_to_string($response['header']));
         fclose($log);
+    }
+
+    // check server status code to follow redirect
+    if ($resp->getStatusCode() == 301 || $resp->getStatusCode() == 302)
+    {
+        // get redirection target
+        $location = getHeader($response['header'], 'Location');
+        if (empty($location))
+        {
+            $response['error'] = 'Redirect but no Location header found';
+            return $response;
+        }
+        else
+        {
+            // in case no redirect is needed stop here and respond success
+            if ($para['no_redirect'])
+            {
+                // save time if result is not needed
+                $response['error'] = '';
+                $response['success'] = true;
+                return $response;
+            }
+
+            if (preg_match("/^\//", $location))
+            {
+                // local redirect
+                $location = 'http://'.$uri['host'].':'.$uri['port'].$location;
+            }
+            elseif (!preg_match('/^http/', $location))
+            {
+                // local redirect without path
+                $path     = substr($uri['path'], 0, strrpos($uri['path'], '/') + 1);
+                $location = 'http://'.$uri['host'].':'.$uri['port'].$path.$location;
+            }
+
+            // don't use old headers again
+            $headers = '';
+
+            // add new cookies from response
+            $para['cookies'] = get_cookies_from_response($resp, $para['cookies']);
+
+            // perform redirected request; we must GET, not POST
+            if ($para['post'])
+            {
+                unset($para['post']);
+            }
+            $response = httpClient($location, $cache, $para);
+
+            // remember we were redirected
+            $response['redirect'] = $location;
+
+            // store response a 2nd time under the the original post attributes
+            if ($response['success'] == true && $cache)
+            {
+                putHTTPcache($url.$post, $response);
+            }
+
+            return $response;
+        }
     }
 
     // verify status code
@@ -191,7 +331,7 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
 
 /**
  * Print all header info using echo
- * @param response    Object homepage Psr7\Response
+ * @param response    Object homepageGuzzleHttp\Psr7\Response
  */
 function echoHeaders($headers)
 {
