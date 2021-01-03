@@ -63,10 +63,9 @@ function getDiskId()
 
     // find first 'free' diskId
     $lastid = 0;
-    foreach ($results as $result)
-    {
-        $thisid = preg_replace('/^0+/','',$result['id']);
-        if ($lastid + 1 < $thisid) break;
+    foreach ($results as $result) {
+        $thisid = preg_replace('/^0+/', '', $result['id']);
+        if (intval($lastid) + 1 < intval($thisid)) break;
         $lastid = $thisid;
     }
 
