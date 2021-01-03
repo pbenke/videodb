@@ -45,10 +45,10 @@ function xmlexport($WHERE)
         {
             if (!empty($value))
             {
-                if (($key != 'owner_id') && ($key != 'actors'))
+                if ($key != 'owner_id' && $key != 'actors' && $key != 'genres')
                 {
                     $tag       = strtolower($key);
-                    $xml_item .= createTag($tag, trim(html_entity_decode_all($value)));
+                    $xml_item .= createTag($tag, trim(html_entity_decode_all_utf8($value)));
                 }    
             }
         }
@@ -62,10 +62,10 @@ function xmlexport($WHERE)
         }
         
         // genres
-        if (count($row['genres']))
+        if (count($item['genres']))
         {
             $xml_genres = '';
-            foreach ($row['genres'] as $genre)
+            foreach ($item['genres'] as $genre)
             {
                 $xml_genres .= createTag('genre', $genre['name']);
             }
