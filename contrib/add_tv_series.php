@@ -63,7 +63,7 @@ function printStartForm()
   <table>
     <tr>
       <td>TV-Tome Episode Root</td>
-      <td><input type="text" name="tomeurl" value="<?php echo formvar($tomeurl)?>"></td>
+      <td><input type="text" name="tomeurl" value="<?php echo htmlspecialchars($tomeurl)?>"></td>
       <td>e.g. <code>http://www.tvtome.com/StargateSG1/</code> (See <a href="http://www.tvtome.com" target="_blank">tvtome.com</a>)</td> 
     </tr>
     <tr>

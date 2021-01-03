@@ -274,7 +274,7 @@ tpl_page('search', $q);
 tpl_list($result);
 
 $smarty->assign('q', $q);
-$smarty->assign('q_q', formvar($q));
+$smarty->assign('q_q', htmlspecialchars($q));
 $smarty->assign('search_fields', $search_fields);
 $smarty->assign('genreselect', out_genres($genres));
 $smarty->assign('genres', out_genres2($genres));
@@ -284,7 +284,7 @@ $smarty->assign('actors', prepare_cast($actors));
 // person search?
 if ($isname && ($config['actorpics']))
 {
-    $smarty->assign('imgurl', getActorThumbnail(urldecode(preg_replace('/&quot;|"/', '', formvar($q)))));
+    $smarty->assign('imgurl', getActorThumbnail(urldecode(preg_replace('/&quot;|"/', '', htmlspecialchars($q)))));
 }
 
 // allow XML export
