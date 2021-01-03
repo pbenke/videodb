@@ -170,7 +170,6 @@ foreach($data as $key => $movie)
 	$fd = fopen($tempfn, "rb");
 	rewind($tempfn);
 	fpassthru($fd); // output temp file content
-	set_magic_quotes_runtime(get_magic_quotes_gpc());
 
 	unlink($tempfn); // remove temp file
 	
