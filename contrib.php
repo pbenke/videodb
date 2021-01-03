@@ -39,8 +39,7 @@ function multidimsort($array_in, $column)
     reset($multiarray);
 
     // traverse new array of index values and add the corresponding element of the input array to the correct position in the output array
-    while (list ($key, $val) = each ($multiarray))
-    {
+    foreach ($multiarray as $key => $val) {
         $array_out[$loopvalue] = $array_in[$key];
         $loopvalue++;
     }
