@@ -255,13 +255,16 @@ function redirect($dest)
  *
  * TODO     Check if this can be replaced by PHP5.5 array_column() function
  *
+ * @param   $ary          array   SQL result array
+ * @param   $columnKey    string  key index name
  * @author  Andreas Goetz   <cpuidle@gmx.de>
- * @param   $ary    SQL result array
- * @param   $key    key index name
  */
 function array_extract($ary, $columnKey)
 {
-    return array_map(create_function('&$row', 'return $row["'.$columnKey.'"];'), $ary);
+    return array_map(
+        function (&$row) {
+            return $row[$columnKey];
+        }, $ary);
 }
 
 /**

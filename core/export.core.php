@@ -3,7 +3,7 @@
  * Export functions. Returns standardized data for export.
  *
  * @package videoDB
- * @author  Andreas Götz <cpuidle@gmx.de>
+ * @author  Andreas Gï¿½tz <cpuidle@gmx.de>
  * @author  Chinamann <chinamann@users.sourceforge.net>
  * @version $Id: export.core.php,v 1.8 2013/03/15 16:42:46 andig2 Exp $
  */
@@ -45,9 +45,10 @@ function exportData($WHERE)
     $result = runSQL($SQL);
 
     // do adultcheck
-    if (is_array($result))
-    {
-        $result = array_filter($result, create_function('$video', 'return adultcheck($video["id"]);'));
+    if (is_array($result)) {
+        $result = array_filter($result, function ($video) {
+            return adultcheck($video["id"]);
+        });
     }
 
     // genres
@@ -64,7 +65,7 @@ function exportData($WHERE)
  *
  * @param   string  string to trim
  * @param   int     target length
- * @result  string  trimmed string
+ * @return  string  trimmed string
  */
 function leftString($plot, $text_length)
 {
