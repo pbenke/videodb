@@ -4,7 +4,7 @@
  *
  * @package Core
  * @author  Andreas Gohr    <a.gohr@web.de>
- * @author  Andreas Götz    <cpuidle@gmx.de>
+ * @author  Andreas Gï¿½tz    <cpuidle@gmx.de>
  * @version $Id: setup.core.php,v 1.12 2013/03/16 10:10:07 andig2 Exp $
  */
 
@@ -215,7 +215,7 @@ function setup_getLanguages()
  * Find available templates/styles
  * Extended to search for template screenshots
  *
- * @author  Andreas Götz    <cpuidle@gmx.de>
+ * @author  Andreas Gï¿½tz    <cpuidle@gmx.de>
  */
 function setup_getTemplates(&$screenshots)
 {
@@ -322,7 +322,7 @@ function setup_mkCustoms()
     
     for ($i=1; $i<5; $i++)
     {
-        $setup_custom .= $i.'. <input type="text" size="20" name="custom'.$i.'" id="custom'.$i.'" value="'.formvar($config['custom'.$i]).'"/>';
+        $setup_custom .= $i.'. <input type="text" size="20" name="custom'.$i.'" id="custom'.$i.'" value="'.htmlspecialchars($config['custom'.$i]).'"/>';
         $setup_custom .= '<select name="custom'.$i.'type">';
     
         foreach($allcustomtypes as $ctype)

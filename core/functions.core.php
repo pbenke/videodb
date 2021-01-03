@@ -87,22 +87,6 @@ function remove_magic_quotes(&$array)
 }
 
 /**
- * magicquote safe formoutputter
- *
- * Strips slashes when magic_quotes_gpc is set.
- *
- * @param  string $name     The input string
- * @return string           The cleaned string
- */
-function formvar($name)
-{
-	if (get_magic_quotes_gpc()) {
-		$name = stripslashes($name);
-	}
-	return htmlspecialchars($name);
-}
-
-/**
  * Get high resolution time
  *
  * @return integer  current time in microseconds

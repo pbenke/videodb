@@ -98,7 +98,7 @@ function custom__output($cn,$cv)
  */
 function custom_text_input($cn,$cv)
 {
-    return '<input type="text" size="45" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.formvar($cv).'" />';
+    return '<input type="text" size="45" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" />';
 }
 
 /**
@@ -118,7 +118,7 @@ function custom_text_output($cn,$cv)
  */
 function custom_url_input($cn,$cv)
 {
-    return '<input type="text" size="45" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.formvar($cv).'" />';
+    return '<input type="text" size="45" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" />';
 }
 
 /**
@@ -144,7 +144,7 @@ function custom_url_output($cn,$cv)
  */
 function custom_ed2k_input($cn,$cv)
 {
-    return '<input type="text" size="40" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.formvar($cv).'" /> (MD4)';
+    return '<input type="text" size="40" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" /> (MD4)';
 }
 
 /**
@@ -175,11 +175,11 @@ function custom_language_input($cn,$cv)
     global $config;
 
     $output = '';
-    $output .= '<input type="text" size="15" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.formvar($cv).'" /> ';
+    $output .= '<input type="text" size="15" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" /> ';
     foreach ($config['languages'] as $flag) 
     {
         $output .= '<a href="#" title="set to '.$flag.'" onclick="document.edi.'.$cn.'.value=\''.$flag.'\'">';
-        $output .= '<img src="'.img('flags/'.$flag.'.gif').'" border="0" alt="'.formvar($cv).'" /></a> ';
+        $output .= '<img src="'.img('flags/'.$flag.'.gif').'" border="0" alt="'.htmlspecialchars($cv).'" /></a> ';
     }
     return $output;
 }
@@ -307,7 +307,7 @@ function custom_movix_input($cn,$cv)
                 <option selected value=""></option>
                 <option value=eMovix>eMovix</option>
                 <option value=Movix>Movix</option>
-                <option value=Movix²>Movix²</option>
+                <option value=Movixï¿½>Movixï¿½</option>
               </select>';
     return $output;
 }
@@ -343,7 +343,7 @@ function custom_mpaa_input($cn,$cv)
             runSQL($UPDATE);
         }
     }
-    $output = '<input type="text" size="50" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.formvar($cv).'" /> ';
+    $output = '<input type="text" size="50" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" /> ';
     return $output;
 }
 
@@ -404,7 +404,7 @@ function custom_bbfc_input($cn,$cv)
             runSQL($UPDATE);
         }
     }
-    $output  = '<input type="text" size="10" maxlength="4" name="'.$cn.'" id="'.$cn.'" value="'.formvar($cv).'" />';
+    $output  = '<input type="text" size="10" maxlength="4" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" />';
     $output .= " <a href='#' onclick='document.edi.".$cn.".value=\"U\"'>U</a>";
     $output .= " <a href='#' onclick='document.edi.".$cn.".value=\"12\"'>12</a>";
     $output .= " <a href='#' onclick='document.edi.".$cn.".value=\"12A\"'>12A</a>";

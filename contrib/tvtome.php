@@ -96,31 +96,31 @@ function printStartForm()
     <tr>
       <td nowrap>TV.com show id and season</td>
       <td>
-        <input type="text" name="tomeshowid" size="5" value="<?php echo formvar($tomeshowid)?>">
-        <input type="text" name="tomeseason" size="2" value="<?php echo formvar($tomeseason)?>">
+        <input type="text" name="tomeshowid" size="5" value="<?php echo htmlspecialchars($tomeshowid)?>">
+        <input type="text" name="tomeseason" size="2" value="<?php echo htmlspecialchars($tomeseason)?>">
       </td>
       <td>e.g. Futurama has showid 249: http://www.tv.com/futurama/show/249/episode_listings.html
         (See <a href="http://www.tv.com" target="_blank">tv.com</a>)</td>
     </tr>
     <tr>
       <td nowrap>VideoDB title search</td>
-      <td><input type="text" name="titlesql" value="<?php echo formvar($titlesql)?>"></td>
+      <td><input type="text" name="titlesql" value="<?php echo htmlspecialchars($titlesql)?>"></td>
       <td>e.g. <code>Futurama</code> - Very simple search use * and ? as wildcards.</td>
     </tr>
     <tr>
       <td nowrap>VideoDB sub-title search</td>
-      <td><input type="text" name="subtitlesql" value="<?php echo formvar($subtitlesql)?>"></td>
+      <td><input type="text" name="subtitlesql" value="<?php echo htmlspecialchars($subtitlesql)?>"></td>
       <td>e.g. <code>3x</code> to search for 3rd season.</td>
     </tr>
     <tr>
       <td nowrap>VideoDB language search</td>
-      <td><input type="text" name="languagesql" value="<?php echo formvar($languagesql)?>"></td>
+      <td><input type="text" name="languagesql" value="<?php echo htmlspecialchars($languagesql)?>"></td>
       <td>Empty field will include any language.</td>
     </tr>
     <tr>
       <td>Fast mode</td>
   <?php
-    if (stristr(formvar($fastmode), 'fastmode')) {
+    if (stristr(htmlspecialchars($fastmode), 'fastmode')) {
   ?>
       <td><input type="checkbox" name="fastmode" value="fastmode" checked></td>
   <?php
@@ -135,7 +135,7 @@ function printStartForm()
     <tr>
       <td>Show details</td>
   <?php
-    if (stristr(formvar($showext), 'showext')) {
+    if (stristr(htmlspecialchars($showext), 'showext')) {
   ?>
       <td><input type="checkbox" name="showext" value="showext" checked></td>
   <?php
@@ -272,15 +272,15 @@ function printEpisodes()
   ?>
     <tr>
       <td>
-        <input type="hidden" name="form_tvcomid[<?php echo $row?>]" value="<?php echo formvar($ep[tvcomid])?>">
-        <input type="hidden" name="form_subtitle[<?php echo $row?>]" value="<?php echo formvar($ep[subtitle])?>">
-        <input type="hidden" name="form_plot[<?php echo $row?>]" value="<?php echo formvar($ep[plot])?>">
-        <input type="hidden" name="form_year[<?php echo $row?>]" value="<?php echo formvar($ep[year])?>">
-        <input type="hidden" name="form_director[<?php echo $row?>]" value="<?php echo formvar($ep[director])?>">
-        <input type="hidden" name="form_cast[<?php echo $row?>]" value="<?php echo formvar($ep[cast])?>">
-        <input type="hidden" name="form_rating[<?php echo $row?>]" value="<?php echo formvar($ep[rating])?>">
-        <input type="hidden" name="form_coverurl[<?php echo $row?>]" value="<?php echo formvar($ep[coverurl])?>">
-        <input type="hidden" name="form_genres[<?php echo $row?>]" value="<?php echo formvar($ep[genres])?>">
+        <input type="hidden" name="form_tvcomid[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[tvcomid])?>">
+        <input type="hidden" name="form_subtitle[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[subtitle])?>">
+        <input type="hidden" name="form_plot[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[plot])?>">
+        <input type="hidden" name="form_year[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[year])?>">
+        <input type="hidden" name="form_director[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[director])?>">
+        <input type="hidden" name="form_cast[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[cast])?>">
+        <input type="hidden" name="form_rating[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[rating])?>">
+        <input type="hidden" name="form_coverurl[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[coverurl])?>">
+        <input type="hidden" name="form_genres[<?php echo $row?>]" value="<?php echo htmlspecialchars($ep[genres])?>">
       </td>
     </tr>
   <?php
@@ -369,7 +369,7 @@ function save()
   
   print '<h2>Updating database...</h2>';
   
-  $fastmode = formvar($form_fastmode);
+  $fastmode = htmlspecialchars($form_fastmode);
   
   foreach($form_eps as $ep){
     $id    = $form_id[$ep];    

@@ -488,7 +488,7 @@ function tpl_edit($video)
 	// create a form ready quoted version for each value
 	foreach (array_keys($video) as $key)
     {
-		$video['q_'.$key] = formvar($video[$key]);
+		$video['q_'.$key] = htmlspecialchars($video[$key]);
 	}
 
 	// use custom function for language
@@ -549,7 +549,7 @@ function tpl_lookup($find, $engine, $searchtype)
 
     $find   = trim($find);
     $smarty->assign('find', $find);
-    $smarty->assign('q_find', formvar($find));
+    $smarty->assign('q_find', htmlspecialchars($find));
 
     $smarty->assign('engine', $engine);
 
