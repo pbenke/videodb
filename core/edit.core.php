@@ -3,7 +3,7 @@
  * Edit functions. Split into separate file for reuse.
  *
  * @package videoDB
- * @author  Andreas Götz <cpuidle@gmx.de>
+ * @author  Andreas Gï¿½tz <cpuidle@gmx.de>
  * @author  Andreas Gohr <a.gohr@web.de>
  * @author  Chinamann <chinamann@users.sourceforge.net>
  * @version $Id: edit.core.php,v 1.9 2009/12/05 13:56:04 andig2 Exp $
@@ -63,10 +63,9 @@ function getDiskId()
 
     // find first 'free' diskId
     $lastid = 0;
-    foreach ($results as $result)
-    {
-        $thisid = preg_replace('/^0+/','',$result['id']);
-        if ($lastid + 1 < $thisid) break;
+    foreach ($results as $result) {
+        $thisid = preg_replace('/^0+/', '', $result['id']);
+        if (intval($lastid) + 1 < intval($thisid)) break;
         $lastid = $thisid;
     }
 
@@ -86,7 +85,7 @@ function removeArticles($field)
                       'ein ', 'eine ', 'eines ', 'le ', 'el ', "l'", 'il ', 'les ', 'i ',
                       'o ', 'un ', 'los ', 'de ', 'an ', 'una ', 'las ', 'gli ', 'het ',
                       'lo ', 'os ', 'az ', 'ha-', 'een ', 'det ', 'oi ', 'ang ', 'ta ',
-                      'al-', 'uno ', "un'", 'ett ', 'mga ', 'Ï ', 'Ç ', 'els ', 'Ôï ', 'Ïé ');
+                      'al-', 'uno ', "un'", 'ett ', 'mga ', 'ï¿½ ', 'ï¿½ ', 'els ', 'ï¿½ï¿½ ', 'ï¿½ï¿½ ');
 
     foreach ($articles as $article)
     {
