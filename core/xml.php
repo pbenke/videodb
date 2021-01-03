@@ -5,7 +5,7 @@
  * Lets you browse through your movie collection
  *
  * @package Core
- * @author  Andreas Götz    <cpuidle@gmx.de>
+ * @author  Andreas Gï¿½tz    <cpuidle@gmx.de>
  * @author	Kokanovic Branko    <branko.kokanovic@gmail.com>
  * @version $Id: xml.php,v 1.34 2013/03/10 16:25:35 andig2 Exp $
  */
@@ -25,11 +25,12 @@ function xmlexport($WHERE)
     
     // get data
     $result = exportData($WHERE);
-    
+
     // do adultcheck
-    if (is_array($result))
-    {
-        $result = array_filter($result, create_function('$video', 'return adultcheck($video["id"]);'));
+    if (is_array($result)) {
+        $result = array_filter($result, function ($video) {
+            return adultcheck($video["id"]);
+        });
     }
     
     $xml = '';

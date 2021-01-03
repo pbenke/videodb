@@ -293,11 +293,12 @@ function tpl_list($list)
 */
     }
 
-	// do adultcheck
-	if (is_array($list))
-	{
-		$list = array_filter($list, create_function('$video', 'return adultcheck($video["id"]);'));
-	}
+    // do adultcheck
+    if (is_array($list)) {
+        $list = array_filter($list, function ($video) {
+            return adultcheck($video["id"]);
+        });
+    }
 
     // enable dynamic columns in list view
     $smarty->assign('listcolumns', session_get('listcolumns'));
