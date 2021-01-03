@@ -431,9 +431,9 @@ function getActorThumbnail($name, $actorid = 0, $idSearchAllowed = true)
     if ($actorid && $idSearchAllowed) {
         $result = runSQL($SQL." WHERE actorid='".addslashes($actorid)."'");
 	}
-	if (!$actorid || (count($result) == 0)) {
-        $result = runSQL($SQL." WHERE name='".addslashes(html_entity_decode($name))."'");
-	}
+    if (!$actorid || !isset($result) || count($result) == 0) {
+        $result = runSQL($SQL . " WHERE name='" . addslashes(html_entity_decode($name)) . "'");
+    }
 
     $imgurl = get_actor_image_from_cache($result[0], $name, $actorid);
 
