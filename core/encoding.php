@@ -37,7 +37,7 @@ function is_utf8($str)
 }
 
 /**
- * @author   "Sebasti·n Grignoli" <grignoli@framework2.com.ar>
+ * @author   "Sebasti√°n Grignoli" <grignoli@framework2.com.ar>
  * @package  Encoding
  * @version  1.1
  * @link     http://www.framework2.com.ar/dzone/forceUTF8-es/
@@ -117,16 +117,11 @@ function html_entity_decode_all($string)
     // replace numeric entities
     $string = preg_replace_callback('~&#x([0-9a-f]+);~i', '_callback_chr_hexdec', $string);
     $string = preg_replace_callback('~&#([0-9]+);~', '_callback_chr', $string);
-#   utf8 version commented out
-#    $string = preg_replace_callback('~&#x([0-9a-f]+);~i', '_callback_code2utf_hexdec', $string);
-#    $string = preg_replace_callback('~&#([0-9]+);~', '_callback_code2utf', $string);
-    
+
     // replace literal entities
     $trans_tbl = get_html_translation_table(HTML_ENTITIES);    
     $trans_tbl = array_flip($trans_tbl);
-#   utf8 version commented out
-#    foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key) $trans_tbl[$key] = utf8_encode($val);
-    
+
     return strtr($string, $trans_tbl);
 }
 
@@ -138,21 +133,17 @@ function html_entity_decode_all($string)
  * @param  string   $string  html entity loaded string
  * @return string            html entity free string 
  */
-function html_entity_decode_all_utf8($string) 
+function html_entity_decode_all_utf8(string $string)
 {
     // replace numeric entities
-#   non-utf8 version commented out
-#    $string = preg_replace_callback('~&#x([0-9a-f]+);~i', '_callback_chr_hexdec', $string);
-#    $string = preg_replace_callback('~&#([0-9]+);~', '_callback_chr', $string);
     $string = preg_replace_callback('~&#x([0-9a-f]+);~i', '_callback_code2utf_hexdec', $string);
     $string = preg_replace_callback('~&#([0-9]+);~', '_callback_code2utf', $string);
-    
+
     // replace literal entities
-#   non-utf8 version commented out
-#    $trans_tbl = get_html_translation_table(HTML_ENTITIES);    
-#    $trans_tbl = array_flip($trans_tbl);
-    foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key) $trans_tbl[$key] = utf8_encode($val);
-    
+    foreach (get_html_translation_table(HTML_ENTITIES) as $val => $key) {
+        $trans_tbl[$key] = utf8_encode($val);
+    }
+
     return strtr($string, $trans_tbl);
 }
 
@@ -174,7 +165,7 @@ function code2utf($num)
  *
  * @author Andreas Goetz	<cpuidle@gmx.de>
  * @param  string   $string  html entity loaded string
- * @return string            html entity free string 
+ * @return string            html entity free string
  */
 function html_clean($str) 
 {
