@@ -16,14 +16,13 @@ require_once './engines/engines.php';
 // since we don't need session functionality, use this as workaround
 // for php bug #22526 session_start/popen hang
 session_write_close();
-
 ?>
 
 <html>
 
 <head>
     <title>Find Movie Recommendations</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="description" content="VideoDB" />
 
     <style>
@@ -31,37 +30,66 @@ session_write_close();
     </style>
 </head>
 <body>
+    <div id="process">
+        Process: <label id="count">0</label> of <label id="total">0</label>
+    </div>
+<script>
+function updateCount(value) {
+    document.getElementById("count").innerHTML = value;
+}
 
-<?
+function updateTotal(value) {
+    document.getElementById("total").innerHTML = value;
+}
+</script>
 
+
+<?php
 error_reporting(E_ALL ^ E_NOTICE);
 
-if ($submit)
-{
+if ($submit) {
     // validate form data
     $required_rating = (is_numeric($required_rating)) ? (float) $required_rating : '';
     $required_year = (is_numeric($required_year)) ? (int) $required_year : '';
 
+    $movieIds = [];
+
     // get list of all videos
     $SQL = 'SELECT * FROM '.TBL_DATA;
-    if (empty($wishlist)) $SQL .= ' WHERE mediatype != '.MEDIA_WISHLIST;
+    if (empty($wishlist)) {
+        $SQL .= ' WHERE mediatype != '.MEDIA_WISHLIST;
+        if (empty($include_istv)) {
+            $SQL .= ' AND istv != 1';
+        }
+    } else if (empty($include_istv)) {
+        $SQL .= ' WHERE istv != 1';
+    }
     $result = runSQL($SQL);
 
-    foreach ($result as $video)
-    {
-        if (empty($video['imdbID'])) continue;
+    echo '<script>updateTotal('.sizeof($result).');</script>';
+    ob_flush();
+    flush();
+
+    $count = 1;
+    foreach ($result as $video) {
+        echo '<script>updateCount('.$count++.');</script>';
+        ob_flush();
+        flush();
+
+        if (empty($video['imdbID'])) {
+            continue;
+        }
+
         $engine = strtoupper(engineGetEngine($video['imdbID']));
         echo "Fetching recommendations for <b>{$video['title']}</b> ($engine Id {$video['imdbID']})<br/>";
 
         $data = engineGetRecommendations($video['imdbID'], $required_rating, $required_year, 'imdb');
-        if (!empty($CLIENTERROR))
-        {
+        if (!empty($CLIENTERROR)) {
             echo $CLIENTERROR."<br/>";
             continue;
         }
 
-        if (empty($data))
-        {
+        if (empty($data)) {
             // sometimes there are no recommendations for a movie. This is true for Underworld: imdbId 0320691
             echo "No recommendations for {$video['title']}.<br/><br/>";
             continue;
@@ -72,14 +100,19 @@ if ($submit)
         echo "        <th>Title</th> <th>Year</th> <th>Rating</th> <th>Id</th>";
         echo "    </tr>";
 
-        foreach ($data as $recommended)
-        {
-            $available = (count(runSQL("SELECT * FROM ".TBL_DATA." WHERE imdbID like '%".$recommended['id']."'")) > 0);
+        foreach ($data as $recommended) {
+            $movieId = $recommended['id'];
+            if (empty($show_duplicates) && in_array($movieId, $movieIds)) {
+                continue;
+            }
+            $movieIds[] = $movieId;
 
-            if (!$available)
-            {
-                $recommended['title'] = '<a class="green" href="../edit.php?save=1&mediatype='.MEDIA_WISHLIST.'&lookup=1&imdbID='.$recommended['id'].
-                             '&title='.urlencode($recommended['title']).'" target="_blank">'.$recommended['title'].' <img src="../images/add.gif" border="0"/></a>';
+            $available = (count(runSQL("SELECT * FROM ".TBL_DATA." WHERE imdbID like '%".$movieId."'")) > 0);
+
+            if (!$available) {
+                $recommended['title'] = '<a class="green" href="../edit.php?save=1&mediatype='.MEDIA_WISHLIST.'&lookup=1&imdbID='.$movieId.
+                             '&title='.urlencode($recommended['title']).'" target="_blank">'.$recommended['title'].
+                             ' <img src="../images/add.gif" border="0"/></a>';
             }
 
             echo "<tr>";
@@ -89,14 +122,14 @@ if ($submit)
             echo "<td align=right width=\"15%\">{$recommended['id']}</td>";
             echo "</tr>";
 
-            if ($download && !$available) engineGetData($recommended['id']);
+            if ($download && !$available) {
+                engineGetData($movieId);
+            }
         }
         echo "</table>";
         echo "<br/>";
     }
-}
-else
-{
+} else {
 ?>
     <form action="<?php echo $_SERVER['PHP_SELF']?>">
         <table>
@@ -125,6 +158,18 @@ else
         </label>
         <br />
 
+        <label for="include_istv">
+            <input type="checkbox" name="include_istv" id="include_istv" value="1" />
+            Show recommendations for tv shows
+        </label>
+        <br />
+
+        <label for="show_duplicates">
+            <input type="checkbox" name="show_duplicates" id="show_duplicates" value="1" />
+            Show recommendations more than once
+        </label>
+        <br />
+
         <label for="download">
             <input type="checkbox" name="download" id="download" value="1" />
             Download recommendations if movie is not in videoDB
@@ -133,7 +178,7 @@ else
 
         <input type="submit" name="submit" value="Search" />
     </form>
-<?
+<?php
 }
 ?>
 
