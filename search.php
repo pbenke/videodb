@@ -86,10 +86,10 @@ $replace_fields = array('mediatype' => TBL_MEDIATYPES.'.name',
 // add custom fields
 for ($i=1; $i<=4; $i++)
 {
-	if (!empty($config['custom'.$i]))
+    if (!empty($config['custom'.$i]))
     {
-		$search_fields['custom'.$i] = $config['custom'.$i];
-	}
+        $search_fields['custom'.$i] = $config['custom'.$i];
+    }
 }
 
 // remove empty fields and make array
@@ -125,59 +125,59 @@ foreach ($fields as $search_field)
 if (isset($q) &! (isset($default) && empty($q)))
 {
     $JOINS  = '';
-	$WHERES = '1=1 ';
+    $WHERES = '1=1 ';
 
-	// remove empty genres
-	$genres = array_filter($genres);
-	
-	if (!empty($q))
-	{
-		$error  = '';
-		$tokens = queryparser($q, $error);
+    // remove empty genres
+    $genres = array_filter($genres);
 
-		$wild_char = (empty($nowild)) ? '%' : '';
+    if (!empty($q))
+    {
+        $error  = '';
+        $tokens = queryparser($q, $error);
 
-		foreach ($tokens as $token)
-		{
+        $wild_char = (empty($nowild)) ? '%' : '';
+
+        foreach ($tokens as $token)
+        {
             // escape search token
-			$token['token'] = addslashes($token['token']);
+            $token['token'] = addslashes($token['token']);
 
             // concatenate tokens with token operator
-			$WHERES .= $token['ops'].' (';
+            $WHERES .= $token['ops'].' (';
 
             // concatenate all searchable fields with OR
-			foreach ($fields as $field)
+            foreach ($fields as $field)
             {
-				$WHERES .= " ($field LIKE '$wild_char".$token['token']."$wild_char') OR ";
-			}
+                $WHERES .= " ($field LIKE '$wild_char".$token['token']."$wild_char') OR ";
+            }
 
             // concatenate custom fields with OR
-			for ($custom = 1; $custom <= 4; $custom++)
-			{
-				if (!empty($config['custom'.$custom]) && !empty($fields['custom'.$custom]))
+            for ($custom = 1; $custom <= 4; $custom++)
+            {
+                if (!empty($config['custom'.$custom]) && !empty($fields['custom'.$custom]))
                 {
-					$WHERES .= " (custom$custom LIKE '$wild_char".$token['token']."$wild_char') OR ";
-				}
-			}
-			$WHERES .= ' 1=2)';
-		}
-	}
-	
+                    $WHERES .= " (custom$custom LIKE '$wild_char".$token['token']."$wild_char') OR ";
+                }
+            }
+            $WHERES .= ' 1=2)';
+        }
+    }
+
     // filter by genres
-	if (count($genres))
-	{
+    if (count($genres))
+    {
         $JOINS  .= ' LEFT JOIN '.TBL_VIDEOGENRE.' ON '.TBL_DATA.'.id = '.TBL_VIDEOGENRE.'.video_id ';
         $WHERES .= ' AND '.TBL_DATA.'.id = '.TBL_VIDEOGENRE.'.video_id AND (';
 
-		foreach ($genres as $genre)
+        foreach ($genres as $genre)
         {
             $FILTER .= 'OR '.TBL_VIDEOGENRE.'.genre_id = '.$genre.' ';
-		}
-		
+        }
+
         $FILTER  = preg_replace('/^OR/', '', $FILTER);
-		$WHERES .= $FILTER;
-		$WHERES .= ')';
-	}
+        $WHERES .= $FILTER;
+        $WHERES .= ')';
+    }
 
     // limit visibility
     if ($config['multiuser'])
@@ -224,23 +224,23 @@ if (isset($q) &! (isset($default) && empty($q)))
     $result = runSQL($select);
 
 /*
-	// prepare actors table if searching for them
-	if (in_array('actors', $fields))
-	{
-		$actors = '';
-		foreach ($result as $row)
-		{
-			$actors .= $row['actors']."\n";
-		}
+    // prepare actors table if searching for them
+    if (in_array('actors', $fields))
+    {
+        $actors = '';
+        foreach ($result as $row)
+        {
+            $actors .= $row['actors']."\n";
+        }
 #		dump($actors);
-		$qa = preg_replace('/"/', '', $q);
+        $qa = preg_replace('/"/', '', $q);
 #		dump($qa);
-		
-		if (preg_match_all("#^.*$qa.*#im", $actors, $m, PREG_PATTERN_ORDER))
-			$actors = join("\n", $m);
-		else
-			$actors = '';
-	}
+
+        if (preg_match_all("#^.*$qa.*#im", $actors, $m, PREG_PATTERN_ORDER))
+            $actors = join("\n", $m);
+        else
+            $actors = '';
+    }
 */
 
     // autocomplete textbox
