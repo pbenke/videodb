@@ -267,7 +267,7 @@ function imdbData($imdbID)
         $data['subtitle'] = trim($s);
     }
     # orig. title
-    preg_match('<div class="originalTitle">(.+?)<span class="description"> \(original title\)<\/span><\/div>/si', $resp['data'], $ary);
+    preg_match('/<div class="originalTitle">(.+?)<span class="description"> \(original title\)<\/span><\/div>/si', $resp['data'], $ary);
     $data['origtitle'] = trim($ary[1]);
 
     // Cover URL
@@ -297,8 +297,8 @@ function imdbData($imdbID)
     $data['country'] = trim(join(', ', $ary[1]));
 
     // Languages
-    preg_match('/Languages?:\s*<\/h4>(.+?)<\/div>/si', $resp['data'], $ary);
-    preg_match_all('/<a.*?href=".*?language.*?".*?>(.+?)<\/a>/si', $ary[1], $ary, PREG_PATTERN_ORDER);
+    preg_match('/<div data-testid="title-details-section".+?<li .+?data-testid="title-details-languages"><span .+?>Languages<\/span>(.+?)<\/div><\/li>/si', $resp['data'], $ary);
+    preg_match_all('/<a class=.+?>(.+?)<\/a>/si', $ary[1], $ary, PREG_PATTERN_ORDER);
     $data['language'] = trim(strtolower(join(', ', $ary[1])));
 
     // Genres (as Array)
@@ -329,8 +329,8 @@ function imdbData($imdbID)
 
         # language
         if (!$data['language']) {
-            preg_match('/Languages?:\s*<\/h4>(.+?)<\/div>/si', $sresp['data'], $ary);
-            preg_match_all('/<a.*?href=".*?language.*?".*?>(.+?)<\/a>/si', $ary[1], $ary, PREG_PATTERN_ORDER);
+            preg_match('/<div data-testid="title-details-section".+?<li .+?data-testid="title-details-languages"><span .+?>Languages<\/span>(.+?)<\/div><\/li>/ai', $resp['data'], $ary);
+            preg_match_all('/<a class=.+?>(.+?)<\/a>/si', $ary[1], $ary, PREG_PATTERN_ORDER);
             $data['language'] = trim(strtolower(join(', ', $ary[1])));
         }
 
