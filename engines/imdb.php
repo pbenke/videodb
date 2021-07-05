@@ -278,8 +278,9 @@ function imdbData($imdbID)
     $data['mpaa'] = trim($ary[1]);
 
     // Runtime
-    preg_match('/<time datetime="PT(\d+)M">/si', $resp['data'], $ary);
-    $data['runtime'] = trim($ary[1]);
+    preg_match('/<li .+? data-testid="title-techspec_runtime"><span .+?>Runtime<\/span><div .+?><ul .+?><li .+?><span .+?>(\d*)h?(.+?)min<\/span><\/li>/si', $resp['data'], $ary);
+    $minutes = intval(trim($ary[1])) * 60 + intval(trim($ary[2]));
+    $data['runtime'] = $minutes;
 	
     // Director
     preg_match('/<li role="presentation" class="ipc-inline-list__item">(<a class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link" rel="" href="\/name\/nm.+?\/?ref_=tt_ov_dr">.+?<\/a>.+?)<\/div>/si', $resp['data'], $ary);
@@ -316,8 +317,9 @@ function imdbData($imdbID)
 
         # runtime
         if (!$data['runtime']) {
-            preg_match('/<time datetime="PT(\d+)M">/si', $sresp['data'], $ary);
-            $data['runtime'] = trim($ary[1]);
+            preg_match('/<li .+? data-testid="title-techspec_runtime"><span .+?>Runtime<\/span><div .+?><ul .+?><li .+?><span .+?>(\d*)h?(.+?)min<\/span><\/li>/si', $resp['data'], $ary);
+            $minutes = intval(trim($ary[1])) * 60 + intval(trim($ary[2]));
+            $data['runtime'] = $minutes;
         }
 
         # country
