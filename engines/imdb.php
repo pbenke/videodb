@@ -303,11 +303,9 @@ function imdbData($imdbID)
     $data['language'] = trim(strtolower(join(', ', $ary[1])));
 
     // Genres (as Array)
-    preg_match('/Genres:\s*<\/h4>(.+?)<\/div>/si', $resp['data'], $ary);
-    preg_match_all('/<a.*?href="\/genres?\/.+?".*?>(.+?)<\/a>/si', $ary[1], $ary, PREG_PATTERN_ORDER);
-    foreach($ary[1] as $genre)
-    {
-        $data['genres'][] = trim($genre);
+    preg_match_all('/<a .+? href="\/search\/title\/\?genres=.+?&amp;explore=title_type,genres&amp;ref_=tt_ov_inf">(.+?)<\/a>/si', $resp['data'], $ary, PREG_PATTERN_ORDER);
+    foreach($ary[1] as $genre) {
+        $data['genres'][] = trim($ary);
     }
 
     // for Episodes - try to get some missing stuff from the main series page
