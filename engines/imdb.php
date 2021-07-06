@@ -126,7 +126,7 @@ function getRecommendationData($imdbID) {
     }
 
     // Rating
-    preg_match('/<strong title="([\d\.]+)+ based on.+?ratings"/si', $resp['data'], $ary);
+    preg_match('/<span class="AggregateRatingButton__RatingScore-.+?">(.+?)<\/span>/si', $resp['data'], $ary);
     $data['rating'] = trim($ary[1]);
 
     return $data;
@@ -289,7 +289,7 @@ function imdbData($imdbID)
     $data['director']  = trim(join(', ', $ary[1]));
 
     // Rating
-    preg_match('/<strong title="([\d\.]+)+ based on.+?ratings"/si', $resp['data'], $ary);
+    preg_match('/<span class="AggregateRatingButton__RatingScore-.+?">(.+?)<\/span>/si', $resp['data'], $ary);
     $data['rating'] = trim($ary[1]);
 
     // Countries
