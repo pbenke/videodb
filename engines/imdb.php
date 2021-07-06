@@ -430,7 +430,7 @@ function imdbGetCoverURL($data) {
     global $cache;
 
     // find cover image url
-    if (preg_match('/<td.*?id="img_primary".*?<a.*?href="(\/media\/rm.*?)".*?>/si', $data, $ary))
+    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/rm.+?)" aria-label="View {Title} Poster"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/si', $data, $ary))
     {
         // Fetch the image page
         $resp = httpClient($imdbServer.$ary[1], $cache);
@@ -438,7 +438,11 @@ function imdbGetCoverURL($data) {
         if ($resp['success'])
         {
             // get big cover image.
-            preg_match('/<img.+?id="primary-img".*?src="(.*?)"/si', $resp['data'], $ary);
+            preg_match('/<div style=".+?" class="MediaViewerImagestyles__PortraitContainer-.+?"><img src="(.+?)"/si', $resp['data'], $ary);
+            // If you want the image to scaled to a certain size you can do this.
+            // UX800 sets the width of the image to 800 with correct aspect ratio with regard to height.
+            // UY800 set the height to 800 with correct aspect ratio with regard to width.
+            // return str_replace('.jpg', 'UY800_.jpg', $ary[1]);
             return trim($ary[1]);
         }
         $CLIENTERROR .= $resp['error']."\n";
