@@ -473,7 +473,6 @@ function imdbGetCoverURL($data) {
 function imdbActorUrl($name, $id)
 {
     global $imdbServer;
-    global $imdbIdPrefix;
 
     $path = ($id) ? 'name/'.urlencode($id).'/' : 'Name?'.urlencode(html_entity_decode_all($name));
 
@@ -497,14 +496,16 @@ function imdbActor($name, $actorid)
 
     // search directly by id or via name?
     $resp   = httpClient(imdbActorUrl($name, $actorid), $cache);
-    $ary    = array();
 
     // if not direct match load best match
     if (preg_match('#<b>Popular Names</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m) ||
         preg_match('#<b>Names \(Exact Matches\)</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m) ||
         preg_match('#<b>Names \(Approx Matches\)</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m))
     {
-        if (!preg_match('/http/i', $m[1])) $m[1] = $imdbServer.$m[1];
+        if (!preg_match('/http/i', $m[1]))
+        {
+            $m[1] = $imdbServer.$m[1];
+        }
         $resp = httpClient($m[1], true);
     }
 
