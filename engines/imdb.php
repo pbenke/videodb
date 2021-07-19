@@ -49,6 +49,7 @@ function imdbContentUrl($id)
     global $imdbServer;
     global $imdbIdPrefix;
     $id = preg_replace('/^'.$imdbIdPrefix.'/', '', $id);
+
     return $imdbServer.'/title/tt'.$id.'/';
 }
 
@@ -67,14 +68,14 @@ function imdbRecommendations($id, $required_rating, $required_year)
 {
     global $CLIENTERROR;
 
-    $url = imdbContentUrl($id);
-    $resp = httpClient($url, true);
+	$url = imdbContentUrl($id);
+	$resp = httpClient($url, true);
 
     $recommendations = array();
-    preg_match_all('/<div class="rec_item" data-info=".*?" data-spec=".*?" data-tconst="tt(\d+)">/si', $resp['data'], $ary, PREG_SET_ORDER);
+    preg_match_all('/<a class="ipc-lockup-overlay ipc-focusable" href="\/title\/tt(\d+)\/\?ref_=tt_sims_tt_i_\d+" aria-label="View title page for.+?">/si', $resp['data'], $ary, PREG_SET_ORDER);
 
     foreach ($ary as $recommended_id) {
-        $rec_resp = getRecommendationData($recommended_id[1]);
+		$rec_resp = getRecommendationData($recommended_id[1]);
         $imdbId = $recommended_id[1];
         $title  = $rec_resp['title'];
         $year   = $rec_resp['year'];
@@ -98,24 +99,26 @@ function imdbRecommendations($id, $required_rating, $required_year)
 }
 
 function getRecommendationData($imdbID) {
-    global $imdbServer;
+	global $imdbServer;
     global $imdbIdPrefix;
     global $CLIENTERROR;
 
-    $imdbID = preg_replace('/^'.$imdbIdPrefix.'/', '', $imdbID);
+	$imdbID = preg_replace('/^'.$imdbIdPrefix.'/', '', $imdbID);
 
-    // fetch mainpage
+	// fetch mainpage
     $resp = httpClient($imdbServer.'/title/tt'.$imdbID.'/', true);     // added trailing / to avoid redirect
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
+    if (!$resp['success']) {
+		$CLIENTERROR .= $resp['error']."\n";
+	}
 
-    // Titles and Year
+	// Titles and Year
     // See for different formats. https://contribute.imdb.com/updates/guide/title_formats
     if ($data['istv']) {
         if (preg_match('/<title>&quot;(.+?)&quot;(.+?)\(TV Episode (\d+)\) - IMDb<\/title>/si', $resp['data'], $ary)) {
             # handles one episode of a TV serie
             $data['title'] = trim($ary[1]);
             $data['year'] = $ary[3];
-        } else if (preg_match('/<title>(.+?)\(TV Series (\d+).+?<\/title>/si', $resp['data'], $ary)){
+        } else if (preg_match('/<title>(.+?)\(TV Series (\d+).+?<\/title>/si', $resp['data'], $ary)) {
             $data['title'] = trim($ary[1]);
             $data['year'] = trim($ary[2]);
         }
@@ -125,11 +128,11 @@ function getRecommendationData($imdbID) {
         $data['year'] = trim($ary[2]);
     }
 
-    // Rating
+	// Rating
     preg_match('/<span class="AggregateRatingButton__RatingScore-.+?">(.+?)<\/span>/si', $resp['data'], $ary);
     $data['rating'] = trim($ary[1]);
 
-    return $data;
+	return $data;
 }
 
 /**
@@ -152,10 +155,14 @@ function imdbSearch($title, $aka=null)
     global $cache;
 
     $url    = $imdbServer.'/find?q='.urlencode($title);
-    if ($aka) $url .= ';s=tt;site=aka';
+    if ($aka) {
+        $url .= ';s=tt;site=aka';
+    }
 
     $resp = httpClient($url, $cache);
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
 
     $data = array();
 
@@ -163,8 +170,7 @@ function imdbSearch($title, $aka=null)
     $data['encoding'] = $resp['encoding'];
 
     // direct match (redirecting to individual title)?
-    if (preg_match('/^'.preg_quote($imdbServer,'/').'\/[Tt]itle(\?|\/tt)([0-9?]+)\/?/', $resp['url'], $single))
-    {
+    if (preg_match('/^'.preg_quote($imdbServer,'/').'\/[Tt]itle(\?|\/tt)([0-9?]+)\/?/', $resp['url'], $single)) {
         $info       = array();
         $info['id'] = $imdbIdPrefix.$single[2];
 
@@ -178,10 +184,8 @@ function imdbSearch($title, $aka=null)
     }
 
     // multiple matches
-    else if (preg_match_all('/<tr class="findResult.*?">(.*?)<\/tr>/i', $resp['data'], $multi, PREG_SET_ORDER))
-    {
-        foreach ($multi as $row)
-        {
+    else if (preg_match_all('/<tr class="findResult.*?">(.*?)<\/tr>/i', $resp['data'], $multi, PREG_SET_ORDER)) {
+        foreach ($multi as $row) {
             preg_match('/<td class="result_text">\s*<a href="\/title\/tt(\d+).*?" >(.*?)<\/a>\s?\(?(\d+)?\)?/i', $row[1], $ary);
             if ($ary[1] and $ary[2]) {
                 $info           = array();
@@ -190,7 +194,6 @@ function imdbSearch($title, $aka=null)
                 $info['year']   = $ary[3];
                 $data[]         = $info;
             }
-
 #           dump($info);
         }
     }
@@ -220,7 +223,9 @@ function imdbData($imdbID)
 
     // fetch mainpage
     $resp = httpClient($imdbServer.'/title/tt'.$imdbID.'/', $cache);     // added trailing / to avoid redirect
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
 
     // add encoding
     $data['encoding'] = $resp['encoding'];
@@ -228,9 +233,11 @@ function imdbData($imdbID)
     // Check if it is a TV series episode
     if (preg_match('/<title>.+?\(TV (Episode|Series|Mini-Series).*?<\/title>/si', $resp['data'])) {
         $data['istv'] = 1;
-        
+
         # find id of Series
-        preg_match('/<meta property="imdb:pageConst" content="tt(\d+)"\/>/si', $resp['data'], $ary);
+
+        //preg_match('/<meta property="pageId" content="tt(\d+)" \/>/si', $resp['data'], $ary);
+		preg_match('/<meta property="imdb:pageConst" content="tt(\d+)"\/>/si', $resp['data'], $ary);
         $data['tvseries_id'] = trim($ary[1]);
     }
 
@@ -278,10 +285,14 @@ function imdbData($imdbID)
     $data['mpaa'] = trim($ary[1]);
 
     // Runtime
-    preg_match('/<li .+? data-testid="title-techspec_runtime"><span .+?>Runtime<\/span><div .+?><ul .+?><li .+?><span .+?>(\d*)h?(.+?)min<\/span><\/li>/si', $resp['data'], $ary);
-    $minutes = intval(trim($ary[1])) * 60 + intval(trim($ary[2]));
-    $data['runtime'] = $minutes;
-	
+	preg_match('/<div data-testid="title-techspecs-header" .+? data-testid="title-techspec_runtime">.+?>(?:(\d+)h )?(\d+)min<\/span><\/li>/si', $resp['data'], $ary);
+	$minutes = intval(trim($ary[2]));
+	if (is_numeric($ary[1])) {
+		$minutes += intval(trim($ary[1])) * 60;
+	}
+
+	$data['runtime'] = $minutes;
+
     // Director
     preg_match('/<li role="presentation" class="ipc-inline-list__item">(<a class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link" rel="" href="\/name\/nm.+?\/?ref_=tt_ov_dr">.+?<\/a>.+?)<\/div>/si', $resp['data'], $ary);
     preg_match_all('/<a class=.+? href="\/name\/nm.+?">(.+?)<\/a>/si', $ary[1], $ary, PREG_PATTERN_ORDER);
@@ -303,7 +314,7 @@ function imdbData($imdbID)
     // Genres (as Array)
     preg_match_all('/<a .+? href="\/search\/title\/\?genres=.+?&amp;explore=title_type,genres&amp;ref_=tt_ov_inf">(.+?)<\/a>/si', $resp['data'], $ary, PREG_PATTERN_ORDER);
     foreach($ary[1] as $genre) {
-        $data['genres'][] = trim($ary);
+        $data['genres'][] = trim($genre);
     }
 
     // for Episodes - try to get some missing stuff from the main series page
@@ -313,8 +324,12 @@ function imdbData($imdbID)
 
         # runtime
         if (!$data['runtime']) {
-            preg_match('/<li .+? data-testid="title-techspec_runtime"><span .+?>Runtime<\/span><div .+?><ul .+?><li .+?><span .+?>((\d+)h)?(\d+)min<\/span><\/li>/si', $sresp['data'], $ary);
-            $minutes = intval(trim($ary[1])) * 60 + intval(trim($ary[2]));
+            preg_match('/<div data-testid="title-techspecs-header" .+? data-testid="title-techspec_runtime">.+?>(?:(\d+)h )?(\d+)min<\/span><\/li>/si', $sresp['data'], $ary);
+			$minutes = intval(trim($ary[2]));
+			if (is_numeric($ary[1])) {
+				$minutes += intval(trim($ary[1])) * 60;
+			}
+
             $data['runtime'] = $minutes;
         }
 
@@ -342,19 +357,18 @@ function imdbData($imdbID)
 
     // Fetch credits
     $resp = imdbFixEncoding($data, httpClient($imdbServer.'/title/tt'.$imdbID.'/fullcredits', $cache));
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
 
     // Cast
-    if (preg_match('#<table class="cast_list">(.*)#si', $resp['data'], $match))
-    {
+    if (preg_match('#<table class="cast_list">(.*)#si', $resp['data'], $match)) {
         // no idea why it does not always work with (.*?)</table
         // could be some maximum length of .*?
         // anyways, I'm cutting it here
-        $casthtml = substr($match[1],0,strpos( $match[1],'</table'));
-        if (preg_match_all('#<td class=\"primary_photo\">\s+<a href=\"\/name\/(nm\d+)\/?.*?".+?<a .+?>(.+?)<\/a>.+?<td class="character">(.*?)<\/td>#si', $casthtml, $ary, PREG_PATTERN_ORDER))
-        {
-            for ($i=0; $i < sizeof($ary[0]); $i++)
-            {
+        $casthtml = substr($match[1], 0, strpos($match[1], '</table'));
+        if (preg_match_all('#<td class=\"primary_photo\">\s+<a href=\"\/name\/(nm\d+)\/?.*?".+?<a .+?>(.+?)<\/a>.+?<td class="character">(.*?)<\/td>#si', $casthtml, $ary, PREG_PATTERN_ORDER)) {
+            for ($i=0; $i < sizeof($ary[0]); $i++) {
                 $actorid    = trim(strip_tags($ary[1][$i]));
                 $actor      = trim(strip_tags($ary[2][$i]));
                 $character  = trim( preg_replace('/\s+/', ' ', strip_tags( preg_replace('/&nbsp;/', ' ', $ary[3][$i]))));
@@ -371,8 +385,10 @@ function imdbData($imdbID)
 
     // Fetch plot
     $resp = $resp = imdbFixEncoding($data, httpClient($imdbServer.'/title/tt'.$imdbID.'/plotsummary', $cache));
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
-    
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
+
     // Plot
     //<li class="ipl-zebra-list__item" id="summary-ps0695557">
     //  <p>A nameless first person narrator (<a href="/name/nm0001570/">Edward Norton</a>) attends support groups in attempt to subdue his emotional state and relieve his insomniac state. When he meets Marla (<a href="/name/nm0000307/">Helena Bonham Carter</a>), another fake attendee of support groups, his life seems to become a little more bearable. However when he associates himself with Tyler (<a href="/name/nm0000093/">Brad Pitt</a>) he is dragged into an underground fight club and soap making scheme. Together the two men spiral out of control and engage in competitive rivalry for love and power. When the narrator is exposed to the hidden agenda of Tyler&#39;s fight club, he must accept the awful truth that Tyler may not be who he says he is.</p>
@@ -381,8 +397,7 @@ function imdbData($imdbID)
     //  </div>
     //</li>
     preg_match('/<li class="ipl-zebra-list__item" id="summary-p.\d+">\s+<p>(.+?)<\/p>/is', $resp['data'], $ary);
-    if ($ary[1])
-    {
+    if ($ary[1]) {
         $data['plot'] = trim($ary[1]);
         $data['plot'] = preg_replace('/&#34;/', '"', $data['plot']); //Replace HTML " with "
 
@@ -407,8 +422,7 @@ function imdbFixEncoding($data, $resp)
     $result = $resp;
     $pageEncoding = $resp['encoding'];
 
-    if ($pageEncoding != $data['encoding'])
-    {
+    if ($pageEncoding != $data['encoding']) {
         $result['data'] = iconv($pageEncoding, $data['encoding'], html_entity_decode_all($resp['data']));
     }
 
@@ -428,33 +442,26 @@ function imdbGetCoverURL($data) {
     global $cache;
 
     // find cover image url
-    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/rm.+?)" aria-label="View {Title} Poster"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/si', $data, $ary))
-    {
+    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/rm.+?)" aria-label="View {Title} Poster"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/si', $data, $ary)) {
         // Fetch the image page
         $resp = httpClient($imdbServer.$ary[1], $cache);
 
-        if ($resp['success'])
-        {
+        if ($resp['success']) {
             // get big cover image.
-            preg_match('/<div style=".+?" class="MediaViewerImagestyles__PortraitContainer-.+?"><img src="(.+?)"/si', $resp['data'], $ary);
-            // If you want the image to be scaled to a certain size you can do this.
+			preg_match('/<div style=".+?" class="MediaViewerImagestyles__PortraitContainer-.+?"><img src="(.+?)"/si', $resp['data'], $ary);
+            // If you want the image to scaled to a certain size you can do this.
             // UX800 sets the width of the image to 800 with correct aspect ratio with regard to height.
-            // UY800 sets the height to 800 with correct aspect ratio with regard to width.
-            // If you use PDF export I would scale the image down because the PDF can get huge.
-            // return str_replace('.jpg', 'UY800_.jpg', $ary[1]);
-            return trim($ary[1]);
+			// UY800 set the height to 800 with correct aspect ratio with regard to width.
+            return str_replace('.jpg', 'UY800_.jpg', $ary[1]);
+            //return trim($ary[1]);
         }
         $CLIENTERROR .= $resp['error']."\n";
         return '';
     }
     // src look somthing like: src="https://images-na.ssl-images-amazon.com/images/M/MV5BMTc0MDMyMzI2OF5BMl5BanBnXkFtZTcwMzM2OTk1MQ@@._V1_UX214_CR0,0,214,317_AL_.jpg"
     // The last part ._V1_UX214.....jpg seams to be an function that scales the image. Just remove that we want the full size.
-    else if (preg_match('/<div.*?class="poster".*?<img.*?src="(.*?\.)_v.*?"/si', $data, $ary))
-    {
-        $img_url = $ary[1]."jpg";
-        // Replace the https wtih http.
-        $img_url = str_replace("https://images-na.ssl-images-amazon.com", "http://ecx.images-amazon.com", $img_url);
-        return $img_url;
+    else if (preg_match('/<div.*?class="poster".*?<img.*?src="(.*?\.)_v.*?"/si', $data, $ary)) {
+        return $ary[1]."_V1_SY600_CR0,0,600_AL_.jpg";
     } else {
         # no image
         return '';
@@ -495,15 +502,14 @@ function imdbActor($name, $actorid)
     global $cache;
 
     // search directly by id or via name?
-    $resp   = httpClient(imdbActorUrl($name, $actorid), $cache);
+    $resp = httpClient(imdbActorUrl($name, $actorid), $cache);
 
     // if not direct match load best match
     if (preg_match('#<b>Popular Names</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m) ||
         preg_match('#<b>Names \(Exact Matches\)</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m) ||
         preg_match('#<b>Names \(Approx Matches\)</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m))
     {
-        if (!preg_match('/http/i', $m[1]))
-        {
+        if (!preg_match('/http/i', $m[1])) {
             $m[1] = $imdbServer.$m[1];
         }
         $resp = httpClient($m[1], true);
@@ -512,17 +518,12 @@ function imdbActor($name, $actorid)
     // now we should have loaded the best match
 
     // only search in img_primary <td> - or we get far to many useless images
-    preg_match('/<td.*?id="img_primary".*?>(.*?)<\/td>/si',$resp['data'], $match);
+    preg_match('/<td.+?id="img_primary">(.*?)<\/td>/si', $resp['data'], $match);
 
-    // src look somthing like: src="https://images-na.ssl-images-amazon.com/images/M/MV5BMTc0MDMyMzI2OF5BMl5BanBnXkFtZTcwMzM2OTk1MQ@@._V1_UX214_CR0,0,214,317_AL_.jpg"
-    // The last part ._V1_UX214.....jpg seams to be an function that scales the image. Just remove that we want the full size.
-    if (preg_match('/.*?<a.*?href="(.+?)"\s*?>\s*<img\s+.*?src="(.*?\.)_v.*?"/si', $match[1], $m))
-    {
+    $ary = array();
+    if (preg_match('/.+?<a.*?href="(\/name\/nm\d+\/).+?src="(.+?)"/si', $match[1], $m)) {
         $ary[0][0] = $m[1];
-        $img_url = $m[2]."jpg";
-        // Replace the https wtih http.
-        $img_url = str_replace("https://images-na.ssl-images-amazon.com", "http://ecx.images-amazon.com", $img_url);
-        $ary[0][1] = $img_url;
+        $ary[0][1] = $m[2];
     }
 
     return $ary;
