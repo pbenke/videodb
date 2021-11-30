@@ -285,7 +285,7 @@ function imdbData($imdbID)
     $data['mpaa'] = trim($ary[1]);
 
     // Runtime
-	preg_match('/<li role="presentation".+?>(?:(\d+)<!-- -->h<!-- --> )?(?:<!-- -->(\d+)<!-- -->m)<\/li>/si', $resp['data'], $ary);
+	preg_match('/<li role="presentation" class="ipc-inline-list__item">(?:(\d+)<!-- -->h.*?)?(?:(\d+)<!-- -->m)?<\/li>/si', $resp['data'], $ary);
 	$minutes = intval(trim($ary[2]));
 	if (is_numeric($ary[1])) {
 		$minutes += intval(trim($ary[1])) * 60;
