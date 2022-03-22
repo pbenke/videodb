@@ -448,7 +448,7 @@ function imdbGetCoverURL($data) {
 
         if ($resp['success']) {
             // get big cover image.
-			preg_match('/<div style=".+?" class="MediaViewerImagestyles__PortraitContainer-.+?"><img src="(.+?)"/si', $resp['data'], $ary);
+			preg_match('/<div style=".+?" class=".+?"><img src="(.+?)"/si', $resp['data'], $ary);
             // If you want the image to scaled to a certain size you can do this.
             // UX800 sets the width of the image to 800 with correct aspect ratio with regard to height.
 			// UY800 set the height to 800 with correct aspect ratio with regard to width.
