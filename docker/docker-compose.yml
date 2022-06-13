@@ -1,0 +1,41 @@
+version: "3.7"
+
+services:
+  php:
+    build: './php/'
+    restart: always
+    ports:
+      - '9000:9000'
+    networks:
+      - backend
+    volumes:
+      - ../:/var/www/html/
+
+  apache:
+    build: './apache/'
+    restart: always
+    depends_on:
+      - php
+      - mariadb
+    networks:
+      - frontend
+      - backend
+    ports:
+      - '8000:80'
+    volumes:
+      - ../:/var/www/html/
+
+  mariadb:
+    image: 'mariadb'
+    restart: always
+    networks:
+      - backend
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql_root_password
+      MYSQL_DATABASE: videodb
+      MYSQL_USER: videodb
+      MYSQL_PASSWORD: videodb
+
+networks:
+  frontend:
+  backend:
