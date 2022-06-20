@@ -442,7 +442,7 @@ function imdbGetCoverURL($data) {
     global $cache;
 
     // find cover image url
-    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/rm.+?)" aria-label="View {Title} Poster"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/si', $data, $ary)) {
+    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/rm.+?)" aria-label="View .+? Poster"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/si', $data, $ary)) {
         // Fetch the image page
         $resp = httpClient($imdbServer.$ary[1], $cache);
 
