@@ -312,7 +312,7 @@ function imdbData($imdbID)
     $data['language'] = trim(strtolower(join(', ', $ary[1])));
 
     // Genres (as Array)
-    preg_match_all('/<a class=".+?" rel="" href="\/search\/title\/\?genres=.+?&amp;explore=title_type,genres&amp;ref_=tt_ov_inf">(.+?)<\/a>/si', $resp['data'], $ary, PREG_PATTERN_ORDER);
+    preg_match_all('/class="ipc-inline-list__item ipc-chip__text">(.+?)<\/li><\/ul><\/a>/si', $resp['data'], $ary, PREG_PATTERN_ORDER);
     foreach($ary[1] as $genre) {
         $data['genres'][] = trim($genre);
     }
