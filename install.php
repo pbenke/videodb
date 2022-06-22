@@ -165,7 +165,7 @@ switch ($step)
                     {
 						error("Can't create database: ".mysqli_error($dbh));
 						$step--;
-						continue;
+						break;
 					}
                     else
                     {
@@ -174,7 +174,7 @@ switch ($step)
                         {
 							error("Can't select database: ".mysqli_error($dbh));
 							$step--;
-							continue;
+							break;
 						}
 					}
 				}
@@ -513,15 +513,15 @@ switch ($step)
 	default:	// start setup
 
 ?>				<tr><td colspan="2">
-					<br/>This is the installer for <span style="font-weight:bold;"><a style="color://333399" href="https://github.com/andig/videodb.git">videoDB</a></span>. You will require:
+					<br/>This is the installer for <span style="font-weight:bold;"><a style="color://333399" href="https://github.com/kec2/videodb.git">videoDB</a></span>. You will require:
 					<ol>
-						<li><b>PHP &gt;= 5.5.0</b> with GD library and session support configured.</li><br/><br/>
+						<li><b>PHP &gt;= 7.4.0</b> with GD library and session support configured.</li><br/><br/>
 						<li>A <b>MySQL database</b>, login (username and password) with create/drop table rights.</li><br/><br/>
 						<li>If you want this installer to create the config file for you, it needs permission to write to web server's the videoDB <b>root directory</b>.</li><br/><br/>
 					</ol>
 					The installer will create a database in your MySQL installation, create and populate the required tables, and generate the videoDB configuration file.<br/><br/>
 <!--
-					<input type="checkbox" name="backedup"> <b>I have backed up my database incase of a problem with this upgrade.</b><br/><br/>
+					<input type="checkbox" name="backedup"> <b>I have backed up my database in case of a problem with this upgrade.</b><br/><br/>
 -->
 					Click <b>Next</b> to setup the database connection...<br/><br/>
 
