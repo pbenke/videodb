@@ -19,3 +19,5 @@ services:
       MYSQL_DATABASE: videodb
       MYSQL_USER: videodb
       MYSQL_PASSWORD: videodb
+    volumes:
+      - ../db:/var/lib/mysql
