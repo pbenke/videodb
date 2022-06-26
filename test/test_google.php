@@ -5,7 +5,7 @@
  * google.com images engine test case
  *
  * @package Test
- * @author Andreas Götz <cpuidle@gmx.de>
+ * @author Andreas GÃ¶tz <cpuidle@gmx.de>
  * @version $Id: test_google.php,v 1.5 2013/02/02 11:38:59 andig2 Exp $
  */
 

@@ -5,7 +5,7 @@
  * amazon.de engine test case
  *
  * @package Test
- * @author Andreas Götz <cpuidle@gmx.de>
+ * @author Andreas GÃ¶tz <cpuidle@gmx.de>
  * @version $Id: test_amazonaws.php,v 1.4 2013/02/02 11:38:59 andig2 Exp $
  */
 
@@ -32,17 +32,17 @@ class TestAmazonAWS extends UnitTestCase
         
 #        dump($data);
 
-        $this->assertPattern('/Star Wars/', $data[title]);
-#        $this->assertEqual($data[subtitle], 'Die dunkle Bedrohung (Einzel-DVD)');
-        $this->assertPattern('#http://.+.images\-amazon.com/images/#', $data[coverurl]);
-        $this->assertEqual($data[director], 'George Lucas');
-        $this->assertEqual($data[language], 'deutsch, englisch');
-        $this->assertEqual($data[year], 2001);
-        $this->assertTrue($data[runtime] > 100);
-        $this->assertTrue($data[rating] >= 6);
+        $this->assertPattern('/Star Wars/', $data['title']);
+#        $this->assertEqual($data['subtitle'], 'Die dunkle Bedrohung (Einzel-DVD)');
+        $this->assertPattern('#http://.+.images\-amazon.com/images/#', $data['coverurl']);
+        $this->assertEqual($data['director'], 'George Lucas');
+        $this->assertEqual($data['language'], 'deutsch, englisch');
+        $this->assertEqual($data['year'], 2001);
+        $this->assertTrue($data['runtime'] > 100);
+        $this->assertTrue($data['rating'] >= 6);
         #[genres] => 
-        $this->assertPattern('/Ewan McGregor/', $data[cast]);
-        $this->assertPattern('/Naboo/', $data[plot]);
+        $this->assertPattern('/Ewan McGregor/', $data['cast']);
+        $this->assertPattern('/Naboo/', $data['plot']);
     }
 
     function testSearch()

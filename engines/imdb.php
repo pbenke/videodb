@@ -230,26 +230,27 @@ function imdbData($imdbID)
     // add encoding
     $data['encoding'] = $resp['encoding'];
 
-    // Check if it is a TV series episode
-    if (preg_match('/<title>.+?\(TV (Episode|Series|Mini-Series).*?<\/title>/si', $resp['data'])) {
+    # <meta property="og:type" content="video.tv_show">
+    # <meta property="og:type" content="video.episode">
+    # <meta property="og:type" content="video.tv_show"/>
+    if (preg_match('/<meta property="og:type" content="video\.(episode|tv_show)"\/?>/si', $resp['data'])) {
         $data['istv'] = 1;
-
-        # find id of Series
-
-        //preg_match('/<meta property="pageId" content="tt(\d+)" \/>/si', $resp['data'], $ary);
-		preg_match('/<meta property="imdb:pageConst" content="tt(\d+)"\/>/si', $resp['data'], $ary);
-        $data['tvseries_id'] = trim($ary[1]);
     }
 
     // Titles and Year
     // See for different formats. https://contribute.imdb.com/updates/guide/title_formats
     if ($data['istv']) {
-        if (preg_match('/<title>&quot;(.+?)&quot;(.+?)\(TV Episode (\d+)\) - IMDb<\/title>/si', $resp['data'], $ary)) {
+        # find id of Series
+        preg_match('/<a href="\/title\/tt(.+?)\/.+?" .+? data-testid="hero-title-block__series-link">/si', $resp['data'], $ary);
+        $data['tvseries_id'] = trim($ary[1]);
+
+        if (preg_match('/<title>&quot;(.+?)&quot; (.+?) \(.+? (\d+)\) - IMDb<\/title>/si', $resp['data'], $ary)) {
             # handles one episode of a TV serie
-            $data['title'] = trim($ary[1]);
-            $data['subtitle'] = trim($ary[2]);
+            $data['title'] = $ary[1];
+            $data['subtitle'] = $ary[2];
             $data['year'] = $ary[3];
-        } else if (preg_match('/<title>(.+?)\(TV (?:Series|Mini-Series) (\d+).+?\) - IMDb<\/title>/si', $resp['data'], $ary)) {
+
+        } else if (preg_match('/<title>(.+?) \(.+? (\d+).*?\) - IMDb<\/title>/si', $resp['data'], $ary)) {
             # handles a TV series.
             # split title - subtitle
             list($t, $s) = explode(' - ', $ary[1], 2);
@@ -262,8 +263,8 @@ function imdbData($imdbID)
             $data['year'] = trim($ary[2]);
         }
     } else {
-        preg_match('/<title>(.+?)\(.*?(\d+)\).+?<\/title>/si', $resp['data'], $ary);
-        $data['year'] = trim($ary[2]);
+        preg_match('/<title>(.+?) \((\d+)\) - IMDb<\/title>/si', $resp['data'], $ary);
+
         # split title - subtitle
         list($t, $s) = explode(' - ', $ary[1], 2);
         # no dash, lets try colon
@@ -272,26 +273,37 @@ function imdbData($imdbID)
         }
         $data['title'] = trim($t);
         $data['subtitle'] = trim($s);
+        $data['year'] = $ary[2];
     }
+
     # orig. title
-    preg_match('/<div class="originalTitle">(.+?)<span class="description"> \(original title\)<\/span><\/div>/si', $resp['data'], $ary);
+    preg_match('/<div data-testid="hero-title-block__original-title" class=".+?">Originaltitel: (.+?)<\/div>/si', $resp['data'], $ary);
     $data['origtitle'] = trim($ary[1]);
 
     // Cover URL
     $data['coverurl'] = imdbGetCoverURL($resp['data']);
 
     // MPAA Rating
-    preg_match('/<div class="subtext">(.+?)</is', $resp['data'], $ary);
+    preg_match('/href="\/title\/tt\d+\/parentalguide\/certificates\?ref_=tt_ov_.+?" class="ipc-link ipc-link--baseAlt ipc-link--inherit-color sc-.+?">(.+?)<\/a><span class="sc-.+?">.+?<\/span>/is', $resp['data'], $ary);
     $data['mpaa'] = trim($ary[1]);
 
     // Runtime
-	preg_match('/<li role="presentation" class="ipc-inline-list__item">(?:(\d+)<!-- -->h.*?)?(?:(\d+)<!-- -->m)?<\/li>/si', $resp['data'], $ary);
-	$minutes = intval(trim($ary[2]));
-	if (is_numeric($ary[1])) {
-		$minutes += intval(trim($ary[1])) * 60;
-	}
+    if (preg_match('/<li role="presentation" class="ipc-inline-list__item">(\d+)(?:<!-- --> ?)+(?:h|s).*?(?:(?:<!-- --> ?)+(\d+)(?:<!-- --> ?)+.+?)?<\/li>/si', $resp['data'], $ary)) {
+        # handles Hours and maybe minutes. Some movies are exactly 1 hours.
+        $minutes = intval($ary[2]);
+    	if (is_numeric($ary[1])) {
+    		$minutes += intval($ary[1]) * 60;
+    	}
 
-	$data['runtime'] = $minutes;
+    	$data['runtime'] = $minutes;
+    } else if (preg_match('/<li role="presentation" class="ipc-inline-list__item">(\d+)(?:<!-- --> ?)+m.*?<\/li>/si', $resp['data'], $ary)) {
+        # handle only minutes
+    	$data['runtime'] = $ary[1];
+    } else if (preg_match('/<div class="ipc-metadata-list-item__content-container">(\d+)(?:<!-- --> ?)+m.*?<\/div>/si', $resp['data'], $ary)) {
+        # handle only minutes
+        # Handles the case where runtime is only in the technical spec section.
+        $data['runtime'] = $ary[1];
+    }
 
     // Director
     preg_match('/<li role="presentation" class="ipc-inline-list__item">(<a class="ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link" rel="" href="\/name\/nm.+?\/?ref_=tt_ov_dr">.+?<\/a>.+?)<\/div>/si', $resp['data'], $ary);
@@ -323,14 +335,21 @@ function imdbData($imdbID)
         if (!$sresp['success']) $CLIENTERROR .= $resp['error']."\n";
 
         # runtime
-        if (!$data['runtime']) {
-            preg_match('/<div data-testid="title-techspecs-header" .+? data-testid="title-techspec_runtime">.+?>(?:(\d+)h )?(\d+)min<\/span><\/li>/si', $sresp['data'], $ary);
-			$minutes = intval(trim($ary[2]));
-			if (is_numeric($ary[1])) {
-				$minutes += intval(trim($ary[1])) * 60;
-			}
+        if (preg_match('/<li role="presentation" class="ipc-inline-list__item">(\d+)(?:<!-- --> ?)+(?:h|s).*?(?:(?:<!-- --> ?)+(\d+)(?:<!-- --> ?)+.+?)?<\/li>/si', $resp['data'], $ary)) {
+            # handles Hours and maybe minutes. Some movies are exactly 1 hours.
+            $minutes = intval($ary[2]);
+            if (is_numeric($ary[1])) {
+                $minutes += intval($ary[1]) * 60;
+            }
 
             $data['runtime'] = $minutes;
+        } else if (preg_match('/<li role="presentation" class="ipc-inline-list__item">(\d+)(?:<!-- --> ?)+m.*?<\/li>/si', $resp['data'], $ary)) { // only minutes
+            # handle only minutes
+            $data['runtime'] = $ary[1];
+        } else if (preg_match('/<div class="ipc-metadata-list-item__content-container">(\d+)(?:<!-- --> ?)+m.*?<\/div>/si', $resp['data'], $ary)) {
+            # handle only minutes
+            # Handles the case where runtime is only in the technical spec section.
+            $data['runtime'] = $ary[1];
         }
 
         # country
@@ -352,7 +371,7 @@ function imdbData($imdbID)
     }
 
     // Plot
-    preg_match('/<h2>Storyline<\/h2>.*?<p>(.*?)</si', $resp['data'], $ary);
+    preg_match('/<(?:p|div) data-testid="plot" .+?>.+?<span role="presentation" data-testid="plot-.+?" .+?>(.+?)<\/span></si', $resp['data'], $ary);
     $data['plot'] = $ary[1];
 
     // Fetch credits
@@ -382,32 +401,6 @@ function imdbData($imdbID)
         // sometimes appearing in series (e.g. Scrubs)
         $data['cast'] = preg_replace('#/ ... #', '', $data['cast']);
     }
-
-    // Fetch plot
-    $resp = $resp = imdbFixEncoding($data, httpClient($imdbServer.'/title/tt'.$imdbID.'/plotsummary', $cache));
-    if (!$resp['success']) {
-        $CLIENTERROR .= $resp['error']."\n";
-    }
-
-    // Plot
-    //<li class="ipl-zebra-list__item" id="summary-ps0695557">
-    //  <p>A nameless first person narrator (<a href="/name/nm0001570/">Edward Norton</a>) attends support groups in attempt to subdue his emotional state and relieve his insomniac state. When he meets Marla (<a href="/name/nm0000307/">Helena Bonham Carter</a>), another fake attendee of support groups, his life seems to become a little more bearable. However when he associates himself with Tyler (<a href="/name/nm0000093/">Brad Pitt</a>) he is dragged into an underground fight club and soap making scheme. Together the two men spiral out of control and engage in competitive rivalry for love and power. When the narrator is exposed to the hidden agenda of Tyler&#39;s fight club, he must accept the awful truth that Tyler may not be who he says he is.</p>
-    //  <div class="author-container">
-    //      <em>&mdash;<a href="/search/title?plot_author=Rhiannon&view=simple&sort=alpha&ref_=ttpl_pl_0">Rhiannon</a></em>
-    //  </div>
-    //</li>
-    preg_match('/<li class="ipl-zebra-list__item" id="summary-p.\d+">\s+<p>(.+?)<\/p>/is', $resp['data'], $ary);
-    if ($ary[1]) {
-        $data['plot'] = trim($ary[1]);
-        $data['plot'] = preg_replace('/&#34;/', '"', $data['plot']); //Replace HTML " with "
-
-        // removed linked actors like: <a href="/name/nm0001570?ref_=tt_stry_pl">Edward Norton</a>
-        $data['plot'] = preg_replace('/<a href="\/name\/nm\d+.+?">/', '', $data['plot']);
-        $data['plot'] = preg_replace('/<\/a>/', '', $data['plot']);
-        $data['plot'] = preg_replace('/\s+/s', ' ', $data['plot']);
-    }
-
-    $data['plot'] = html_clean_utf8($data['plot']);
 
     return $data;
 }
@@ -442,7 +435,7 @@ function imdbGetCoverURL($data) {
     global $cache;
 
     // find cover image url
-    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/rm.+?)" aria-label="View .+? Poster"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/si', $data, $ary)) {
+    if (preg_match('/<a class="ipc-lockup-overlay ipc-focusable" href="(\/title\/tt\d+\/mediaviewer\/\??rm.+?)" aria-label=".*?Poster.*?"><div class="ipc-lockup-overlay__screen"><\/div><\/a>/s', $data, $ary)) {
         // Fetch the image page
         $resp = httpClient($imdbServer.$ary[1], $cache);
 
