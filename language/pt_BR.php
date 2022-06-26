@@ -233,4 +233,7 @@ $lang['help_adultgenresn']   = "Gêneros Adultos";
 $lang['help_pageno']   	   = "Número de itens a exibir em cada página. Use 0 ou deixe em branco para desativar a paginação.";
 $lang['help_pagenon']        = "Máximo de itens por página";
 
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
+
 ?>

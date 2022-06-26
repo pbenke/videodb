@@ -20,7 +20,7 @@ $SETUP_GLOBAL = array('language', 'autoid', 'mediadefault', 'langdefault',
                       'custom2type', 'custom3type', 'custom4type', 'enginedefault', 
                       'proxy_host', 'proxy_port', 'actorpics', 'thumbAge', 'listcolumns', 
                       'shownew', 'imdbBrowser', 'multiuser', 'denyguest', 'adultgenres',
-                      'pageno', 'showtools');
+                      'pageno', 'showtools', 'http_header_accept_language');
 
 $SETUP_QUICK  = array('template');
 
@@ -105,6 +105,7 @@ function setup_mkOptions($isprofile = false)
     $setup[] = setup_addOption($isprofile, 'usermanager', 'link', 'users.php');
 	$setup[] = setup_addOption($isprofile, 'proxy_host', 'text');
 	$setup[] = setup_addOption($isprofile, 'proxy_port', 'text');
+	$setup[] = setup_addOption($isprofile, 'http_header_accept_language', 'text');
 
     if (!$isprofile) $setup[] = setup_addSection('opt_caching');
     $setup[] = setup_addOption($isprofile, 'thumbnail', 'boolean');

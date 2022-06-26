@@ -212,4 +212,7 @@ $lang['help_denyguestn']     = "Acesso público negado";
 $lang['help_adultgenres']    = "Os géneros de filmes que escolheres serão apenas vistos por pessoas com permição para ver filmes 'adultos'. (Só se aplica quando o modo multi-utilizador está ligado)";
 $lang['help_adultgenresn']   = "Géneros adultos";
 
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
+
 ?>

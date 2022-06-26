@@ -330,6 +330,9 @@ $lang['help_engexperimental']= "<br/>Ten dostawca treści jest ciągle na etapie
 $lang['help_showtoolsn']     = "Pokaż narzędzia";
 $lang['help_showtools']      = "Menu Narzędzia pokaże zawartość katalogu <code>contrib</code>. Zawartość tego katalogu to wartościowa narzędzia do videoDB, ale nie w pełni przetestowane ich używanie może być niebezpieczne.";
 
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
+
 $lang['page']                = "Strona";
 $lang['of']                  = "";
 $lang['records']             = "elementów";

@@ -275,6 +275,8 @@ $lang['help_engexperimental']= "<br/>Dikkat: Bu veri saðlayýcýsý deneme aþamasýn
 
 $lang['help_showtoolsn']     = "Araçlarý Göster";
 $lang['help_showtools']      = "Bu özellik içerikleri gösterecektir.";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['page']                = "Sayfa";
 $lang['of']                  = " / ";

@@ -75,7 +75,7 @@ function get_response_encoding($response)
     }
 
     if (!$encoding) {
-        $encoding = 'iso-8859-1';
+        $encoding = 'UTF-8';
     }
 
     return $encoding;
@@ -87,11 +87,11 @@ function get_response_encoding($response)
  * Returns the raw data from the given URL, uses proxy when configured
  * and follows redirects
  *
- * @param string $url URL to fetch
- * @param bool $cache use caching? defaults to false
- * @param string $post POST data, if nonempty POST is used instead of GET
- * @param integer $timeout Timeout in seconds defaults to 15
- * @return mixed             HTTP response
+ * @param string    $url URL to fetch
+ * @param bool      $cache use caching? defaults to false
+ * @param string    $post POST data, if nonempty POST is used instead of GET
+ * @param integer   $timeout Timeout in seconds defaults to 15
+ * @return mixed    HTTP response
  * @author Andreas Goetz <cpuidle@gmx.de>
  */
 function httpClient($url, $cache = false, $para = null, $reload = false)
@@ -117,7 +117,7 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
     }
 
     // get data from cache?
-    if ($cache & !$reload) {
+    if ($cache && !$reload) {
         $resp = getHTTPcache($url . $post);
         if ($resp !== false) {
             $resp['cached'] = true;
@@ -132,6 +132,10 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
             $port = 8080;
         }
         $requestConfig += ['proxy' => sprintf('tcp://%s:%d', $server, $port)];
+    }
+
+    if (!empty($config['http_header_accept_language'])) {
+        $requestConfig += ['headers' => ['Accept-Language' => $config['http_header_accept_language']]];
     }
 
     // additional request headers

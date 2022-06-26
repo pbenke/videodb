@@ -229,6 +229,8 @@ $lang['help_youtubekey']       = "Anskaf en YouTube Dev API nøgle fra <a href='
 $lang['help_shownewn']       = "Nye film";
 
 $lang['help_showtoolsn']     = "Vis værktøjer";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['page']                = "Side";
 $lang['of']                  = "af";

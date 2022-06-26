@@ -275,6 +275,8 @@ $lang['help_defaultenginen'] = "Standard Datenanbieter";
 $lang['help_defaultengine']  = "Hier kannst du auswälen, von wo VideoDB standardmässig seine Daten bezieht.";
 $lang['help_enginegoogle']   = "Über Google können nur Cover oder Schauspieler Thumbnails gesucht werden.";
 $lang['help_engexperimental']= "<br/>Dieser Datenanbieter ist noch in experimentellem Zustand und funktioniert evtl. nicht wie erwartet.";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['page']                = "Seite";
 $lang['of']                  = "von";

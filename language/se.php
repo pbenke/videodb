@@ -231,6 +231,9 @@ $lang['help_adultgenres']    = "Filmer i dessa genres kan bara ses av användare
 $lang['help_adultgenresn']   = "Vuxenfilmsgenre";
 $lang['help_pageno']   	   = "Antal poster som visas per sida. Skriv in 0 eller lämna blankt om du vill slå av sidfunktionen.";
 $lang['help_pagenon']        = "Max antal poster per sida";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
+
 $lang['page']                = "Sida";
 $lang['of']                  = "av";
 $lang['records']             = "poster";

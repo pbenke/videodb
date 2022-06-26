@@ -257,6 +257,8 @@ $lang['help_engexperimental']= "<br/>Notez que ce fournisseur est encore à l'é
 
 $lang['help_showtoolsn']     = "Monter utilitaires";
 $lang['help_showtools']      = "Le menu utilitaires affichera le contenu du répertoire <code>contrib</code>. Le contenu du répertoire contrib est d'utiles contributions à videoDB, mais pas encore bien testées et peuvent être hazardeuses pour la sécurité.";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['warn_noOwner']        = "Données non sauvées - vous devez préalablement sélectionner un propriétaire !";
 

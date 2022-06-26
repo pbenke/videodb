@@ -220,7 +220,8 @@ $lang['help_shownewn']       = "Nuevas Pel&iacute;culas";
 $lang['help_shownew']        = "Puedes definir cuantas pel&iacute;culas ser&aacute;n listadas con el filtro \"Nuevas\".";
 $lang['help_imdbBrowsern']   = "Browser IMDB";
 $lang['help_imdbBrowser']    = "Esta opci&oacute;n habilita la integraci&oacute;n del Browser IMDB, el cual le proporciona con la funcionalidad de insertar su pel&iacute;cula directamente del sitio web de IMDB";
-
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['help_multiuser']      = "Habilita la funci&oacute;n de multiusuarios para usar videodb von varios usuarios identificados usando contrase&ntilde;as.";
 $lang['help_multiusern']     = "Soporte para multiusuarios";

@@ -243,6 +243,8 @@ $lang['help_defaultenginen'] = "Standard datakilde";
 $lang['help_defaultengine']  = "Velg standardkilde for henting av filmdata.";
 $lang['help_enginegoogle']   = "Google støtter kun bildesøk.";
 $lang['help_engexperimental']= "<br/>Merk at støtte for denne datakilden er på prøvestadiet, og derfor kanskje ikke vil fungere skikkelig.";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['page']                = "Side";
 $lang['of']                  = "av";

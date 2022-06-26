@@ -227,6 +227,9 @@ $lang['help_denyguestn']     = "No public access";
 $lang['help_adultgenresn']   = "Adult Genres";
 #$lang['help_pageno']   	   = "Number of items to display on each page. Use 0 or leave empty to disable pagination.";
 $lang['help_pagenon']        = "Maximum items per page";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
+
 $lang['page']                = "Page";
 $lang['of']                  = "of";
 $lang['records']             = "records";

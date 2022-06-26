@@ -30,7 +30,7 @@ $config['httpclientlog']        = 0;    // HttpClient logging (debug only)
 /* Cache configuration */
 $config['IMDBage']      = 3600*24*7;    // Maximum cache age in seconds
 $config['hierarchical']         = 1;    // Set to 1 to enable hierarchical cache folders (if existing!)
-$config['cache_pruning']        = 1;    // Set to 1 to enable automatical cleanup of cache folders
+$config['cache_pruning']        = 1;    // Set to 1 to enable automatically cleanup of cache folders
 
 /* Defaults for external data lookup */
 $config['lookupdefault_edit']   = 0;    // 0=ignore, 1=lookup, 2=overwrite
@@ -47,6 +47,16 @@ $config['xml']              = 0;        // Set to 1 to enable XML data im/export
 
 /* RSS Feed */
 $config['rss']              = 1;        // Set to 1 to enable RSS Feed
+
+/* Extra HTTP Headers */
+/* see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Language */
+/* fx: fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5 */
+/*
+ 1 prio: US English or any English.
+ 2 prio: Danish
+ 3 prio: Dutch
+*/
+$config['http_header_accept_language'] = 'en-US, en;q=0.9, da;q=0.8, de;q=0.7';
 
 
 /*

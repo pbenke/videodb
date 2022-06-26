@@ -204,6 +204,8 @@ $lang['help_usermanager']    = "Da qui puoi aggiungere, modificare e cancellare 
 $lang['help_usermanagern']   = "Gestione utenti";
 $lang['help_denyguest']      = "Ablitare questa opzione permette l'accesso solo agli utenti registrati. (solo se il supporto multiutente &egrave; abilitato)";
 $lang['help_denyguestn']     = "Vieta accesso pubblico";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['searchimdb'] 	   = "Cerca in IMDB"
 

@@ -248,6 +248,8 @@ $lang['help_defaultenginen'] = "Standaard Data Provider";
 $lang['help_defaultengine']  = "Selecteer van waar videoDB zijn data standaard zou moeten afhalen.";
 $lang['help_enginegoogle']   = "Google ondersteunt enkel het zoeken van afbeeldingen.";
 $lang['help_engexperimental']= "<br/>Let op: deze data provider is nog steeds in experimentele fase en zou niet naar verwachting kunnen werken.";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 
 $lang['page']                = "Pagina";
 $lang['of']                  = "van";

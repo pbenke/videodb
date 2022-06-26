@@ -297,6 +297,8 @@ $lang['help_proxy_hostn']    = "Proxy server";
 $lang['help_proxy_host']     = "If the host which VideoDB runs on is behind a proxy server you can give its name here. Leave it blank if you don't need a proxy.";
 $lang['help_proxy_portn']    = "Proxy port";
 $lang['help_proxy_port']     = "Give the port of your proxy here eg. <span class=\"example\">8080</span>.";
+$lang['help_http_header_accept_languagen']   = "HTTP Header Accept-Language";
+$lang['help_http_header_accept_language']    = "Add extra data to HTTP Header. fx \"fr-CH, fr;q=0.9, en;q=0.8, de;q=0.7, *;q=0.5\"";
 $lang['help_actorpicsn']     = "Actor thumbnails";
 $lang['help_actorpics']      = "This tries to find a tiny image for each actor from the cast and to display it beside the actors name.";
 $lang['help_thumbAgen']      = "Actor thumbnail retry";
