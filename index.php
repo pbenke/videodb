@@ -6,7 +6,7 @@
  *
  * @package videoDB
  * @author  Andreas Gohr <a.gohr@web.de>
- * @author  Andreas G�tz <cpuidle@gmx.de>
+ * @author  Andreas Götz <cpuidle@gmx.de>
  * @author  Chinamann <chinamann@users.sourceforge.net>
  * @link	http://videodb.sf.net
  * @version $Id: index.php,v 2.102 2013/03/21 16:27:57 andig2 Exp $
@@ -86,14 +86,14 @@ session_set('listview', 'index.php');
 
 // standard filters
 $filter_expr = array(
-  'NUM'  => '^["\\\' ]*[^A-Za-z�������]',
-  'ABC'  => '^["\\\' ]*[ABCabc��]',
+  'NUM'  => '^["\\\' ]*[^A-Za-zÄäÖöÜüß]',
+  'ABC'  => '^["\\\' ]*[ABCabcÄä]',
   'DEF'  => '^["\\\' ]*[DEFdef]',
   'GHI'  => '^["\\\' ]*[GHIghi]',
   'JKL'  => '^["\\\' ]*[JKLjkl]',
-  'MNO'  => '^["\\\' ]*[MNOmno��]',
-  'PQRS' => '^["\\\' ]*[PQRSpqrs�]',
-  'TUV'  => '^["\\\' ]*[TUVtuv��]',
+  'MNO'  => '^["\\\' ]*[MNOmnoÖö]',
+  'PQRS' => '^["\\\' ]*[PQRSpqrsß]',
+  'TUV'  => '^["\\\' ]*[TUVtuvÜü]',
   'WXYZ' => '^["\\\' ]*[WXZwxy]'
 );
 
