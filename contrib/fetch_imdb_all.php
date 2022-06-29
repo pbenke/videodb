@@ -1,10 +1,6 @@
 <?php
 /**
- * Refresh whole IMDB info (rund from command line)
- *
- * This script should be executed from command line
- * Look for the NOTE: comments to change behavior
- * The script should be placed under videodb/contrib and run as "php fetch_imdb_all.php"
+ * Fetch all data for either all movies or a specific movie.
  *
  * @package Contrib
  * @author  Alex Mondshain <alex_mond@yahoo.com>
@@ -17,105 +13,132 @@ require_once './core/genres.php';
 require_once './core/custom.php';
 require_once './core/edit.core.php';
 
-//Id is imdb id
-//lookup is either 1 (add missing) or 2 (overwrite)
-function FetchSaveMovie($id,$lookup)
-{
-	$debug = 0;
+?>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="../<?php echo $config['style'] ?>"
+    type="text/css" />
+<title>Fetch all data</title>
+</head>
+<body>
+    <h2>Fetch all data</h2>
+    Fetch all data for either all movies or a specific movie.
+    <br>Leave <b<Video ID</b> empty for fetching for all movies.
+    <br>
+    <br>
+    <h3>All data for all users on all engines are updated!</h3>
+    <form>
+        Video ID: <input type="text" name="videoId">
+        <br>
+        Also update genres: <input type="checkbox" name="update_genres" value="1" checked>
+        <br>
+        Display debug msg: <input type="checkbox" name="debug" value="1">
+        <br>
+        Use cache: <input type="checkbox" name="use_cache" value="1">
+        <br><br>
+        <input type="submit" name="submit" value="Fetch">
+    </form>
+</body>
+</html>
 
+<?php
+if (isset($submit) && $submit == "Fetch") {
+    if (!empty($videoId) && isset($videoId) && is_int(intval($videoId, 10))) {
+        $id = intval($videoId, 10);
+        echo "<br>Updating ID: ".$id."<br>";
+
+        FetchSaveMovie($id, $update_genres, $debug, $use_cache);
+    } else {
+        $ids = runSQL('SELECT id FROM '.TBL_DATA);
+        foreach ($ids as $id) {
+            echo "<br>Updating ID: ".$id['id']."<br>";
+            FetchSaveMovie($id['id'], $update_genres, $debug, $use_cache);
+        }
+    }
+    echo "Update done<br>";
+}
+
+function FetchSaveMovie($id, $update_genres, $debug, $use_cache) {
+    set_time_limit(60);
+    // get fields (according to list) from db to be saved later
 	$video = runSQL('SELECT * FROM '.TBL_DATA.' WHERE id = '.$id);
-	// get fields (according to list) from db to be saved later
 
-	if ($debug){
-		echo "\n=================== Video DB Data ============================\n";
-		print_r( $video[0]);
-		echo "\n=================== Video DB Data ============================\n";
+    if ($debug) {
+        echo "<pre>=================== Video DB Data ============================<br>";
+		print_r($video[0]);
+        echo "<br>=================== Video DB Data ============================</pre>";
 	}
 
 	$imdbID = $video[0]['imdbID'];
-	echo "Movie/imdb -- ".$video[0]['title']."/".$video[0]['imdbID']."\n";
-
-
-	if (empty($imdbID)) {
-		echo "No imdbID\n";
+    if (empty($imdbID)) {
+        echo "No imdbID, exit<br><br><br>";
 		return;
 	}
 
-	if (empty($engine)) $engine = engineGetEngine($imdbID);
-
-	if ($debug) {
-		echo "IMDBID = $imdbID, engine = $engine\n";
+    echo "Movie/imdbID -- ".$video[0]['title']."/".$video[0]['imdbID']."<br>";
+	if (empty($engine)) {
+	    $engine = engineGetEngine($imdbID);
 	}
 
-	$imdbdata = engineGetData($imdbID, $engine);
-	# removed due to performance issues of is_utf8
-	// fix erroneous IMDB encoding issues
-	if (!is_utf8($imdbdata)) {
-		echo "Applying encoding fix\n";
-		$imdbdata = fix_utf8($imdbdata);
+    if ($debug) {
+        echo "IMDBID = $imdbID, engine = $engine<br>";
 	}
 
-	if (empty($imdbdata[title])) {
-		echo "Fetch failed , try again...\n";
-		$imdbdata = engineGetData($imdbID, $engine);
+	$imdbdata = engineGetData($imdbID, $engine, $use_cache);
+
+    if (empty($imdbdata['title'])) {
+        echo "Fetch failed, try again...<br>";
+		$imdbdata = engineGetData($imdbID, $engine, false); // Never use cache the second time.
 	}
 
-	if (empty($imdbdata[title])) {
-		echo "Fetch failed again , next movie";
+    if (empty($imdbdata['title'])) {
+        echo "Fetch failed again, exit.<br><br><br>";
 		return;
 	}
 
-	if ($debug) {
-		echo "\n===================  IMDB Data ============================\n";
+    if ($debug) {
+        echo "<pre>=================== IMDB Data ================================<br>";
 		print_r($imdbdata);
-		echo "\n===================  IMDB Data ============================\n";
+        echo "<br>=================== IMDB Data ================================</pre>";
 	}
 
-	if (!empty($imdbdata[title])) {
-		//
-		// NOTE: comment out any of the following lines if you do not want them updated
-		//
-		$video[0][title]=$imdbdata[title];
-		$video[0][subtitle]=$imdbdata[subtitle];
-		$video[0][year]=$imdbdata[year];
-		$video[0][imgurl]=$imdbdata[coverurl];
-		$video[0][runtime]=$imdbdata[runtime];
-		$video[0][director]=$imdbdata[director];
-		$video[0][rating]=$imdbdata[rating];
-		$video[0][country]=$imdbdata[country];
-		$video[0][language]=$imdbdata[language];
-		$video[0][actors]=$imdbdata[cast];
-		$video[0][plot]=$imdbdata[plot];
+    if (!empty($imdbdata['title'])) {
+		$video[0]['title']    = $imdbdata['title'];
+		$video[0]['subtitle'] = $imdbdata['subtitle'];
+		$video[0]['year']     = $imdbdata['year'];
+		$video[0]['imgurl']   = $imdbdata['coverurl'];
+		$video[0]['runtime']  = $imdbdata['runtime'];
+		$video[0]['director'] = $imdbdata['director'];
+		$video[0]['rating']   = $imdbdata['rating'];
+		$video[0]['country']  = $imdbdata['country'];
+		$video[0]['language'] = $imdbdata['language'];
+		$video[0]['actors']   = $imdbdata['cast'];
+		$video[0]['plot']     = $imdbdata['plot'];
 	}
 
-	if (count($genres) == 0 || ($lookup > 1))
-	{
-		$genres = array();
-		$gnames = $imdbdata['genres'];
-		if (isset($gnames))
-		{
-			foreach ($gnames as $gname)
-			{
+    if ($update_genres) {
+		$genres = $imdbdata['genres'];
+		if (isset($genres)) {
+			foreach ($genres as $genre) {
 				// check if genre is found- otherwise fail silently
-				if (is_numeric($genre = getGenreId($gname))) {
-					$genres[] = $genre;
-				} else {
-					echo "MISSING GENRE $gname\n";
+                if (is_numeric($genreId = getGenreId($genre))) {
+					$video[0]['genres'][] = $genreId;
+                } else {
+                    echo "UNKNOWN GENRE $genre<br>";
 				}
 			}
 		}
 	}
 
-	// custom filds , not working for now
-	for ($i=1; $i<=4; $i++)
-	{
+    // custom fields
+	for ($i = 1; $i <= 4; $i++) {
 		$custom = 'custom'.$i;
 		$type   = $config[$custom.'type'];
-		if (!empty($type))
-		{
+        if (!empty($type) && isset($$type)) {
 			// copy imdb data into corresponding custom field
-			$video[0][$custom]=$imdbdata[$type];
-			echo "CUSTOM $custom $type = $imdbdata[$type]\n";
+            $$custom = $$type;
+            echo "CUSTOM $custom $type = $imdbdata[$type]<br>";
 		}
 	}
 
@@ -123,30 +146,21 @@ function FetchSaveMovie($id,$lookup)
 
 	$SETS = prepareSQL($video[0]);
 
-	if ($debug) {
-		echo "\n===================  Final Data ============================\n";
-		echo "SETS = $SETS \n";
-		echo  "\n===================  Final Data ============================\n";
+    if ($debug) {
+        echo "<pre>=================== Final Data ===============================<br>";
+        echo "SETS = ".print_r($SETS, true);
+        echo "<br>=================== Final Data ===============================</pre>";
 	}
 
 	$id = updateDB($SETS, $id);
 
 	// save genres
-	setItemGenres($id, $genres);
+	if ($update_genres) {
+	    setItemGenres($id, $video[0]['genres']);
+	}
 
 	// set seen for currently logged in user
 	set_userseen($id, $seen);
 }
-
-// NOTE: Edit this line if you want to update specific set of files by adding WHERE statment
-$allids = runSQL('SELECT id FROM '.TBL_DATA);
-
-foreach ($allids as $id) {
-	#if ($id['id'] <= 2113) continue;
-	echo "Updating ID:".$id['id']."\n";
-	FetchSaveMovie($id['id'],3);
-}
-// for testing
-// FetchSaveMovie(1,3);
 
 ?>
