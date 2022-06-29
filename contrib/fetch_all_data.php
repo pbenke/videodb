@@ -82,7 +82,7 @@ function FetchSaveMovie($id, $update_genres, $debug, $use_cache) {
 	}
 
     if ($debug) {
-        echo "IMDBID = $imdbID, engine = $engine<br>";
+        echo "imdbID = $imdbID, engine = $engine<br>";
 	}
 
 	$imdbdata = engineGetData($imdbID, $engine, $use_cache);
