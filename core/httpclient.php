@@ -117,7 +117,7 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
     }
 
     // get data from cache?
-    if ($cache && !$reload) {
+    if ($cache & !$reload) {
         $resp = getHTTPcache($url . $post);
         if ($resp !== false) {
             $resp['cached'] = true;
