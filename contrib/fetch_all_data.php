@@ -62,105 +62,105 @@ if (isset($submit) && $submit == "Fetch") {
 function FetchSaveMovie($id, $update_genres, $debug, $use_cache) {
     set_time_limit(60);
     // get fields (according to list) from db to be saved later
-	$video = runSQL('SELECT * FROM '.TBL_DATA.' WHERE id = '.$id);
+    $video = runSQL('SELECT * FROM '.TBL_DATA.' WHERE id = '.$id);
 
     if ($debug) {
         echo "<pre>=================== Video DB Data ============================<br>";
-		print_r($video[0]);
+        print_r($video[0]);
         echo "<br>=================== Video DB Data ============================</pre>";
-	}
+    }
 
-	$imdbID = $video[0]['imdbID'];
+    $imdbID = $video[0]['imdbID'];
     if (empty($imdbID)) {
         echo "No imdbID, exit<br><br><br>";
-		return;
-	}
+        return;
+    }
 
     echo "Movie/imdbID -- ".$video[0]['title']."/".$video[0]['imdbID']."<br>";
-	if (empty($engine)) {
-	    $engine = engineGetEngine($imdbID);
-	}
+    if (empty($engine)) {
+        $engine = engineGetEngine($imdbID);
+    }
 
     if ($debug) {
         echo "imdbID = $imdbID, engine = $engine<br>";
-	}
+    }
 
-	$imdbdata = engineGetData($imdbID, $engine, $use_cache);
+    $imdbdata = engineGetData($imdbID, $engine, $use_cache);
 
     if (empty($imdbdata['title'])) {
         echo "Fetch failed, try again...<br>";
-		$imdbdata = engineGetData($imdbID, $engine, false); // Never use cache the second time.
-	}
+        $imdbdata = engineGetData($imdbID, $engine, false); // Never use cache the second time.
+    }
 
     if (empty($imdbdata['title'])) {
         echo "Fetch failed again, exit.<br><br><br>";
-		return;
-	}
+        return;
+    }
 
     if ($debug) {
         echo "<pre>=================== IMDB Data ================================<br>";
-		print_r($imdbdata);
+        print_r($imdbdata);
         echo "<br>=================== IMDB Data ================================</pre>";
-	}
+    }
 
     if (!empty($imdbdata['title'])) {
-		$video[0]['title']    = $imdbdata['title'];
-		$video[0]['subtitle'] = $imdbdata['subtitle'];
-		$video[0]['year']     = $imdbdata['year'];
-		$video[0]['imgurl']   = $imdbdata['coverurl'];
-		$video[0]['runtime']  = $imdbdata['runtime'];
-		$video[0]['director'] = $imdbdata['director'];
-		$video[0]['rating']   = $imdbdata['rating'];
-		$video[0]['country']  = $imdbdata['country'];
-		$video[0]['language'] = $imdbdata['language'];
-		$video[0]['actors']   = $imdbdata['cast'];
-		$video[0]['plot']     = $imdbdata['plot'];
-	}
+        $video[0]['title']    = $imdbdata['title'];
+        $video[0]['subtitle'] = $imdbdata['subtitle'];
+        $video[0]['year']     = $imdbdata['year'];
+        $video[0]['imgurl']   = $imdbdata['coverurl'];
+        $video[0]['runtime']  = $imdbdata['runtime'];
+        $video[0]['director'] = $imdbdata['director'];
+        $video[0]['rating']   = $imdbdata['rating'];
+        $video[0]['country']  = $imdbdata['country'];
+        $video[0]['language'] = $imdbdata['language'];
+        $video[0]['actors']   = $imdbdata['cast'];
+        $video[0]['plot']     = $imdbdata['plot'];
+    }
 
     if ($update_genres) {
-		$genres = $imdbdata['genres'];
-		if (isset($genres)) {
-			foreach ($genres as $genre) {
-				// check if genre is found- otherwise fail silently
+        $genres = $imdbdata['genres'];
+        if (isset($genres)) {
+            foreach ($genres as $genre) {
+                // check if genre is found- otherwise fail silently
                 if (is_numeric($genreId = getGenreId($genre))) {
-					$video[0]['genres'][] = $genreId;
+                    $video[0]['genres'][] = $genreId;
                 } else {
                     echo "UNKNOWN GENRE $genre<br>";
-				}
-			}
-		}
-	}
+                }
+            }
+        }
+    }
 
     // custom fields
-	for ($i = 1; $i <= 4; $i++) {
-		$custom = 'custom'.$i;
-		$type   = $config[$custom.'type'];
+    for ($i = 1; $i <= 4; $i++) {
+        $custom = 'custom'.$i;
+        $type = $config[$custom.'type'];
         if (!empty($type) && isset($$type)) {
-			// copy imdb data into corresponding custom field
+            // copy imdb data into corresponding custom field
             $$custom = $$type;
             echo "CUSTOM $custom $type = $imdbdata[$type]<br>";
-		}
-	}
+        }
+    }
 
-	//  -------- SAVE
+    //  -------- SAVE
 
-	$SETS = prepareSQL($video[0]);
+    $SETS = prepareSQL($video[0]);
 
     if ($debug) {
         echo "<pre>=================== Final Data ===============================<br>";
         echo "SETS = ".print_r($SETS, true);
         echo "<br>=================== Final Data ===============================</pre>";
-	}
+    }
 
-	$id = updateDB($SETS, $id);
+    $id = updateDB($SETS, $id);
 
-	// save genres
-	if ($update_genres) {
-	    setItemGenres($id, $video[0]['genres']);
-	}
+    // save genres
+    if ($update_genres) {
+        setItemGenres($id, $video[0]['genres']);
+    }
 
-	// set seen for currently logged in user
-	set_userseen($id, $seen);
+    // set seen for currently logged in user
+    set_userseen($id, $seen);
 }
 
 ?>
