@@ -1,8 +1,8 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-<!--[if lt IE 7]><html class="lt-ie9 lt-ie8 lt-ie7" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><![endif]-->
-<!--[if IE 7]><html class="lt-ie9 lt-ie8" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><![endif]-->
-<!--[if IE 8]><html class="lt-ie9" xmlns="http://www.w3.org/1999/xhtml" xml:lang="en"><![endif]-->
-<!--[if gt IE 8]><!--><html xmlns="http://www.w3.org/1999/xhtml"><!--<![endif]-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "https://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<!--[if lt IE 7]><html class="lt-ie9 lt-ie8 lt-ie7" xmlns="https://www.w3.org/1999/xhtml" xml:lang="en"><![endif]-->
+<!--[if IE 7]><html class="lt-ie9 lt-ie8" xmlns="https://www.w3.org/1999/xhtml" xml:lang="en"><![endif]-->
+<!--[if IE 8]><html class="lt-ie9" xmlns="https://www.w3.org/1999/xhtml" xml:lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html xmlns="https://www.w3.org/1999/xhtml"><!--<![endif]-->
 <head>
 	<title>videoDB{if $title} - {$title}{/if}</title>
 	<meta charset="utf-8" />
@@ -19,7 +19,7 @@
 	<link rel="stylesheet" type="text/css" href="{$style}" />
 <!--[if lt IE 9]><link rel="stylesheet" type="text/css" href="lib/foundation4/css/ltie9.css" /><![endif]-->
 
-	<link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Exo:600' type='text/css'>
+	<link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Exo:600' type='text/css'>
 
 	<!-- js -->
 	<!-- for now, we're only using jquery, no zepto -->
