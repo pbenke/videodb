@@ -61,7 +61,6 @@ foreach ($files as $file) {
         $unused++;
 
         if ($submit) {
-            echo $file."<br>";
         	unlink($file);
 			dump($file);
 		}

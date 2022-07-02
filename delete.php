@@ -49,6 +49,9 @@ if (count($res))
 runSQL('DELETE FROM '.TBL_DATA.' WHERE id = '.$id);
 runSQL('DELETE FROM '.TBL_VIDEOGENRE.' WHERE video_id = '.$id);
 
+// Delete from actors what is not found in any movie.
+runSQL('DELETE FROM '.TBL_ACTORS.' WHERE POSITION(actorid IN (SELECT actors FROM '.TBL_DATA.')) = 0');
+
 // clear smarty cache for this item
 #!! this does not work- at least not with Smarty3
 #$smarty->cache->clear($id);
