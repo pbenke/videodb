@@ -12,11 +12,15 @@
 require_once './core/functions.php';
 
 /*
- * Helper function for comparing an associative array by it's 'count' values 
+ * Helper function for comparing an associative array by it's 'count' values.
  */
 function compare_count($a, $b)
 {
-    return strnatcasecmp($b['count'], $a['count']); 
+    $diff = strnatcasecmp($b['count'], $a['count']);
+    if ($diff == 0) {
+        $diff = strnatcasecmp($a['language'], $b['language']);
+    }
+    return $diff;
 }
 
 /*
@@ -98,14 +102,14 @@ $result = runSQL('SELECT A.name, COUNT(*) AS count, A.id
                    WHERE B.genre_id = A.id
                    	 AND B.video_id = C.id'.$WHERES.'
                 GROUP BY A.name, A.id
-                ORDER BY count DESC');
+                ORDER BY count DESC, A.name ASC');
 $stats['count_genre'] = $result;
 
 $result = runSQL('SELECT A.name, COUNT(*) AS count, A.id
                     FROM '.TBL_MEDIATYPES.' A, '.TBL_DATA.' B
                    WHERE B.mediatype = A.id'.$WHERES.' 
                 GROUP BY A.name, A.id
-                ORDER BY count DESC');
+                ORDER BY count DESC, A.name ASC');
 $stats['count_media'] = $result;
 
 $result = runSQL('SELECT language, COUNT(*) AS count
