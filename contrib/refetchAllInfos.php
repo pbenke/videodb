@@ -6,7 +6,7 @@
  *
  * @package Contrib
  * @author  Chinamann <chinamann@users.sourceforge.net>
- * @meta	ACCESS:PERM_ADMIN
+ * @meta    ACCESS:PERM_ADMIN
  */
 
 chdir('..');
@@ -28,128 +28,127 @@ permission_or_die(PERM_WRITE);
  * and assign 1 (value) if they should be preselected else 0  
  */
 function getFields() {
-	$edit_file = file_get_contents('./core/edit.core.php');
-	$edit_file = preg_replace("/\n/", '', $edit_file);
+    $edit_file = file_get_contents('./core/edit.core.php');
+    $edit_file = preg_replace("/\n/", '', $edit_file);
 
 
-	if (preg_match('/\$imdb_set_fields\s*=\s*array\s*\((.*?)\)/', $edit_file, $fieldslist)
-	        && preg_match('/\$imdb_overwrite_fields.*?array\s*\((.*?)\)/', $edit_file, $overwritelist)) {
-		$fields     = array_map('trim', explode(',', preg_replace("/'/", '', $fieldslist[1])));
-		$overwrites = array_map('trim', explode(',', preg_replace("/'/", '', $overwritelist[1])));
+    if (preg_match('/\$imdb_set_fields\s*=\s*array\s*\((.*?)\)/', $edit_file, $fieldslist)
+            && preg_match('/\$imdb_overwrite_fields.*?array\s*\((.*?)\)/', $edit_file, $overwritelist)) {
+        $fields     = array_map('trim', explode(',', preg_replace("/'/", '', $fieldslist[1])));
+        $overwrites = array_map('trim', explode(',', preg_replace("/'/", '', $overwritelist[1])));
 
-		$ret = [];
-		foreach ($fields as $field) {
-			$value = (in_array($field, $overwrites)) ? 1 : 0;
+        $ret = [];
+        foreach ($fields as $field) {
+            $value = (in_array($field, $overwrites)) ? 1 : 0;
             if (preg_match('/custom/', $field)) $value = 0;
-			$ret = array_merge ($ret, array($field => $value));
-		}
+            $ret = array_merge ($ret, array($field => $value));
+        }
 
-		return $ret;
-	}	
+        return $ret;
+    }
 }
 
 if (!check_permission(PERM_ADMIN)) {
-?>	
+?>
 
 <html>
-	<head>
-	    <title>Refetch all external engine information</title>
+    <head>
+        <title>Refetch all external engine information</title>
         <link rel="stylesheet" href="../<?php echo $config['style'] ?>" type="text/css" />
-	    <meta http-equiv="refresh" content="0; URL=../index.php">
+        <meta http-equiv="refresh" content="0; URL=../index.php">
         <meta http-equiv="Content-Style-Type" content="text/html; charset=utf-8">
-	</head>
-	<body>
+    </head>
+    <body>
         <h2>Admin rights are required!</h2>
-	</body>
+    </body>
 </html>
 
 <?php
 } else {
-	if (isset($submit) && $submit == 'Yes') {
-		#$contribUrl = 'http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT']
-		$contribUrl = "http://172.19.0.1:".$_SERVER['SERVER_PORT']
-			.substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
-		$baseUrl = substr($contribUrl, 0, strrpos($contribUrl, '/'));
+    if (isset($submit) && $submit == 'Yes') {
+        #$contribUrl = 'http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT']
+        $contribUrl = "http://172.19.0.1:".$_SERVER['SERVER_PORT']
+            .substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
+        $baseUrl = substr($contribUrl, 0, strrpos($contribUrl, '/'));
 
-	    // get list movies in DB
-	    $SQL = 'SELECT * FROM '.TBL_DATA;
+        // get list movies in DB
+        $SQL = 'SELECT * FROM '.TBL_DATA;
         if ($user != '0') {
             $SQL .= ' WHERE owner_id = '.$user;
         }
-	    $result = runSQL($SQL);
-	
-		$CLIENTERRORS = [];
-		$CLIENTOKS = [];
-		$diskid = 0;
-		
-	    foreach ($result as $video)
-	    {
-	    	$diskid++;
-	    	// Filter movies of unselected Users.
-	    	if ($user != '0' && $video['owner_id'] != $user) {
-	    	    continue;
+        $result = runSQL($SQL);
+
+        $CLIENTERRORS = [];
+        $CLIENTOKS = [];
+        $diskid = 0;
+
+        foreach ($result as $video) {
+            $diskid++;
+            // Filter movies of unselected Users.
+            if ($user != '0' && $video['owner_id'] != $user) {
+                continue;
             }
 
-	    	// Filter movies of unselected Engines
-	    	if ($selectedengine != 'all' && engineGetEngine($video['imdbID']) != $selectedengine) {
-	    	    continue;
+            // Filter movies of unselected Engines
+            if ($selectedengine != 'all' && engineGetEngine($video['imdbID']) != $selectedengine) {
+                continue;
             }
 
-	    	// new DiskID ?
-	    	if (isset($resetDI) && $resetDI == 'true') {
-	    		$didigits = $GLOBALS['config']['diskid_digits'];
-				if (empty($didigits)) {
-				    $didigits = 4;
+            // new DiskID ?
+            if (isset($resetDI) && $resetDI == 'true') {
+                $didigits = $GLOBALS['config']['diskid_digits'];
+                if (empty($didigits)) {
+                    $didigits = 4;
                 }
 
-	    		$newId = sprintf('%0'.$didigits.'d', $diskid);
-	    		
-	    		// make sure lent table is changed too
-	    		$SELECT = "SELECT diskid FROM ".TBL_DATA." WHERE id = ".$video['id'];
-	    		$oldDiskId = runSQL($SELECT);
-	    		$UPDATE = "UPDATE ".TBL_LENT." SET diskid = 'TMP".$newId."' WHERE diskid = '".$oldDiskId[0]['diskid']."'";
-	    		runSQL($UPDATE);
-	    		
-				$UPDATE = "UPDATE ".TBL_DATA." SET diskid = '".$newId."' WHERE id = ".$video['id'];
-				runSQL($UPDATE);
-			}
-			
-            // cannot refetch without external id
-	        if (empty($video['imdbID'])) {
-	            continue;
-            }
-            
-	        set_time_limit(300); // raise per movie execution timeout limit if safe_mode is not set in php.ini
-            
-			$id = $video['id'];
-	        $engine = engineGetEngine($video['imdbID']);
-	        
-	        $fieldlist = '';
-	        foreach (array_keys($_POST) as $param) {
-	        	if (preg_match('/^(update_.*)/',$param,$fieldname)) {
-	        		$fieldlist .= '&'.$fieldname[1].'=1';
-	        	}	
-	        }
+                $newId = sprintf('%0'.$didigits.'d', $diskid);
 
-	    	$url = $baseUrl."/edit.php?id=".$id."&engine=".$engine."&save=1&lookup=".$lookup.$fieldlist;
-		    $resp = httpClient($url, false, array('cookies' => $_COOKIE, 'no_proxy' => true, 'no_redirect' => true));
-		    if (!$resp['success']) {
-		    	$CLIENTERRORS[] = $video['title'].' ('.$video['diskid'].'/'.$engine.'): '.$resp['error'];
-		    } else {
-		        $CLIENTOKS[] = $video['title'].' ('.$video['diskid'].'/'.$engine.')';
+                // make sure lent table is changed too
+                $SELECT = "SELECT diskid FROM ".TBL_DATA." WHERE id = ".$video['id'];
+                $oldDiskId = runSQL($SELECT);
+                $UPDATE = "UPDATE ".TBL_LENT." SET diskid = 'TMP".$newId."' WHERE diskid = '".$oldDiskId[0]['diskid']."'";
+                runSQL($UPDATE);
+
+                $UPDATE = "UPDATE ".TBL_DATA." SET diskid = '".$newId."' WHERE id = ".$video['id'];
+                runSQL($UPDATE);
             }
-	    }
-	    
-	    if (isset($resetDI) && $resetDI == 'true') {
-			// fix lent table after upper temp. changes
-			$SELECT = "SELECT diskid FROM ".TBL_LENT." WHERE diskid like 'TMP%'";
-			$lentResult = runSQL($SELECT);
-			foreach ($lentResult as $lentRow) {
-				$diskid = preg_replace('/^TMP/','',$lentRow['diskid']);
-				$UPDATE = "UPDATE ".TBL_LENT." SET diskid = '".$diskid."' WHERE diskid = 'TMP".$diskid."'";
-				runSQL($UPDATE);	
-			}
-	    }
+
+            // cannot refetch without external id
+            if (empty($video['imdbID'])) {
+                continue;
+            }
+            
+            set_time_limit(300); // raise per movie execution timeout limit if safe_mode is not set in php.ini
+            
+            $id = $video['id'];
+            $engine = engineGetEngine($video['imdbID']);
+
+            $fieldlist = '';
+            foreach (array_keys($_POST) as $param) {
+                if (preg_match('/^(update_.*)/',$param,$fieldname)) {
+                    $fieldlist .= '&'.$fieldname[1].'=1';
+                }
+            }
+
+            $url = $baseUrl."/edit.php?id=".$id."&engine=".$engine."&save=1&lookup=".$lookup.$fieldlist;
+            $resp = httpClient($url, false, array('cookies' => $_COOKIE, 'no_proxy' => true, 'no_redirect' => true));
+            if (!$resp['success']) {
+                $CLIENTERRORS[] = $video['title'].' ('.$video['diskid'].'/'.$engine.'): '.$resp['error'];
+            } else {
+                $CLIENTOKS[] = $video['title'].' ('.$video['diskid'].'/'.$engine.')';
+            }
+        }
+
+        if (isset($resetDI) && $resetDI == 'true') {
+            // fix lent table after upper temp. changes
+            $SELECT = "SELECT diskid FROM ".TBL_LENT." WHERE diskid like 'TMP%'";
+            $lentResult = runSQL($SELECT);
+            foreach ($lentResult as $lentRow) {
+                $diskid = preg_replace('/^TMP/','',$lentRow['diskid']);
+                $UPDATE = "UPDATE ".TBL_LENT." SET diskid = '".$diskid."' WHERE diskid = 'TMP".$diskid."'";
+                runSQL($UPDATE);
+            }
+        }
 ?>
 <html>
     <head>
@@ -164,22 +163,22 @@ if (!check_permission(PERM_ADMIN)) {
         <p>
 <?php
         foreach ($CLIENTERRORS as $error) {
-    		echo $error.'<br>';
+            echo $error.'<br>';
         }
 ?>
-			
+
         <h2>SUCCESS:</h2>
         <p>
 <?php
         foreach ($CLIENTOKS as $ok) {
-    		echo $ok.'<br>';
+            echo $ok.'<br>';
         }
 ?>
     </body>
 </html>
 
 <?php
-	} elseif (isset($submit) && $submit == 'LOAD') {
+    } elseif (isset($submit) && $submit == 'LOAD') {
 ?>
 <html>
     <head>
@@ -189,7 +188,7 @@ if (!check_permission(PERM_ADMIN)) {
     </head>
         
     <body style="font-size: 16px">
-       <form method="post" action="<?php echo $_SERVER['PHP_SELF']?>"
+        <form method="post" action="<?php echo $_SERVER['PHP_SELF']?>"
                 target="mainFrame"
                 onSubmit="alert('This may take a LONG time (depending on movie count and connection speed)!!!');">
 
@@ -265,25 +264,25 @@ if (!check_permission(PERM_ADMIN)) {
     </body>
 </html>
 <?php
-	} else { 
+    } else {
 ?>
 <html>
     <head>
-		<title>Refetch all external engine information</title>
+        <title>Refetch all external engine information</title>
         <link rel="stylesheet" href="../<?php echo $config['style'] ?>" type="text/css" />
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     </head>
-		
+
     <frameset name="fs1" rows="260,*" frameborder="NO" border="0" framespacing="0">
         <frame name="topFrame" scrolling="NO" noresize src="<?php echo $_SERVER['PHP_SELF']?>?submit=LOAD">
         <frame name="mainFrame" src="">
     </frameset>
-		
+
     <noframes>
         <body>Please use a browser which supports frames!</body>
     </noframes>
 </html>
 <?php
-	} 
+    }
 }
-?>	
+?>
