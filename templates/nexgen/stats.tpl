@@ -52,11 +52,11 @@
               <td>
                 <table class="small-12">
                   <tr>
-                    <td valign="bottom"><small>{$stats.first_year|spacify:"<br/>"}</small></td>
+                    <td align="center"><small>{$stats.first_year|spacify:"<br/>"}</small></td>
                     <td colspan="2" valign="bottom">
-                      {foreach key=year item=count from=$stats.count_year}<a href="search.php?q={$year}&amp;fields=year&amp;nowild=1"><img src="images/bar.gif" style="width:7px; height:{if $count==0}0{else}{math equation='max(round(100/y*x),1)' x=$count y=$stats.max_count}{/if}px;" title="{$year}: {$count}" alt="{$year}: {$count}" /></a>{/foreach}
+                      {foreach key=year item=count from=$stats.count_year}<a href="search.php?q={$year}&amp;fields=year&amp;nowild=1"><img src="images/bar.gif" style="width:calc(100% / {count($stats.count_year)}); height:{if $count==0}0{else}{math equation='max(round(100/y*x),1)' x=$count y=$stats.max_count}{/if}px;" title="{$year}: {$count}" alt="{$year}: {$count}" /></a>{/foreach}
                     </td>
-                    <td><small>{$stats.last_year|spacify:"<br/>"}</small></td>
+                    <td align="center"><small>{$stats.last_year|spacify:"<br/>"}</small></td>
                   </tr>
                 </table>
               </td>
