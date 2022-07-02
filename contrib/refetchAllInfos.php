@@ -66,8 +66,7 @@ if (!check_permission(PERM_ADMIN)) {
 <?php
 } else {
     if (isset($submit) && $submit == 'Yes') {
-        #$contribUrl = 'http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT']
-        $contribUrl = "http://172.19.0.1:".$_SERVER['SERVER_PORT']
+        $contribUrl = 'http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER['SERVER_PORT']
             .substr($_SERVER['PHP_SELF'], 0, strrpos($_SERVER['PHP_SELF'], '/'));
         $baseUrl = substr($contribUrl, 0, strrpos($contribUrl, '/'));
 
