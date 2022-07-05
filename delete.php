@@ -50,7 +50,11 @@ runSQL('DELETE FROM '.TBL_DATA.' WHERE id = '.$id);
 runSQL('DELETE FROM '.TBL_VIDEOGENRE.' WHERE video_id = '.$id);
 
 // Delete from actors what is not found in any movie.
-runSQL('DELETE FROM '.TBL_ACTORS.' WHERE POSITION(actorid IN (SELECT actors FROM '.TBL_DATA.')) = 0');
+runSQL('delete from '.TBL_ACTORS
+      .' where not exists ('
+            .' select actors'
+            .' from '.TBL_DATA.' as D'
+            .' where position('.TBL_ACTORS.'.actorid in D.actors) <> 0)');
 
 // clear smarty cache for this item
 #!! this does not work- at least not with Smarty3
@@ -59,8 +63,8 @@ runSQL('DELETE FROM '.TBL_ACTORS.' WHERE POSITION(actorid IN (SELECT actors FROM
 // goto index instead of delete template
 if ($redirect)
 {
-	header("Location: index.php?deleteid=$id");
-	exit;
+    header("Location: index.php?deleteid=$id");
+    exit;
 }
 
 // prepare templates
