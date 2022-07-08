@@ -43,7 +43,7 @@ $config['lookupdefault_new']    = 2;    // 0=ignore, 1=lookup, 2=overwrite
 $config['diskid_digits']    = 4;
 
 /* XML Import/Export */
-$config['xml']              = 0;        // Set to 1 to enable XML data im/export - import requires php5
+$config['xml']              = 1;        // Set to 1 to enable XML data im/export - import requires php5
 
 /* RSS Feed */
 $config['rss']              = 1;        // Set to 1 to enable RSS Feed
@@ -73,7 +73,7 @@ define('TUMB_SCALE',       1);  // always scale   - create thumbnails for all im
 
 // or define a positive integer to check filesize - thumbnail is created when existing file is bigger than specified value
 $config['thumbnail_level']      = TUMB_SCALE;
-$config['thumbnail_quality']    = 80;
+$config['thumbnail_quality']    = 100;
 
 /*
  * To enable PDF export you can uncomment the following line and edit 
@@ -83,19 +83,11 @@ $config['thumbnail_quality']    = 80;
 require_once 'pdf.inc.php';
 
 /*
- * To enable XLS export you can uncomment the following line and edit 
- * the settings in xls.inc.php. This option requires the additional installation
- * of "Spreadsheet OLE" and "Spreadsheet Excel Writer". They have to be accessible 
- * from the "include_path" which is set inside "php.ini".
- * 
- * In the Apache Distribution XAMPP it is included by default.
- * On gentoo linux systems you can easily add it by typing 
- *     emerge dev-php/PEAR-Spreadsheet_Excel_Writer
- *  
- * Official Website:
- * http://pear.php.net/package/Spreadsheet_Excel_Writer/
+ * To enable XLS export you can uncomment the following line.
+ * The required libraries are now included via composer in folders
+ * vendor/pear/ole and Vendor/pear/spreadsheet_excel_writer
  */
-// require_once 'xls.inc.php';
+require_once 'xls.inc.php';
 
 /*
  *  To get access to FSK18 rated movies in the german dvdb engine you
