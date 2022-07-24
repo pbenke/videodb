@@ -37,7 +37,7 @@
 			<div class="row collapse">
 				<div class="small-10 columns">
 					<input type="text" name="q" id="q" value='{$q_q}' />
-					<div id="item_choices" class="autocomplete" style="display: none"></div>
+					<div id="item_choices" style="display: none"></div>
 				</div><!-- col -->
 
 				<div class="small-2 columns">
