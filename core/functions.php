@@ -41,7 +41,7 @@ require_once './core/encoding.php';
 require_once './core/template.php';
 require_once './core/cache.php';
 require_once './core/compatibility.php';
-require_once './vendor/smarty/smarty/libs/SmartyBC.class.php';
+require_once './vendor/smarty/smarty/libs/Smarty.class.php';
 
 /* --------------------------------------------------------------------*/
 // exception handling beyond this point
@@ -61,7 +61,7 @@ if ($id) validate_input($id);
 if ($ajax_update) validate_input($ajax_update);
 
 // Smarty setup
-$smarty = new SmartyBC();
+$smarty = new Smarty();
 $smarty->compile_dir     = './cache/smarty';            // path to compiled templates
 $smarty->cache_dir       = './cache/smarty';            // path to cached html
 $smarty->plugins_dir     = array('./lib/smarty/custom', './vendor/smarty/smarty/libs/plugins');
