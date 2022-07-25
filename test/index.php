@@ -1,71 +1,99 @@
 <?php
 
-// move out of contrib for includes
+// move out of test for includes
 chdir('..');
-
 require_once './core/functions.php';
-
-if (version_compare(phpversion(), '5.3') >= 0)
-    error_reporting(E_ALL ^ E_NOTICE ^ E_DEPRECATED);
-else
-    error_reporting(E_ALL ^ E_NOTICE);
 
 localnet_or_die();
 permission_or_die(PERM_ADMIN);
 
-if (!defined('SIMPLE_TEST')) define('SIMPLE_TEST', './test/simpletest/');
+?>
 
-require_once(SIMPLE_TEST . 'unit_tester.php');
-require_once(SIMPLE_TEST . 'reporter.php');
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>Test Documentation</title>
+        <style>
+            body {
+                text-rendering: optimizeLegibility;
+                font-variant-ligatures: common-ligatures;
+                font-kerning: normal;
+                margin-left: 2em;
+                background-color: #ffffff;
+                color: #000000;
+            }
 
-function findTestCases($dir, $pattern=null)
-{
+            body > ul > li {
+                font-family: Source Serif Pro, PT Sans, Trebuchet MS, Helvetica, Arial;
+                font-size: 2em;
+            }
+
+            h2 {
+                font-family: Tahoma, Helvetica, Arial;
+                font-size: 3em;
+            }
+
+            ul {
+                list-style: none;
+                margin-bottom: 1em;
+            }
+        </style>
+    </head>
+    <body>
+
+<?php
+
+$testClasses = findTestClasses('./test', $_REQUEST['test']);
+
+// 'loadedExtensions', 'extensions', 'notLoadedExtensions' is just to avoid PHP 7.4 warnings.
+$args = [];
+$args['loadedExtensions'] = [];
+$args['extensions'] = [];
+$args['notLoadedExtensions'] = [];
+$args['testdoxHTMLFile'] = true;
+
+$warnings = [];
+$stopOnError = false;
+
+// File name and class name must match because TestSuite takes a CLASS NAME!!!
+foreach($testClasses as $name => $className) {
+    $suite = new PHPUnit\Framework\TestSuite($name);
+    ob_start();
+
+    $runner = new PHPUnit\TextUI\TestRunner;
+    $testResult = $runner->run($suite, $args, $warnings, $stopOnError);
+    $result = ob_get_clean();
+
+    preg_match('/&lt;body&gt;(.+?)&lt;\/body&gt;/si', $result, $body);
+    echo html_entity_decode($body[1]);
+
+    preg_match('/&lt;\/body&gt;.+?&lt;\/html&gt;(.+)/si', $result, $description);
+    echo "<pre>"; echo $description[1]; echo "</pre><br><br>";
+}
+
+echo "</body></html>";
+
+
+// Find files that either starts with or ends with test.
+function findTestClasses(string $dir, string $pattern = null) {
     $res = array();
-    
-    if ($dh = @opendir($dir))
-    {
-        while (($file = readdir($dh)) !== false)
-        {
-            if (preg_match("/^test_(.+)\.php$/", $file, $matches))
-            {
-                if ($pattern && (stristr($file, $pattern) == false)) continue;
 
-                $res[$matches[1]] = $dir.'/'.$file;
-                // get meta data
-#                require_once($dir.'/'.$file);
-/*
-                $func = $engine.'Meta';
+    if ($dh = @opendir($dir)) {
+        while (($file = readdir($dh)) !== false) {
+            if (preg_match("/^(test(.+?))\.php$/i", $file, $matches) || preg_match("/^((.+?)test)\.php$/i", $file, $matches)) {
+                if ($pattern && (stristr($file, $pattern) == false)) {
+                    continue;
+                }
 
-                if (function_exists($func))
-                {
-                    $engines[$engine] = $func();
-                    
-                    // required php version present?
-                    if ($engines[$engine]['php'] && (version_compare(phpversion(), $engines[$engine]['php']) < 0))
-                    {
-                        unset($engines[$engine]);
-                    }    
-                }    
-*/
+                $res[$matches[1]] = $matches[2];
+                require_once($file);
             }
         }
         closedir($dh);
     }
-    
+
     return $res;
 }
-
-$res = findTestCases('./test', $_REQUEST['test']);
-
-echo "Starting tests.<br/>";
-
-foreach ($res as $case => $file)
-{
-    $test = new TestSuite($case);
-    $test->addFile($file);
-    $test->run(new HtmlReporter('utf-8'));
-}
-
-echo "<br/>All tests completed.<br/>";
 
 ?>

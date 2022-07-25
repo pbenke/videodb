@@ -11,13 +11,10 @@
 
 require_once './core/functions.php';
 require_once './engines/engines.php';
+use PHPUnit\Framework\TestCase;
 
-class TestAmazonAWS extends UnitTestCase
+class TestAmazonAWS extends TestCase
 {
-	function TestAmazonAWS()
-	{
-		parent::__construct();
-	}
 
     function testData()
     {
@@ -32,17 +29,17 @@ class TestAmazonAWS extends UnitTestCase
         
 #        dump($data);
 
-        $this->assertPattern('/Star Wars/', $data['title']);
-#        $this->assertEqual($data['subtitle'], 'Die dunkle Bedrohung (Einzel-DVD)');
-        $this->assertPattern('#http://.+.images\-amazon.com/images/#', $data['coverurl']);
-        $this->assertEqual($data['director'], 'George Lucas');
-        $this->assertEqual($data['language'], 'deutsch, englisch');
-        $this->assertEqual($data['year'], 2001);
+        $this->assertMatchesRegularExpression('/Star Wars/', $data['title']);
+#        $this->assertEquals($data['subtitle'], 'Die dunkle Bedrohung (Einzel-DVD)');
+        $this->assertMatchesRegularExpression('#http://.+.images\-amazon.com/images/#', $data['coverurl']);
+        $this->assertEquals($data['director'], 'George Lucas');
+        $this->assertEquals($data['language'], 'deutsch, englisch');
+        $this->assertEquals($data['year'], 2001);
         $this->assertTrue($data['runtime'] > 100);
         $this->assertTrue($data['rating'] >= 6);
         #[genres] => 
-        $this->assertPattern('/Ewan McGregor/', $data['cast']);
-        $this->assertPattern('/Naboo/', $data['plot']);
+        $this->assertMatchesRegularExpression('/Ewan McGregor/', $data['cast']);
+        $this->assertMatchesRegularExpression('/Naboo/', $data['plot']);
     }
 
     function testSearch()

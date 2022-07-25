@@ -11,14 +11,11 @@
 
 require_once './core/functions.php';
 require_once './engines/engines.php';
+use PHPUnit\Framework\TestCase;
 
-class TestGoogle extends UnitTestCase
+class TestGoogle extends TestCase
 {
-    function TestGoogle()
-	{
-		parent::__construct();
-	}
-    
+
     function testSearch()
     {
         // http://images.google.com/images?q=terminator
