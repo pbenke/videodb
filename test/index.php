@@ -52,6 +52,7 @@ $args['loadedExtensions'] = [];
 $args['extensions'] = [];
 $args['notLoadedExtensions'] = [];
 $args['testdoxHTMLFile'] = true;
+$args['cacheResult'] = false;
 
 $warnings = [];
 $stopOnError = false;
