@@ -9,16 +9,22 @@
  */
 namespace SebastianBergmann\Type;
 
-final class NeverType extends Type
+final class TrueType extends Type
 {
     public function isAssignable(Type $other): bool
     {
-        return $other instanceof self;
+        if ($other instanceof self) {
+            return true;
+        }
+
+        return $other instanceof SimpleType &&
+              $other->name() === 'bool' &&
+              $other->value() === true;
     }
 
     public function name(): string
     {
-        return 'never';
+        return 'true';
     }
 
     public function allowsNull(): bool
@@ -27,9 +33,9 @@ final class NeverType extends Type
     }
 
     /**
-     * @psalm-assert-if-true NeverType $this
+     * @psalm-assert-if-true TrueType $this
      */
-    public function isNever(): bool
+    public function isTrue(): bool
     {
         return true;
     }
