@@ -20,4 +20,6 @@ RUN apt-get install -y git unzip
 
 # create folder for composer with all rights.
 RUN mkdir /.composer \
-    && chmod -R 777 /.composer
+    && mkdir -p /.cache/psalm \
+    && chmod -R 777 /.composer \
+    && chmod -R 777 /.cache/psalm
