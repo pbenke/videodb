@@ -515,7 +515,7 @@ switch ($step)
 ?>				<tr><td colspan="2">
 					<br/>This is the installer for <span style="font-weight:bold;"><a style="color://333399" href="https://github.com/kec2/videodb.git">videoDB</a></span>. You will require:
 					<ol>
-						<li><b>PHP &gt;= 7.4.0</b> with GD library and session support configured.</li><br/><br/>
+						<li><b>PHP &gt;= 8.1.0</b> with GD library and session support configured.</li><br/><br/>
 						<li>A <b>MySQL database</b>, login (username and password) with create/drop table rights.</li><br/><br/>
 						<li>If you want this installer to create the config file for you, it needs permission to write to web server's the videoDB <b>root directory</b>.</li><br/><br/>
 					</ol>

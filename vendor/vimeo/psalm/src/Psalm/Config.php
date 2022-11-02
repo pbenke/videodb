@@ -6,7 +6,6 @@ use Composer\Autoload\ClassLoader;
 use Composer\Semver\Constraint\Constraint;
 use Composer\Semver\VersionParser;
 use DOMDocument;
-use DomElement;
 use InvalidArgumentException;
 use LogicException;
 use OutOfBoundsException;
@@ -35,6 +34,7 @@ use Psalm\Issue\VariableIssue;
 use Psalm\Plugin\PluginEntryPointInterface;
 use Psalm\Progress\Progress;
 use Psalm\Progress\VoidProgress;
+use RuntimeException;
 use SimpleXMLElement;
 use SimpleXMLIterator;
 use Throwable;
@@ -55,7 +55,6 @@ use function class_exists;
 use function clearstatcache;
 use function count;
 use function dirname;
-use function error_log;
 use function explode;
 use function extension_loaded;
 use function file_exists;
@@ -295,6 +294,11 @@ class Config
      * @var bool
      */
     public $hide_external_errors = false;
+
+    /**
+     * @var bool
+     */
+    public $hide_all_errors_except_passed_files = false;
 
     /** @var bool */
     public $allow_includes = true;
@@ -752,7 +756,6 @@ class Config
 
         $psalm_nodes = $dom_document->getElementsByTagName('psalm');
 
-        /** @var DomElement|null */
         $psalm_node = $psalm_nodes->item(0);
 
         if (!$psalm_node) {
@@ -928,6 +931,7 @@ class Config
             'useDocblockPropertyTypes' => 'use_docblock_property_types',
             'throwExceptionOnError' => 'throw_exception',
             'hideExternalErrors' => 'hide_external_errors',
+            'hideAllErrorsExceptPassedFiles' => 'hide_all_errors_except_passed_files',
             'resolveFromConfigFile' => 'resolve_from_config_file',
             'allowFileIncludes' => 'allow_includes',
             'strictBinaryOperands' => 'strict_binary_operands',
@@ -1014,8 +1018,19 @@ class Config
             chdir($config->base_dir);
         }
 
-        if (is_dir($config->cache_directory) === false && @mkdir($config->cache_directory, 0777, true) === false) {
-            error_log('Could not create cache directory: ' . $config->cache_directory);
+        if (!is_dir($config->cache_directory)) {
+            try {
+                if (mkdir($config->cache_directory, 0777, true) === false) {
+                    // any other error than directory already exists/permissions issue
+                    throw new RuntimeException('Failed to create Psalm cache directory for unknown reasons');
+                }
+            } catch (RuntimeException $e) {
+                if (!is_dir($config->cache_directory)) {
+                    // rethrow the error with default message
+                    // it contains the reason why creation failed
+                    throw $e;
+                }
+            }
         }
 
         if ($cwd) {
@@ -1313,7 +1328,7 @@ class Config
     private function loadFileExtensions(SimpleXMLElement $extensions): void
     {
         foreach ($extensions as $extension) {
-            $extension_name = preg_replace('/^\.?/', '', (string)$extension['name']);
+            $extension_name = preg_replace('/^\.?/', '', (string)$extension['name'], 1);
             $this->file_extensions[] = $extension_name;
 
             if (isset($extension['scanner'])) {
@@ -1507,7 +1522,7 @@ class Config
     public function shortenFileName(string $to): string
     {
         if (!is_file($to)) {
-            return preg_replace('/^' . preg_quote($this->base_dir, '/') . '/', '', $to);
+            return preg_replace('/^' . preg_quote($this->base_dir, '/') . '/', '', $to, 1);
         }
 
         $from = $this->base_dir;
@@ -1557,6 +1572,13 @@ class Config
         $dependent_files = [strtolower($file_path) => $file_path];
 
         $project_analyzer = ProjectAnalyzer::getInstance();
+
+        // if the option is set and at least one file is passed via CLI
+        if ($this->hide_all_errors_except_passed_files
+            && $project_analyzer->check_paths_files
+            && !in_array($file_path, $project_analyzer->check_paths_files, true)) {
+            return false;
+        }
 
         $codebase = $project_analyzer->getCodebase();
 
@@ -1679,7 +1701,7 @@ class Config
         }
 
         if (strpos($issue_type, 'Possibly') === 0) {
-            $stripped_issue_type = preg_replace('/^Possibly(False|Null)?/', '', $issue_type);
+            $stripped_issue_type = preg_replace('/^Possibly(False|Null)?/', '', $issue_type, 1);
 
             if (strpos($stripped_issue_type, 'Invalid') === false && strpos($stripped_issue_type, 'Un') !== 0) {
                 $stripped_issue_type = 'Invalid' . $stripped_issue_type;
@@ -1693,7 +1715,7 @@ class Config
         }
 
         if (preg_match('/^(False|Null)[A-Z]/', $issue_type) && !strpos($issue_type, 'Reference')) {
-            return preg_replace('/^(False|Null)/', 'Invalid', $issue_type);
+            return preg_replace('/^(False|Null)/', 'Invalid', $issue_type, 1);
         }
 
         if ($issue_type === 'UndefinedInterfaceMethod') {
@@ -2288,19 +2310,28 @@ class Config
                     continue;
                 }
 
+                $full_path = $dir . '/' . $object;
+
                 // if it was deleted in the meantime/race condition with other psalm process
-                if (!file_exists($dir . '/' . $object)) {
+                if (!file_exists($full_path)) {
                     continue;
                 }
 
-                if (filetype($dir . '/' . $object) === 'dir') {
-                    self::removeCacheDirectory($dir . '/' . $object);
+                if (filetype($full_path) === 'dir') {
+                    self::removeCacheDirectory($full_path);
                 } else {
-                    unlink($dir . '/' . $object);
+                    try {
+                        unlink($full_path);
+                    } catch (RuntimeException $e) {
+                        clearstatcache(true, $full_path);
+                        if (file_exists($full_path)) {
+                            // rethrow the error with default message
+                            // it contains the reason why deletion failed
+                            throw $e;
+                        }
+                    }
                 }
             }
-
-            reset($objects);
 
             // may have been removed in the meantime
             clearstatcache(true, $dir);

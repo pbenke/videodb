@@ -7,20 +7,19 @@ namespace Composer\Autoload;
 class ComposerStaticInitd9d00095bf213c4e32317ca45825f2d0
 {
     public static $files = array (
-        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
-        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         'e8aa6e4b5a1db2f56ae794f1505391a8' => __DIR__ . '/..' . '/amphp/amp/lib/functions.php',
         '76cd0796156622033397994f25b0d8fc' => __DIR__ . '/..' . '/amphp/amp/lib/Internal/functions.php',
+        '6e3fae29631ef280660b3cdad06f25a8' => __DIR__ . '/..' . '/symfony/deprecation-contracts/function.php',
         '320cde22f66dd4f5d3fd621d3e88b98f' => __DIR__ . '/..' . '/symfony/polyfill-ctype/bootstrap.php',
         '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
         'e69f7f6ee287b969198c3c9d6777bd38' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/bootstrap.php',
         '7b11c4dc42b3b3023073cb14e519683c' => __DIR__ . '/..' . '/ralouphie/getallheaders/src/getallheaders.php',
-        '0d59ee240a4cd96ddbb4ff164fccea4d' => __DIR__ . '/..' . '/symfony/polyfill-php73/bootstrap.php',
         'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '6cd5651c4fef5ed6b63e8d8b8ffbf3cc' => __DIR__ . '/..' . '/amphp/byte-stream/lib/functions.php',
         'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
         '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
         'dc51568953534d6c54b08731e61104e2' => __DIR__ . '/..' . '/vimeo/psalm/src/functions.php',
@@ -44,7 +43,6 @@ class ComposerStaticInitd9d00095bf213c4e32317ca45825f2d0
         'S' => 
         array (
             'Symfony\\Polyfill\\Php80\\' => 23,
-            'Symfony\\Polyfill\\Php73\\' => 23,
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Grapheme\\' => 31,
@@ -115,10 +113,6 @@ class ComposerStaticInitd9d00095bf213c4e32317ca45825f2d0
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-php80',
         ),
-        'Symfony\\Polyfill\\Php73\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/symfony/polyfill-php73',
-        ),
         'Symfony\\Polyfill\\Mbstring\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-mbstring',
@@ -149,7 +143,7 @@ class ComposerStaticInitd9d00095bf213c4e32317ca45825f2d0
         ),
         'Psr\\Log\\' => 
         array (
-            0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+            0 => __DIR__ . '/..' . '/psr/log/src',
         ),
         'Psr\\Http\\Message\\' => 
         array (
@@ -271,7 +265,6 @@ class ComposerStaticInitd9d00095bf213c4e32317ca45825f2d0
     public static $classMap = array (
         'Attribute' => __DIR__ . '/..' . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
-        'JsonException' => __DIR__ . '/..' . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
         'PEAR_Exception' => __DIR__ . '/..' . '/pear/pear_exception/PEAR/Exception.php',
         'PHPUnit\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Exception.php',
@@ -578,6 +571,7 @@ class ComposerStaticInitd9d00095bf213c4e32317ca45825f2d0
         'PHPUnit\\Util\\Annotation\\DocBlock' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Annotation/DocBlock.php',
         'PHPUnit\\Util\\Annotation\\Registry' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Annotation/Registry.php',
         'PHPUnit\\Util\\Blacklist' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Blacklist.php',
+        'PHPUnit\\Util\\Cloner' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Cloner.php',
         'PHPUnit\\Util\\Color' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Color.php',
         'PHPUnit\\Util\\ErrorHandler' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/ErrorHandler.php',
         'PHPUnit\\Util\\Exception' => __DIR__ . '/..' . '/phpunit/phpunit/src/Util/Exception.php',
