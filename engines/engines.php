@@ -335,7 +335,7 @@ function engineGetActorUrl($name, $id, $engine = 'imdb')
  * @param   string    engine name
  * @return  array     array with Actor-URL and Thumbnail
  */
-function engineActor($name, $id, $engine = 'imdb')
+function engineActor($name, $id, $engine = 'imdb', $use_cache = true)
 {
     global $cache;
 
@@ -347,7 +347,7 @@ function engineActor($name, $id, $engine = 'imdb')
     {
         $id = preg_replace('|^'.$engine.':|', '', $id);
 
-        $cache  = true;
+        $cache  = $use_cache;
         $result = $func($name, $id);
     }
 
