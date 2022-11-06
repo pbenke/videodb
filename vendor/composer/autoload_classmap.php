@@ -8,7 +8,6 @@ $baseDir = dirname($vendorDir);
 return array(
     'Attribute' => $vendorDir . '/symfony/polyfill-php80/Resources/stubs/Attribute.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
-    'JsonException' => $vendorDir . '/symfony/polyfill-php73/Resources/stubs/JsonException.php',
     'Normalizer' => $vendorDir . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
     'PEAR_Exception' => $vendorDir . '/pear/pear_exception/PEAR/Exception.php',
     'PHPUnit\\Exception' => $vendorDir . '/phpunit/phpunit/src/Exception.php',
@@ -315,6 +314,7 @@ return array(
     'PHPUnit\\Util\\Annotation\\DocBlock' => $vendorDir . '/phpunit/phpunit/src/Util/Annotation/DocBlock.php',
     'PHPUnit\\Util\\Annotation\\Registry' => $vendorDir . '/phpunit/phpunit/src/Util/Annotation/Registry.php',
     'PHPUnit\\Util\\Blacklist' => $vendorDir . '/phpunit/phpunit/src/Util/Blacklist.php',
+    'PHPUnit\\Util\\Cloner' => $vendorDir . '/phpunit/phpunit/src/Util/Cloner.php',
     'PHPUnit\\Util\\Color' => $vendorDir . '/phpunit/phpunit/src/Util/Color.php',
     'PHPUnit\\Util\\ErrorHandler' => $vendorDir . '/phpunit/phpunit/src/Util/ErrorHandler.php',
     'PHPUnit\\Util\\Exception' => $vendorDir . '/phpunit/phpunit/src/Util/Exception.php',

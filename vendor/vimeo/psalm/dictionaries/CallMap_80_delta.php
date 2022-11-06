@@ -214,7 +214,7 @@ return [
       'new' => ['bool', 'typelib_name'=>'string', 'case_insensitive='=>'true'],
     ],
     'count' => [
-        'old' => ['int', 'value'=>'Countable|array|SimpleXMLElement|ResourceBundle', 'mode='=>'int'],
+        'old' => ['int', 'value'=>'Countable|array|SimpleXMLElement', 'mode='=>'int'],
         'new' => ['int', 'value'=>'Countable|array', 'mode='=>'int'],
     ],
     'count_chars' => [
@@ -278,8 +278,8 @@ return [
       'new' => ['int', 'multi_handle'=>'CurlMultiHandle', '&w_still_running'=>'int'],
     ],
     'curl_multi_getcontent' => [
-      'old' => ['?string', 'ch'=>'resource'],
-      'new' => ['?string', 'handle'=>'CurlHandle'],
+      'old' => ['string', 'ch'=>'resource'],
+      'new' => ['string', 'handle'=>'CurlHandle'],
     ],
     'curl_multi_info_read' => [
       'old' => ['array|false', 'mh'=>'resource', '&w_msgs_in_queue='=>'int'],
@@ -381,9 +381,21 @@ return [
       'old' => ['string|false', 'format'=>'string', 'timestamp='=>'int'],
       'new' => ['string|false', 'format'=>'string', 'timestamp='=>'?int'],
     ],
+    'hash' => [
+      'old' => ['string|false', 'algo'=>'string', 'data'=>'string', 'binary='=>'bool'],
+      'new' => ['non-empty-string', 'algo'=>'string', 'data'=>'string', 'binary='=>'bool'],
+    ],
+    'hash_hmac' => [
+      'old' => ['non-empty-string|false', 'algo'=>'string', 'data'=>'string', 'key'=>'string', 'binary='=>'bool'],
+      'new' => ['non-empty-string', 'algo'=>'string', 'data'=>'string', 'key'=>'string', 'binary='=>'bool'],
+    ],
     'hash_init' => [
       'old' => ['HashContext|false', 'algo'=>'string', 'flags='=>'int', 'key='=>'string'],
       'new' => ['HashContext', 'algo'=>'string', 'flags='=>'int', 'key='=>'string'],
+    ],
+    'hash_hkdf' => [
+      'old' => ['non-empty-string|false', 'algo'=>'string', 'key'=>'string', 'length='=>'int', 'info='=>'string', 'salt='=>'string'],
+      'new' => ['non-empty-string', 'algo'=>'string', 'key'=>'string', 'length='=>'int', 'info='=>'string', 'salt='=>'string'],
     ],
     'hash_update_file' => [
       'old' => ['bool', 'context'=>'HashContext', 'filename'=>'string', 'stream_context='=>'resource'],

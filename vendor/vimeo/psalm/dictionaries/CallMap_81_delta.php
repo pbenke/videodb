@@ -222,16 +222,16 @@ return [
       'new' => ['mixed|false', 'ftp' => 'FTP\Connection', 'option' => 'int'],
     ],
     'hash' => [
-      'old' => ['string|false', 'algo'=>'string', 'data'=>'string', 'binary='=>'bool'],
-      'new' => ['string|false', 'algo'=>'string', 'data'=>'string', 'binary='=>'bool', 'options='=>'array'],
+      'old' => ['non-empty-string', 'algo'=>'string', 'data'=>'string', 'binary='=>'bool'],
+      'new' => ['non-empty-string', 'algo'=>'string', 'data'=>'string', 'binary='=>'bool', 'options='=>'array{seed:scalar}'],
     ],
     'hash_file' => [
-      'old' => ['string|false', 'algo'=>'string', 'filename'=>'string', 'binary='=>'bool'],
-      'new' => ['string|false', 'algo'=>'string', 'filename'=>'string', 'binary='=>'bool', 'options='=>'array'],
+      'old' => ['non-empty-string|false', 'algo'=>'string', 'filename'=>'string', 'binary='=>'bool'],
+      'new' => ['non-empty-string|false', 'algo'=>'string', 'filename'=>'string', 'binary='=>'bool', 'options='=>'array{seed:scalar}'],
     ],
     'hash_init' => [
       'old' => ['HashContext', 'algo'=>'string', 'flags='=>'int', 'key='=>'string'],
-      'new' => ['HashContext', 'algo'=>'string', 'flags='=>'int', 'key='=>'string', 'options='=>'array'],
+      'new' => ['HashContext', 'algo'=>'string', 'flags='=>'int', 'key='=>'string', 'options='=>'array{seed:scalar}'],
     ],
     'imageinterlace' => [
       'old' => ['int|bool', 'image'=>'GdImage', 'enable='=>'bool|null'],
@@ -270,8 +270,8 @@ return [
         'new' => ['bool', 'imap'=>'IMAP\Connection', 'mailbox'=>'string'],
     ],
     'imap_delete' => [
-        'old' => ['bool', 'imap'=>'resource', 'message_num'=>'int', 'flags='=>'int'],
-        'new' => ['bool', 'imap'=>'IMAP\Connection', 'message_num'=>'int', 'flags='=>'int'],
+        'old' => ['bool', 'imap'=>'resource', 'message_nums'=>'string', 'flags='=>'int'],
+        'new' => ['bool', 'imap'=>'IMAP\Connection', 'message_nums'=>'string', 'flags='=>'int'],
     ],
     'imap_deletemailbox' => [
         'old' => ['bool', 'imap'=>'resource', 'mailbox'=>'string'],
@@ -450,8 +450,8 @@ return [
         'new' => ['int|false', 'imap'=>'IMAP\Connection', 'message_num'=>'int'],
     ],
     'imap_undelete' => [
-        'old' => ['bool', 'imap'=>'resource', 'message_num'=>'int', 'flags='=>'int'],
-        'new' => ['bool', 'imap'=>'IMAP\Connection', 'message_num'=>'int', 'flags='=>'int'],
+        'old' => ['bool', 'imap'=>'resource', 'message_nums'=>'string', 'flags='=>'int'],
+        'new' => ['bool', 'imap'=>'IMAP\Connection', 'message_nums'=>'string', 'flags='=>'int'],
     ],
     'imap_unsubscribe' => [
         'old' => ['bool', 'imap'=>'resource', 'mailbox'=>'string'],

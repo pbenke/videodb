@@ -26,33 +26,29 @@ class TestIMDb extends TestCase
         // https://imdb.com/title/tt0120915/
         $id = '0120915';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
+        $this->assertNotEmpty($data);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        // echo '<pre>';dump($data);echo '</pre>';
 
-        $this->assertEquals($data['istv'], '');
-        $this->assertEquals($data['title'], 'Star Wars: Episode I');
-        $this->assertEquals($data['subtitle'], 'Die dunkle Bedrohung');
+        $this->assertNotContains('istv', $data);
+        $this->assertEquals('Star Wars: Episode I', $data['title']);
+        $this->assertEquals('Die dunkle Bedrohung', $data['subtitle']);
 
         # new test: origtitle. Only works if accept-language is not english for an english move.
-        $this->assertEquals($data['origtitle'], 'Star Wars: Episode I - The Phantom Menace');
-        $this->assertEquals($data['year'], 1999);
+        $this->assertEquals('Star Wars: Episode I - The Phantom Menace', $data['origtitle']);
+        $this->assertEquals(1999, $data['year']);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['coverurl']);
 
         # For non-english movies it seams to be a number
-        $this->assertEquals($data['mpaa'], '6');
-
-        # bbfc no longer appears on main page
-        # test disabled
-        # $this->assertEquals($data['bbfc'], 'U');
-        $this->assertEquals($data['runtime'], 136);
+        $this->assertEquals('6', $data['mpaa']);
+        $this->assertEquals(136, $data['runtime']);
         $this->assertTrue($data['runtime'] >= 133 && $data['runtime'] <= 136);
-        $this->assertEquals($data['director'], 'George Lucas');
+        $this->assertEquals('George Lucas', $data['director']);
         $this->assertTrue($data['rating'] >= 6);
         $this->assertTrue($data['rating'] <= 8);
-        $this->assertEquals($data['country'], 'Vereinigte Staaten');
-        $this->assertEquals($data['language'], 'englisch, sanskrit');
-        $this->assertEquals(join(',', $data['genres']), 'Action,Abenteuer,Fantasy');
+        $this->assertEquals('Vereinigte Staaten', $data['country']);
+        $this->assertEquals('englisch, sanskrit', $data['language']);
+        $this->assertEquals('Action,Abenteuer,Fantasy', join(',', $data['genres']));
 
         # cast tests changed to be independent of order
         $cast = explode("\n", $data['cast']);
@@ -77,25 +73,20 @@ class TestIMDb extends TestCase
         // https://imdb.com/title/tt0120915/
         $id = '0120915';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
+        $this->assertNotEmpty($data);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        // echo '<pre>';dump($data);echo '</pre>';
 
-        $this->assertEquals($data['istv'], '');
+        $this->assertNotContains('istv', $data);
         $this->assertEquals($data['title'], 'Star Wars: Episode I');
         $this->assertEquals($data['subtitle'], 'The Phantom Menace');
 
         # new test: origtitle. Only works if accept-language is not english for an english move.
-        $this->assertEquals($data['origtitle'], '');
+        $this->assertNotContains('origtitle', $data);
         $this->assertEquals($data['year'], 1999);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['coverurl']);
 
-        # For non-english movies it seams to be a number
         $this->assertEquals($data['mpaa'], 'PG');
-
-        # bbfc no longer appears on main page
-        # test disabled
-        # $this->assertEquals($data['bbfc'], 'U');
         $this->assertEquals($data['runtime'], 136);
         $this->assertTrue($data['runtime'] >= 133 && $data['runtime'] <= 136);
         $this->assertEquals($data['director'], 'George Lucas');
@@ -127,61 +118,73 @@ class TestIMDb extends TestCase
 
         $id = '0481536';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
+        $this->assertNotEmpty($data);
 
-#       dump($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
-        $this->assertEquals($data['istv'], '');
+        $this->assertNotContains('istv', $data);
         $this->assertMatchesRegularExpression('/After being mistaken for terrorists and thrown into Guantánamo Bay, stoners Harold and Kumar escape and return to the U.S./', $data['plot']);
     }
 
     function testMovieWithoutImage()
     {
-    	// Can We Talk?
-    	// https://www.imdb.com/title/tt1486604/
+        // Can We Talk?
+        // https://www.imdb.com/title/tt1486604/
 
-    	$id = '1486604';
-    	$data = engineGetData($id, 'imdb', false);
+        $id = '1486604';
+        $data = engineGetData($id, 'imdb', false);
 
-    	// There is no cover image in imdb
-    	$this->assertEquals($data['coverurl'], '');
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
+        // There is no cover image in imdb
+        $this->assertNotContains('coverurl', $data);
     }
 
     function testMovieMultipleDirectors()
     {
-    	// Astérix aux jeux olympiques (2008)
-    	// https://www.imdb.com/title/tt0463872/
+        // Astérix aux jeux olympiques (2008)
+        // https://www.imdb.com/title/tt0463872/
 
-    	$id = '0463872';
-    	$data = engineGetData($id, 'imdb', false);
+        $id = '0463872';
+        $data = engineGetData($id, 'imdb', false);
 
-    	// multiple directors
-    	$this->assertEquals($data['director'], 'Frédéric Forestier, Thomas Langmann');
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
+        // multiple directors
+        $this->assertEquals($data['director'], 'Frédéric Forestier, Thomas Langmann');
     }
 
     function testMovie5() {
-    	// Role Models
-    	// https://www.imdb.com/title/tt0430922/
-    	// added for bug #3114003 - imdb.php does not fetch runtime in certain cases
+        // Role Models
+        // https://www.imdb.com/title/tt0430922/
+        // added for bug #3114003 - imdb.php does not fetch runtime in certain cases
 
-    	$id = '0430922';
-    	$data = engineGetData($id, 'imdb', false);
+        $id = '0430922';
+        $data = engineGetData($id, 'imdb', false);
 
-    	$this->assertTrue($data['runtime'] >= 99 && $data['runtime'] <= 101);
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
+        $this->assertTrue($data['runtime'] >= 99 && $data['runtime'] <= 101);
     }
 
     function testMoviePlot() {
-    	// Amélie
-    	// https://www.imdb.com/title/tt0211915/
-    	// added for bug #2914077 - charset of plot
+        // Amélie
+        // https://www.imdb.com/title/tt0211915/
+        // added for bug #2914077 - charset of plot
 
-    	Global $config;
+        Global $config;
         $config['http_header_accept_language'] = 'en-US,en;q=0.9';
 
-    	$id = '0211915';
-    	$data = engineGetData($id, 'imdb', false);
+        $id = '0211915';
+        $data = engineGetData($id, 'imdb', false);
 
-    	$this->assertMatchesRegularExpression('/Amélie is an innocent and naive girl/', $data['plot']);
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
+        $this->assertMatchesRegularExpression('/Amélie is an innocent and naive girl/', $data['plot']);
     }
 
     function testMovie8() {
@@ -194,6 +197,9 @@ class TestIMDb extends TestCase
 
         $id = '0317219';
         $data = engineGetData($id, 'imdb', false);
+
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertEquals($data['title'],'Cars');
         $this->assertEquals($data['year'], 2006);
@@ -210,6 +216,9 @@ class TestIMDb extends TestCase
         $id = '0317219';
         $data = engineGetData($id, 'imdb', false);
 
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
         $this->assertEquals($data['title'],'Biler');
         $this->assertEquals($data['year'], 2006);
     }
@@ -225,9 +234,9 @@ class TestIMDb extends TestCase
 
         $id = '0285403';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertMatchesRegularExpression("/Zach Braff::Dr. John 'J.D.' Dorian.+?::imdb:nm0103785.+?Mona Weiss::Nurse \(uncredited\) .+?::imdb:nm2032293/is", $data['cast']);
         $this->assertMatchesRegularExpression('/Sacred Heart Hospital/i', $data['plot']);
@@ -243,9 +252,9 @@ class TestIMDb extends TestCase
 
         $id = '0285331';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertTrue(sizeof(preg_split('/\n/', $data['cast'])) > 400);
     }
@@ -259,12 +268,12 @@ class TestIMDb extends TestCase
         // https://imdb.com/title/tt0461620/
         $id = '0461620';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertEquals($data['istv'], 1);
-        $this->assertEquals($data['plot'], '');
+        $this->assertNotContains('plot', $data);
         $this->assertEquals($data['runtime'], '45');
         $this->assertTrue($data['rating'] >= 7);
         $this->assertTrue($data['rating'] <= 8);
@@ -283,14 +292,14 @@ class TestIMDb extends TestCase
         // https://imdb.com/title/tt0872606/
         $id = '0872606';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertEquals($data['istv'], 1);
-        $this->assertEquals($data['plot'], '');
+        $this->assertNotContains('plot', $data);
         $this->assertEquals($data['runtime'], '45');
-        $this->assertEquals($data['rating'], '');
+        $this->assertNotContains('rating', $data);
         $this->assertEquals($data['title'], 'Bis in die Spitzen');
         $this->assertEquals($data['subtitle'], 'Episode #1.1');
     }
@@ -306,9 +315,9 @@ class TestIMDb extends TestCase
 
         $id = '0708758';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertEquals($data['istv'], 1);
         $this->assertEquals($data['tvseries_id'], '0092455');
@@ -330,6 +339,7 @@ class TestIMDb extends TestCase
         $this->assertTrue(in_array('Marina Sirtis::Counselor Deanna Troi::imdb:nm0000642', $cast));
         $this->assertTrue(in_array('John de Lancie::Q (as John deLancie)::imdb:nm0209496', $cast));
         $this->assertTrue(in_array('Rob Bowman::Borg (voice) (uncredited)::imdb:nm0101385', $cast));
+
         $this->assertTrue(sizeof($cast) > 15);
         $this->assertTrue(sizeof($cast) < 30);
 
@@ -350,9 +360,9 @@ class TestIMDb extends TestCase
         
         $id = '0359476';
         $data = engineGetData($id, 'imdb', false);
-        $this->assertTrue(sizeof($data) > 0);
 
-        #echo '<pre>';dump($data);echo '</pre>';
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertEquals($data['istv'], 1);
         $this->assertEquals($data['tvseries_id'], '0988820');
@@ -387,6 +397,9 @@ class TestIMDb extends TestCase
         $id = '1039379';
         $data = engineGetData($id, 'imdb', false);
 
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
         // was not detected as tv episode
         $this->assertEquals($data['istv'], 1);
 
@@ -402,6 +415,9 @@ class TestIMDb extends TestCase
         $id = '0851851';
         $data = engineGetData($id, 'imdb', false);
 
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
+
         $this->assertEquals($data['istv'], 1);
         $this->assertEquals($data['runtime'], 60);
     }
@@ -409,7 +425,19 @@ class TestIMDb extends TestCase
     function testActorImage() {
         // William Shatner
         // https://www.imdb.com/name/nm0000638/
-        $data = imdbActor('William Shatner', 'nm0000638');
+        $data = engineActor('William Shatner', 'nm0000638', 'imdb', false);
+//         echo '<pre>';dump($data);echo '</pre>';
+
+        $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
+    }
+
+    function testActorImageByName() {
+        // William Shatner
+        // https://www.imdb.com/name/nm0000638/
+        $data = engineActor(null, 'nm0000638', 'imdb', false);
+
+        $this->assertNotEmpty($data);
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
     }
@@ -417,10 +445,11 @@ class TestIMDb extends TestCase
     function testActorWithoutImage() {
         // Oscar Pearce
         // https://www.imdb.com/name/nm0668994/
+        $data = engineActor('Oscar Pearce', 'nm0668994', 'imdb', false);
 
-        $data = imdbActor('Oscar Pearce', 'nm0668994');
+        // echo '<pre>';dump($data);echo '</pre>';
 
-        $this->assertEquals('', $data[0][1]);
+        $this->assertEmpty($data);
     }
 
     /**
@@ -429,12 +458,12 @@ class TestIMDb extends TestCase
     function testSearch()
     {
         // Clerks 2
-        // https://imdb.com/find?s=all&q=clerks
-        
+        // https://imdb.com/find?q=clerks 2
         $data = engineSearch('Clerks 2', 'imdb');
-        $this->assertTrue(sizeof($data) > 0);
+        $this->assertNotEmpty($data);
 
         $data = $data[0];
+        // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertEquals($data['id'], 'imdb:0424345');
         $this->assertEquals($data['title'], 'Clerks II');
@@ -445,17 +474,17 @@ class TestIMDb extends TestCase
      */
     function testSearch2()
     {
-        // Das Streben nach Glück
+        // Das Streben nach Glück | The Pursuit of Happyness
         // https://www.imdb.com/find?s=all&q=Das+Streben+nach+Gl%FCck
 
         Global $config;
-        $config['http_header_accept_language'] = 'de-DE,en;q=0.9';
+        $config['http_header_accept_language'] = 'de-DE,en;q=0.6';
         
-        $data = engineSearch('Das Streben nach Glück', 'imdb', true);
-        $this->assertTrue(sizeof($data) > 0);
+        $data = engineSearch('Das Streben nach Glück', 'imdb', false);
+        $this->assertNotEmpty($data);
 
         $data = $data[0];
-#       dump($data);
+//        echo("<pre>");dump($data);echo("</pre>");
 
         $this->assertEquals($data['id'], 'imdb:0454921');
         $this->assertMatchesRegularExpression('/Das Streben nach Glück/', $data['title']);
@@ -470,7 +499,7 @@ class TestIMDb extends TestCase
         // https://imdb.com/find?s=all&q=serpico
         
         $data = engineSearch('Serpico', 'imdb');
-		#echo("<pre>");dump($data);echo("</pre>");
+        // echo("<pre>");dump($data);echo("</pre>");
 
         foreach ($data as $item)
         {

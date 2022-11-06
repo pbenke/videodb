@@ -58,7 +58,7 @@ $warnings = [];
 $stopOnError = false;
 
 // File name and class name must match because TestSuite takes a CLASS NAME!!!
-foreach($testClasses as $name => $className) {
+foreach ($testClasses as $name => $className) {
     $suite = new PHPUnit\Framework\TestSuite($name);
     ob_start();
 
