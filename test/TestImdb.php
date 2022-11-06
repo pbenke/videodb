@@ -31,24 +31,24 @@ class TestIMDb extends TestCase
         // echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertNotContains('istv', $data);
-        $this->assertEquals($data['title'], 'Star Wars: Episode I');
-        $this->assertEquals($data['subtitle'], 'Die dunkle Bedrohung');
+        $this->assertEquals('Star Wars: Episode I', $data['title']);
+        $this->assertEquals('Die dunkle Bedrohung', $data['subtitle']);
 
         # new test: origtitle. Only works if accept-language is not english for an english move.
-        $this->assertEquals($data['origtitle'], 'Star Wars: Episode I - The Phantom Menace');
-        $this->assertEquals($data['year'], 1999);
+        $this->assertEquals('Star Wars: Episode I - The Phantom Menace', $data['origtitle']);
+        $this->assertEquals(1999, $data['year']);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['coverurl']);
 
         # For non-english movies it seams to be a number
-        $this->assertEquals($data['mpaa'], '6');
-        $this->assertEquals($data['runtime'], 136);
+        $this->assertEquals('6', $data['mpaa']);
+        $this->assertEquals(136, $data['runtime']);
         $this->assertTrue($data['runtime'] >= 133 && $data['runtime'] <= 136);
-        $this->assertEquals($data['director'], 'George Lucas');
+        $this->assertEquals('George Lucas', $data['director']);
         $this->assertTrue($data['rating'] >= 6);
         $this->assertTrue($data['rating'] <= 8);
-        $this->assertEquals($data['country'], 'Vereinigte Staaten');
-        $this->assertEquals($data['language'], 'englisch, sanskrit');
-        $this->assertEquals(join(',', $data['genres']), 'Action,Abenteuer,Fantasy');
+        $this->assertEquals('Vereinigte Staaten', $data['country']);
+        $this->assertEquals('englisch, sanskrit', $data['language']);
+        $this->assertEquals('Action,Abenteuer,Fantasy', join(',', $data['genres']));
 
         # cast tests changed to be independent of order
         $cast = explode("\n", $data['cast']);
@@ -426,6 +426,7 @@ class TestIMDb extends TestCase
         // William Shatner
         // https://www.imdb.com/name/nm0000638/
         $data = engineActor('William Shatner', 'nm0000638', 'imdb', false);
+//         echo '<pre>';dump($data);echo '</pre>';
 
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
     }
@@ -483,7 +484,7 @@ class TestIMDb extends TestCase
         $this->assertNotEmpty($data);
 
         $data = $data[0];
-        echo("<pre>");dump($data);echo("</pre>");
+//        echo("<pre>");dump($data);echo("</pre>");
 
         $this->assertEquals($data['id'], 'imdb:0454921');
         $this->assertMatchesRegularExpression('/Das Streben nach Glück/', $data['title']);
