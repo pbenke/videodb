@@ -113,7 +113,7 @@ function getRecommendationData($imdbID) {
 
     // Titles and Year
     // See for different formats. https://contribute.imdb.com/updates/guide/title_formats
-    if (!empty($data['istv'])) {
+    if ($data['istv']) {
         if (preg_match('/<title>&quot;(.+?)&quot;(.+?)\(TV Episode (\d+)\) - IMDb<\/title>/si', $resp['data'], $ary)) {
             # handles one episode of a TV serie
             $data['title'] = trim($ary[1]);
@@ -257,7 +257,7 @@ function imdbData($imdbID)
 
     // Titles and Year
     // See for different formats. https://contribute.imdb.com/updates/guide/title_formats
-    if (!empty($data['istv'])) {
+    if ($data['istv'] ?? false) {
         // find id of Series
         // Either it is an episode
         if (preg_match('/<a .+? data-testid="hero-title-block__series-link" href="\/title\/tt(\d+)\/\?ref_=tt_ov_inf">/si', $resp['data'], $ary)) {
@@ -364,7 +364,7 @@ function imdbData($imdbID)
     }
 
     // for Episodes - try to get some missing stuff from the main series page
-    if ( !empty($data['istv']) and (!$data['runtime'] or !$data['country'] or !$data['language'] or !$data['coverurl'])) {
+    if ($data['istv'] ?? false and (!$data['runtime'] or !$data['country'] or !$data['language'] or !$data['coverurl'])) {
         $sresp = httpClient($imdbServer.'/title/tt'.$data['tvseries_id'].'/', $cache);
         if (!$sresp['success']) $CLIENTERROR .= $resp['error']."\n";
 
