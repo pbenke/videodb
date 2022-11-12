@@ -10,7 +10,10 @@
  * @version $Id: imdb.php,v 1.76 2013/04/10 18:11:43 andig2 Exp $
  */
 
-$GLOBALS['imdbServer']   = 'https://www.imdb.com';
+$GLOBALS['imdbApiServer'] = 'https://imdb-api.com/en/API';
+define('IMDB_KEY', 'apikey');
+
+$GLOBALS['imdbServer'] = 'https://www.imdb.com';
 $GLOBALS['imdbIdPrefix'] = 'imdb:';
 
 /**
@@ -18,9 +21,13 @@ $GLOBALS['imdbIdPrefix'] = 'imdb:';
  *
  * @todo    Include image search capabilities etc in meta information
  */
-function imdbMeta()
-{
-    return array('name' => 'IMDB', 'stable' => 1);
+function imdbMeta() {
+    return array('name' => 'IMDb', 'stable' => 1, 'php' => '8.1.0', 'capabilities' => array('movie', 'image'),
+         'config' => array(
+                array('opt' => IMDB_KEY, 'name' => 'IMDb API key',
+                      'desc' => 'To use the IMDb API search engine you need to obtain your own IMDb API key <a href="https://imdb-api.com">here</a>).')
+        ));
+
 }
 
 
@@ -34,6 +41,18 @@ function imdbMeta()
 function imdbSearchUrl($title)
 {
     global $imdbServer;
+    global $imdbApiServer;
+    global $config;
+
+    $apikey = $config['imdbapikey'];
+
+    if (!empty($apikey)) {
+        // https://imdb-api.com/en/API/SearchTitle/k_4c68ekfj/Star%20Wars:%20Episode%20V
+        $url = $imdbApiServer.'/SearchTitle/'.$apikey.'/'.$title;
+        echo 'IMDb search url: '.$url.'<br>';
+        return $url;
+    }
+
     return $imdbServer.'/find?s=all&q='.urlencode($title);
 }
 
@@ -48,7 +67,18 @@ function imdbContentUrl($id)
 {
     global $imdbServer;
     global $imdbIdPrefix;
+    global $imdbApiServer;
+    global $config;
+
+    $apikey = $config['imdbapikey'];
+
     $id = preg_replace('/^'.$imdbIdPrefix.'/', '', $id);
+    if (!empty($apikey)) {
+        https://imdb-api.com/en/API/Title/k_4c68ekfj/tt1375666/FullActor,FullCast,Posters,Images,Ratings,
+        $url = $imdbApiServer.'/Title/'.$apikey.'/tt'.$id.'/FullActor,FullCast,Posters,Images,Ratings';
+        echo 'IMDb content url: '.$url.'<br>';
+        return $url;
+    }
 
     return $imdbServer.'/title/tt'.$id.'/';
 }
@@ -153,6 +183,14 @@ function imdbSearch($title, $aka=null)
     global $imdbIdPrefix;
     global $CLIENTERROR;
     global $cache;
+    global $config;
+
+    $apikey = $config['imdbapikey'];
+
+    if (!empty($apikey)) {
+        return imdbApiSearch($title);
+    }
+    echo "SDFDSFDSFS";
 
     $url = imdbSearchUrl(urlencode($title));
 
@@ -220,6 +258,48 @@ function imdbSearch($title, $aka=null)
 }
 
 /**
+    this is used in search.php
+ */
+function imdbApiSearch($title) {
+    global $imdbServer;
+    global $imdbIdPrefix;
+    global $CLIENTERROR;
+    global $cache;
+    global $apikey;
+
+    $url = imdbSearchUrl($title);
+
+
+    $resp = httpClient($url, $cache);
+    $json = json_decode($resp['data']);
+
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+        $CLIENTERROR .= $json->errorMessage."\n";
+    }
+
+    $data = array();
+
+    // add encoding
+    $data['encoding'] = $resp['encoding'];
+
+    foreach ($json->results as $result) {
+        $info             = array();
+        $info['id']       = $imdbIdPrefix.$result->id;
+        $titles = splitTitle($result->title);
+        $info['title']    = $titles[0];
+        $info['subtitle'] = $titles[1];
+//        $info['year']; year is part of the description
+        $info['details']  = $result->description;
+        $info['imgsmall']; $result->image;
+        $info['coverurl'] = $result->image;
+        $data[] = $info;
+    }
+
+    return $data;
+}
+
+/**
  * Fetches the data for a given IMDB-ID
  *
  * @author  Tiago Fonseca <t_r_fonseca@yahoo.co.uk>
@@ -234,6 +314,13 @@ function imdbData($imdbID)
     global $imdbIdPrefix;
     global $CLIENTERROR;
     global $cache;
+    global $config;
+
+    $apikey = $config['imdbapikey'];
+
+    if (!empty($apikey)) {
+        return imdbApiData($imdbID);
+    }
 
     $imdbID = preg_replace('/^'.$imdbIdPrefix.'/', '', $imdbID);
     $data= array(); // result
@@ -436,6 +523,49 @@ function imdbData($imdbID)
         // sometimes appearing in series (e.g. Scrubs)
         $data['cast'] = preg_replace('#/ ... #', '', $data['cast']);
     }
+
+    return $data;
+}
+
+function imdbApiData($imdbID)
+{
+    global $imdbServer;
+    global $imdbIdPrefix;
+    global $CLIENTERROR;
+    global $cache;
+
+    $imdbID = preg_replace('/^'.$imdbIdPrefix.'/', '', $imdbID);
+    $data= array(); // result
+    $ary = array(); // temp
+
+    $url = imdbContentUrl($imdbID);
+    echo $url;
+
+    // fetch mainpage
+    $resp = httpClient($url, $cache);
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
+
+    // add encoding
+    $data['encoding'] = $resp['encoding'];
+
+    $json = json_decode($resp['data']);
+
+}
+
+
+function splitTitle($input) {
+
+    list($title, $subtitle) = array_pad(explode(' - ', $input, 2), 2, '');
+
+    // no dash, lets try colon
+    if (empty($subtitle)) {
+        list($title, $subtitle) = array_pad(explode(': ', $input, 2), 2, '');
+    }
+    $data = [];
+    $data[0] = trim($title);
+    $data[1] = trim($subtitle);
 
     return $data;
 }

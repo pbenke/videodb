@@ -21,3 +21,12 @@ services:
       MYSQL_PASSWORD: videodb
     volumes:
       - ../db:/var/lib/mysql
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    environment:
+      ADMINER_DEFAULT_SERVER: mariadb
+    restart: always
+    ports:
+      - 7777:8080
