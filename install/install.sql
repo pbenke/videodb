@@ -140,7 +140,7 @@ CREATE TABLE config (
 # actors
 CREATE TABLE actors (
   name VARCHAR(255) NOT NULL,
-  actorid VARCHAR(15) NOT NULL DEFAULT '',
+  actorid VARCHAR(20) NOT NULL DEFAULT '',
   imgurl VARCHAR(255) NOT NULL DEFAULT '',
   checked TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`name`),
@@ -230,4 +230,4 @@ INSERT IGNORE INTO users (id, name, passwd, permissions) VALUES (10000 ,'Guest',
 # core/constants.php when changing the database structure!
 #
 
-REPLACE INTO config (opt,value) VALUES ('dbversion', 41);
+REPLACE INTO config (opt,value) VALUES ('dbversion', 42);

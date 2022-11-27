@@ -134,7 +134,7 @@ function engineSearch($find, $engine = 'imdb', $para1 = null, $para2 = null)
 #    if (empty($result['encoding'])) errorpage('Engine Error', 'Engine does not properly return encoding');
 
     // set default encoding utf-8
-    $source_encoding = ($result['encoding']) ? $result['encoding'] : $lang['encoding'];
+    $source_encoding = $result['encoding'] ?? $lang['encoding'];
     $target_encoding = 'utf-8';
     unset($result['encoding']);
 

@@ -13,6 +13,7 @@
 require_once './core/functions.php';
 require_once './engines/engines.php';
 require_once './engines/imdb.php';
+require_once './engines/imdbapi.php';
 
 /**
  * Update item list asynchronously
