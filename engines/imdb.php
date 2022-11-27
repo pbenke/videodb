@@ -10,7 +10,7 @@
  * @version $Id: imdb.php,v 1.76 2013/04/10 18:11:43 andig2 Exp $
  */
 
-$GLOBALS['imdbServer']   = 'https://www.imdb.com';
+$GLOBALS['imdbServer'] = 'https://www.imdb.com';
 $GLOBALS['imdbIdPrefix'] = 'imdb:';
 
 /**
@@ -18,9 +18,8 @@ $GLOBALS['imdbIdPrefix'] = 'imdb:';
  *
  * @todo    Include image search capabilities etc in meta information
  */
-function imdbMeta()
-{
-    return array('name' => 'IMDB', 'stable' => 1);
+function imdbMeta() {
+    return array('name' => 'IMDb', 'stable' => 1, 'php' => '8.1.0', 'capabilities' => array('movie', 'image'));
 }
 
 
@@ -48,6 +47,7 @@ function imdbContentUrl($id)
 {
     global $imdbServer;
     global $imdbIdPrefix;
+
     $id = preg_replace('/^'.$imdbIdPrefix.'/', '', $id);
 
     return $imdbServer.'/title/tt'.$id.'/';
@@ -537,10 +537,7 @@ function imdbActor($name, $actorid)
             || preg_match('#<b>Names \(Exact Matches\)</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m)
             || preg_match('#<b>Names \(Approx Matches\)</b>.+?<a\s+href="(.*?)">#i', $resp['data'], $m)) {
 
-            echo "inside first preg_match<br>";
-
         if (!preg_match('/http/i', $m[1])) {
-            echo "inside second preg_match<br>";
             $m[1] = $imdbServer.$m[1];
         }
         $resp = httpClient($m[1], true);
@@ -551,11 +548,12 @@ function imdbActor($name, $actorid)
     $ary = array();
     // only search in img_primary <td> - or we get far to many useless images
     if (preg_match('/<td.+?id="img_primary">(.*?)<\/td>/si', $resp['data'], $match)) {
-        if (preg_match('/<a.*?href="(\/name\/nm\d+\/m).+?src="(.+?)">/si', $match[1], $m)) {
+        if (preg_match('#<a.*?href="(/name/nm\d+/)m.+?src="(.+?)"#s', $match[1], $m)) {
             $ary[0][0] = $m[1];
             $ary[0][1] = $m[2];
         }
     }
+
     return $ary;
 }
 

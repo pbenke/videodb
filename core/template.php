@@ -370,12 +370,12 @@ function get_actor_thumbnails_batched(&$actors)
  */
 function split_cast_array(&$actor, $key)
 {
-    $ary            = explode('::', $actor);
+    $ary = explode('::', $actor);
     
-    $actor          = array();   
-    $actor['name']  = $ary[0];
-    $actor['id']    = $ary[2];
-    $actor['roles'] = preg_split('[^</]', $ary[1]);
+    $actor = [];
+    $actor['name']   = $ary[0];
+    $actor['roles']  = preg_split('[^</]', $ary[1]);
+    $actor['id']     = $ary[2];
 }
 
 /**

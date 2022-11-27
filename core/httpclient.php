@@ -167,6 +167,13 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
         $response['error'] = 'Server returned wrong status: ' . $resp->getStatusCode();
         $response['error'] .= " Reason: " . $resp . getReasonPhrase();
         return $response;
+    } else {
+    // TODO find a better way to handle HTTP status == 200 and IMDb json->errorMessage not empty
+        $json = json_decode($response['data']);
+        if (!empty($json->errorMessage)) {
+            $response['error'] .= "IMDb api error message: " . $json->errorMessage;
+            return $response;
+        }
     }
 
     $response['success'] = true;
