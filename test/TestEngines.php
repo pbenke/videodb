@@ -20,10 +20,21 @@ class TestEngines extends TestCase {
         $engineName = engineGetEngine('imdbapi:tt1234567');
         $this->assertEquals('imdbapi', $engineName);
 
-        $engineName = engineGetEngine('abcde12345');
+        $engineName = engineGetEngine('ABCDE12345');
         $this->assertEquals('amazonaws', $engineName);
 
         $engineName = engineGetEngine('default ot imdb');
+        $this->assertEquals('imdb', $engineName);
+    }
+
+    function testEngineGetActorEngine() {
+        $engineName = engineGetActorEngine('imdb:nm1234567');
+        $this->assertEquals('imdb', $engineName);
+
+        $engineName = engineGetActorEngine('imdbapi:nm1234567');
+        $this->assertEquals('imdbapi', $engineName);
+
+        $engineName = engineGetActorEngine('default to imdb');
         $this->assertEquals('imdb', $engineName);
     }
 }
