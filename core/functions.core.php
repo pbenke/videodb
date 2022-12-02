@@ -96,9 +96,6 @@ function remove_magic_quotes(&$array)
  */
 function formvar($name)
 {
-	if (get_magic_quotes_gpc()) {
-		$name = stripslashes($name);
-	}
 	return htmlspecialchars($name);
 }
 

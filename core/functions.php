@@ -55,11 +55,6 @@ foreach (array_keys($_ENV) as $key) unset($GLOBALS[$key]);
 
 // force magic quotes off
 ini_set('magic_quotes_runtime', 0);
-if (get_magic_quotes_gpc())
-{
-    if (!empty($_REQUEST)) remove_magic_quotes($_REQUEST);
-    ini_set('magic_quotes_gpc', 0);
-}
 
 // register_globals off? Well I like it...
 extract($_REQUEST);

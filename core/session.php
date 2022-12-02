@@ -15,12 +15,6 @@ session_start();
 
 require_once './core/functions.php';  // needed for remove_magic_quotes
 
-// get rid of magic quotes
-if (get_magic_quotes_gpc())
-{
-    if (isset($_SESSION)) remove_magic_quotes($_SESSION);
-}
-
 /**
  * Get session value or specified default
  */
