@@ -14,6 +14,7 @@
 require_once 'core/cache.php';
 require_once 'vendor/autoload.php';
 
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Psr7 as Psr7;
 
 /**
@@ -90,12 +91,13 @@ function get_response_encoding($response)
  * Returns the raw data from the given URL, uses proxy when configured
  * and follows redirects
  *
- * @author Andreas Goetz <cpuidle@gmx.de>
- * @param  string  $url      URL to fetch
- * @param  bool    $cache    use caching? defaults to false
- * @param  string  $post     POST data, if nonempty POST is used instead of GET
- * @param  integer $timeout  Timeout in seconds defaults to 15
+ * @param string $url URL to fetch
+ * @param bool $cache use caching? defaults to false
+ * @param null $para
+ * @param bool $reload
  * @return mixed             HTTP response
+ * @throws GuzzleException
+ * @author Andreas Goetz <cpuidle@gmx.de>
  */
 function httpClient($url, $cache = false, $para = null, $reload = false)
 {
@@ -103,13 +105,12 @@ function httpClient($url, $cache = false, $para = null, $reload = false)
 
     $clientConfig = [
         'headers' => [
-            'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.135 Safari/537.36 Edge/12.246',
+            'User-Agent' => get_useragent_from_header(),
         ],
     ];
     $client = new GuzzleHttp\Client($clientConfig);
 
     $requestConfig = [];
-    $headers = '';  // additional HTTP headers, used for post data
 
     if ($para['cookies'])
     {
@@ -235,4 +236,19 @@ function download($url, $local)
     return(@file_put_contents($local, $resp['data']) !== false);
 }
 
-?>
+/**
+ * Return the user agent for this browser and machine
+ * this is used where httpClient is called for imdb to stop 403 error
+ */
+function get_useragent_from_header()
+{
+    if(isset($_SERVER['HTTP_USER_AGENT'])) {
+        $header_useragent = $_SERVER['HTTP_USER_AGENT'];
+    } else {
+        $request_headers = getallheaders();
+        $header_useragent = $request_headers['User-Agent'];
+    }
+
+    return $header_useragent;
+}
+
