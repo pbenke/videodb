@@ -19,7 +19,7 @@ class TestIMDbApi extends TestCase
         // use english as default language.
         global $config;
         $config['imdbApiLanguage'] = 'en';
-        $this->markTestSkipped('These tests are disabled for now.');
+
     }
 
     public static function setUpBeforeClass(): void
@@ -34,19 +34,25 @@ class TestIMDbApi extends TestCase
         $config['imdbApiLanguage'] = self::$origImdbApiLanguage;
     }
 
+    function printData($data): void
+    {
+        echo '<pre>';
+        print_r($data);
+        echo '</pre>';
+    }
+
     function testDutchLanguageWithAmericanMovie()
     {
         // get German version.
         global $config;
         $config['imdbApiLanguage'] = 'de';
-
         // Star Wars: Episode I
         // https://imdb.com/title/tt0120915/
 
         $data = engineGetData('tt0120915', 'imdbapi');
         $this->assertNotEmpty($data);
 
-//        echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertNotContains('istv', $data);
         $this->assertEquals('Star Wars: Episode I', $data['title']);
@@ -84,11 +90,10 @@ class TestIMDbApi extends TestCase
     {
         // Star Wars: Episode I
         // https://imdb.com/title/tt0120915/
-
         $data = engineGetData('tt0120915', 'imdbapi');
         $this->assertNotEmpty($data);
 
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertNotContains('istv', $data);
         $this->assertEquals('Star Wars: Episode I', $data['title']);
@@ -123,11 +128,10 @@ class TestIMDbApi extends TestCase
     {
         // Harold & Kumar Escape from Guantanamo Bay
         // https://www.imdb.com/title/tt0481536/
-
         $data = engineGetData('tt0481536', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertNotContains('istv', $data);
         $this->assertMatchesRegularExpression('/After being mistaken for terrorists and thrown into Guantánamo Bay, stoners Harold and Kumar escape and return to the U.S./', $data['plot']);
@@ -137,11 +141,10 @@ class TestIMDbApi extends TestCase
     {
         // Can We Talk?
         // https://www.imdb.com/title/tt1486604/
-
         $data = engineGetData('tt1486604', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         // There is no cover image in imdb
         $this->assertNotContains('coverurl', $data);
@@ -151,38 +154,23 @@ class TestIMDbApi extends TestCase
     {
         // Astérix aux jeux olympiques (2008)
         // https://www.imdb.com/title/tt0463872/
-
         $data = engineGetData('tt0463872', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        // $this->printData($data);
 
         // multiple directors
         $this->assertEquals('Frédéric Forestier, Thomas Langmann', $data['director']);
-    }
-
-    function testMovieRuntime() {
-        // Role Models
-        // https://www.imdb.com/title/tt0430922/
-        // added for bug #3114003 - imdb.php does not fetch runtime in certain cases
-
-        $data = engineGetData('tt0430922', 'imdbapi');
-
-        $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
-
-        $this->assertTrue($data['runtime'] >= 99 && $data['runtime'] <= 101);
     }
 
     function testMoviePlot() {
         // Amélie
         // https://www.imdb.com/title/tt0211915/
         // added for bug #2914077 - charset of plot
-
         $data = engineGetData('tt0211915', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertMatchesRegularExpression('/Amélie is an innocent and naive girl/', $data['plot']);
     }
@@ -191,28 +179,26 @@ class TestIMDbApi extends TestCase
         // Cars (2006)
         // https://www.imdb.com/title/tt0317219/
         // added for bug #3399788 - title & year
-
         $data = engineGetData('tt0317219', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertEquals($data['title'],'Cars');
         $this->assertEquals($data['year'], 2006);
     }
 
     function testMovieDanish() {
-        // Biler (2006)
-        // https://www.imdb.com/title/tt0317219/
         // Test that Danish language works.
-
         Global $config;
         $config['imdbApiLanguage'] = 'da';
 
+        // Biler (2006)
+        // https://www.imdb.com/title/tt0317219/
         $data = engineGetData('tt0317219', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        // $this->printData($data);
 
         $this->assertEquals('Cars', $data['title']);
         $this->assertEquals('USA', $data['country']);
@@ -231,11 +217,10 @@ class TestIMDbApi extends TestCase
     function testSeries() {
         // Scrubs
         // https://imdb.com/title/tt0285403/
-
         $data = engineGetData('tt0285403', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        // $this->printData($data);
 
         $this->assertMatchesRegularExpression("/Zach Braff::Dr. John 'J.D.' Dorian.+?::imdbapi:nm0103785.+?Mona Weiss::Nurse \(uncredited\) .+?::imdbapi:nm2032293/is", $data['cast']);
         $this->assertMatchesRegularExpression('/Sacred Heart Hospital/i', $data['plot']);
@@ -248,47 +233,38 @@ class TestIMDbApi extends TestCase
     {
         // 24
         // https://imdb.com/title/tt0285331/
-
         $data = engineGetData('tt0285331', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        // $this->printData($data);
 
         $this->assertTrue(sizeof(preg_split('/\n/', $data['cast'])) > 400);
     }
 
-    /**
-     * Bis in die Spitzen
-     */
     function testSeries3MainPage()
     {
         // Bis in die Spitzen
         // https://imdb.com/title/tt0461620/
-
         $data = engineGetData('tt0461620', 'imdbapi');
 
         $this->assertNotEmpty($data);
-//        echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertEquals(1, $data['istv']);
         $this->assertNotContains('plot', $data);
-        $this->assertEquals('', $data['runtime']);
+        $this->assertEmpty($data['runtime']);
         $this->assertTrue($data['rating'] >= 7 && $data['rating'] <= 8);
         $this->assertEquals('Bis in die Spitzen', $data['title']);
     }
 
-    /**
-     * Bis in die Spitzen
-     */
-    function testSerieEpisodeWithoutRuntime()
+    function testSeriesEpisodeWithoutRuntime()
     {
         // Bis in die Spitzen: Folge #1.1
         // https://imdb.com/title/tt0872606/
-
         $data = engineGetData('tt0872606', 'imdbapi');
 
         $this->assertNotEmpty($data);
-//        echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertEquals(1, $data['istv']);
         $this->assertEquals('tt0461620', $data['tvseries_id']);
@@ -301,21 +277,20 @@ class TestIMDbApi extends TestCase
 
     function testSeriesEpisode()
     {
-        // Star Trek TNG Episode "Q Who"
-        // https://www.imdb.com/title/tt0708758/
-
         // get German version.
         Global $config;
         $config['imdbApiLanguage'] = 'de';
 
+        // Star Trek TNG Episode "Q Who"
+        // https://www.imdb.com/title/tt0708758/
         $data = engineGetData('tt0708758', 'imdbapi');
 
         $this->assertNotEmpty($data);
-//        echo '<pre>';dump($data);echo '</pre>';
+        // $this->printData($data);
 
         $this->assertEquals(1, $data['istv']);
         $this->assertEquals('tt0092455', $data['tvseries_id']);
-        $this->assertMatchesRegularExpression('/Star Trek: The Next Generation/', $data['title']);
+        $this->assertEquals('Star Trek: The Next Generation', $data['title']);
         $this->assertEquals('Q Who', $data['subtitle']);
         $this->assertEquals('1989', $data['year']);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['coverurl']);
@@ -345,18 +320,16 @@ class TestIMDbApi extends TestCase
     {
         // The Inspector Lynley Mysteries - Episode: Playing for the Ashes
         // https://www.imdb.com/title/tt0359476
-
         $data = engineGetData('tt0359476', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertEquals(1, $data['istv']);
         $this->assertEquals('tt0988820', $data['tvseries_id']);
-
-        $this->assertMatchesRegularExpression('/Inspector Lynley/', $data['title']);
+        $this->assertEquals('The Inspector Lynley Mysteries', $data['title']);
         $this->assertEquals('Playing for the Ashes', $data['subtitle']);
-        $this->assertMatchesRegularExpression('/200\d/', $data['year']);
+        $this->assertEquals('2003', $data['year']);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['coverurl']);
         $this->assertEquals('Richard Spence', $data['director']);
         $this->assertTrue($data['rating'] >= 5 && $data['rating'] <= 8);
@@ -379,27 +352,39 @@ class TestIMDbApi extends TestCase
     function testSeriesEpisode3() {
         // Pushing Daisies - Episode 3
         // https://www.imdb.com/title/tt1039379/
-
         $data = engineGetData('tt1039379', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         // was not detected as tv episode
         $this->assertEquals(1, $data['istv']);
+        $this->assertEquals(42, $data['runtime']);
+    }
 
-        $this->assertTrue($data['runtime'] >= 40 && $data['runtime'] <= 50);
+    function testGetActorUrlByName() {
+        $url = engineGetActorUrl('Arnold Schwarzenegger', null, 'imdbapi');
+        $this->assertEquals('https://www.imdb.com/Name?Arnold+Schwarzenegger', $url);
+    }
+
+    function testGetActorUrlById() {
+        $url = engineGetActorUrl(null, 'nm0000216', 'imdbapi');
+        $this->assertEquals('https://www.imdb.com/name/nm0000216/', $url);
+    }
+
+    function testGetActorUrlByNameAndId() {
+        $url = engineGetActorUrl('Arnold Schwarzenegger', 'nm0000216', 'imdbapi');
+        $this->assertEquals('https://www.imdb.com/name/nm0000216/', $url);
     }
 
     function testTVSeriesExactOneHourLong()
     {
         // Terminator: The Sarah Connor Chronicles
-        // https://www.imdb.com/title/tt0851851/?ref_=tt_ov_inf
-
+        // https://www.imdb.com/title/tt0851851/
         $data = engineGetData('tt0851851', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertEquals(1, $data['istv']);
         $this->assertEmpty($data['runtime']);
@@ -409,7 +394,7 @@ class TestIMDbApi extends TestCase
         // William Shatner
         // https://www.imdb.com/name/nm0000638/
         $data = engineActor('William Shatner', 'nm0000638', 'imdbapi');
-//         echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
     }
@@ -420,7 +405,7 @@ class TestIMDbApi extends TestCase
         $data = engineActor(null, 'nm0000638', 'imdbapi');
 
         $this->assertNotEmpty($data);
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
     }
@@ -430,27 +415,25 @@ class TestIMDbApi extends TestCase
         // https://www.imdb.com/name/nm0668994/
         $data = engineActor('Oscar Pearce', 'nm0668994', 'imdbapi');
 
-        // echo '<pre>';dump($data);echo '</pre>';
+        //$this->printData($data);
 
         $this->assertEmpty($data);
     }
 
-    /**
-     * https://sourceforge.net/tracker/?func=detail&atid=586362&aid=1675281&group_id=88349
-     */
     function testSearch()
     {
-        // Clerks 2
+        // Clerks II
         // https://imdb.com/find?q=clerks 2
         $data = engineSearch('Clerks 2', 'imdbapi');
 
         $this->assertNotEmpty($data);
+        // $this->printData($data);
+
         $data = $data[0];
 
-//        echo '<pre>';dump($data);echo '</pre>';
-
-        $this->assertEquals('imdbapi:tt0454921', $data['id']);
+        $this->assertEquals('imdbapi:tt0424345', $data['id']);
         $this->assertEquals('Clerks II', $data['title']);
+        $this->assertEquals("2006 Brian O'Halloran, Jeff Anderson", $data['details']);
     }
 
     /**
@@ -466,20 +449,16 @@ class TestIMDbApi extends TestCase
 
         $data = engineSearch('Das Streben nach Glück', 'imdbapi');
 
-//        echo("<pre>");dump($data);echo("</pre>");
+        // $this->printData($data);
 
         $this->assertNotEmpty($data);
 
         $data = $data[0];
 
         $this->assertEquals('imdbapi:tt0454921', $data['id']);
-        $this->assertMatchesRegularExpression('/The Pursuit of Happyness/', $data['title']);
-
-
-        $this->assertEquals('imdbapi:tt0454921', $data['id']);
         $this->assertEquals('The Pursuit of Happyness', $data['title']);
         $this->assertEmpty($data['subtitle']);
-        $this->assertEquals('(2006) aka "Das Streben nach Glück"', $data['details']);
+        $this->assertEquals('2006 Will Smith, Thandiwe Newton', $data['details']);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['imgsmall']);
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data['coverurl']);
     }
@@ -491,19 +470,14 @@ class TestIMDbApi extends TestCase
     {
         // Serpico
         // https://imdb.com/find?s=all&q=serpico
-        
-        $data = engineSearch('Sicario', 'imdbapi');
+        $data = engineSearch('serpico', 'imdbapi');
 
-        dlog('test b');
-        dlog($data);
-        dlog('test e');
-
-//        echo("<pre>");dump($data);echo("</pre>");
+        //$this->printData($data);
         $this->assertNotEmpty($data);
 
         foreach ($data as $item) {
             $t = strip_tags($item['title']);
-            $this->assertTrue($item['title'] == $t);
+            $this->assertEquals($item['title'], $t);
         }
     }
 }

@@ -166,7 +166,7 @@ function imdbapiSearch($title) {
     global $cache;
 
     $url = imdbapiSearchUrl($title);
-    $resp = httpClient($url, false);
+    $resp = httpClient($url, $cache);
     $json = json_decode($resp['data']);
 
     if (!$resp['success']) {
@@ -349,18 +349,15 @@ function imdbapiActor($name, $actorid) {
         if (!preg_match('/http/i', $m[1])) {
             $m[1] = $imdbServer.$m[1];
         }
-        $resp = httpClient($m[1], $cache);
+        $resp = httpClient($m[1], true);
     }
 
     // now we should have loaded the best match
 
-    $ary = array();
-    // only search in img_primary <td> - or we get far to many useless images
-    if (preg_match('/<td.+?id="img_primary">(.*?)<\/td>/si', $resp['data'], $match)) {
-        if (preg_match('#<a.*?href="(/name/nm\d+/)m.+?src="(.+?)"#s', $match[1], $m)) {
-            $ary[0][0] = $m[1];
-            $ary[0][1] = $m[2];
-        }
+    $ary = [];
+    if (preg_match('/<div class="ipc-poster .+?<img.+?srcset="(https.+?)@@.+?".+?href="(\/name\/nm\d+\/)m/si', $resp['data'], $m)) {
+        $ary[0][0] = $m[2]; // /name/nm12345678/
+        $ary[0][1] = $m[1].'jpg'; // img url
     }
 
     return $ary;

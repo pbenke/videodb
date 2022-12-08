@@ -220,7 +220,7 @@ function iconv_array($source_encoding, $target_encoding, $data)
 function html_to_text($str)
 {
     // create list items
-    $str = preg_replace("#<li.*?>#i", "\n-", $str);
+    $str = preg_replace("#<li.*?>#i", "\n-", $str ?? '');
 
     // de-html line breaks
     $str = preg_replace('#<(br|p).*?>#i', "\n", $str);
