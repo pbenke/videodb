@@ -43,7 +43,7 @@ function ajax_render()
     tpl_list($result);
 
     $content = $smarty->fetch('list.tpl');
-#    file_append('log.txt', $content);
+#    dlog($content);
 
     header('X-JSON: '.json_encode(array('count' => count($result))));
     echo $content;

@@ -50,7 +50,7 @@ if ($ajax_prefetch_id || $ajax_autocomplete_title || $ajax_autocomplete_subtitle
         tpl_language();
         tpl_edit($data);
         $content = $smarty->fetch('edit.tpl');
-#       file_append('log.txt', $content);
+#       dlog($content);
 
         echo $content;
 */
@@ -63,7 +63,7 @@ if ($ajax_prefetch_id || $ajax_autocomplete_title || $ajax_autocomplete_subtitle
     				engineSearch($ajax_autocomplete_subtitle, engineGetDefault(), true);
     
     if ($ajax_type == 'json') {
-#        file_append('log.txt', $res);
+#        dlog($res);
 		header("Content-Type: application/json");
 		echo(json_encode($data));
 		exit;

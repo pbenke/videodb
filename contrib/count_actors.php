@@ -47,14 +47,14 @@ if ($submit)
     }
 	foreach ($result as $row) 
 	{
-		# file_append('log.txt' , $row['actors']."\n");
+		# dlog($row['actors']);
 		$cast = preg_split("/\R/", $row['actors']); // split on newline
-		# file_append('log.txt' , 'No of actors '.count($cast)."\n");
+		# dlog('No of actors '.count($cast));
 		// Counting actors
 		foreach ($cast as $actor) {
 			$actorary = explode('::', $actor);
-			# file_append('log.txt', "Actors split\n");
-			# file_append('log.txt', $actorary[0]." ".$actorary[1]." ".$actorary[2]."\n");
+			# dlog('Actors split');
+			# dlog($actorary[0].' '.$actorary[1].' '.$actorary[2]);
 			if (!isset($actors[$actorary[0]])) {
 				// Use actor name as array index so all counts are attributed to the same name
 				$actors[$actorary[0]] = 0;
