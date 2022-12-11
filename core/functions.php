@@ -48,11 +48,13 @@ require_once './vendor/smarty/smarty/libs/Smarty.class.php';
 set_exception_handler('exception_handler');
 
 // Set up some defaults
-error_reporting(isset($config['debug']) && $config['debug'] ? E_ALL ^ E_NOTICE : E_ERROR + E_PARSE);
+if (isset($config['debug']) && $config['debug']) {
+    error_reporting(E_ALL ^ E_NOTICE);
+} else {
+    error_reporting(E_ERROR + E_PARSE);
+}
 // don't pollute output with errors
 ini_set('display_errors', false);
-// Log stuff to error.log when in debug mode
-if (isset($config['debug']) && $config['debug']) ini_set('error_log', 'error.log');
 
 // Remove environment variables from global scope- ensures clean namespace
 foreach (array_keys($_ENV) as $key) unset($GLOBALS[$key]);

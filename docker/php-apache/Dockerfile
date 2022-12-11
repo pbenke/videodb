@@ -11,6 +11,9 @@ RUN apt-get update && apt-get install -y \
 # intall mysql extention
 RUN docker-php-ext-install mysqli
 
+# copy php config to installation.
+COPY php-dev.ini /usr/local/etc/php/conf.d/
+
 # install Composer 2
 RUN curl -sS https://getcomposer.org/installer -o composer-setup.php \
     && php composer-setup.php --install-dir=/usr/local/bin --filename=composer
