@@ -4,3 +4,5 @@ config.inc.php
 cache
 db
 .idea
+debug.log
+error.log
