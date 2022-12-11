@@ -3,6 +3,7 @@ config.inc.php
 
 cache
 db
+vendor
 .idea
 debug.log
 error.log
