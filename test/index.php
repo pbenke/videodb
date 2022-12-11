@@ -7,6 +7,10 @@ require_once './core/functions.php';
 localnet_or_die();
 permission_or_die(PERM_ADMIN);
 
+// disable debug log while testing.
+global $config;
+$origDebug = $config['debug'];
+$config['debug'] = 0;
 ?>
 
 <!doctype html>
@@ -75,6 +79,8 @@ foreach ($testClasses as $name => $className) {
 
 echo "</body></html>";
 
+// Set debug back to the original value.
+$config['debug'] = $origDebug;
 
 // Find files that either starts with or ends with test.
 function findTestClasses(string $dir, string $pattern = null) {
