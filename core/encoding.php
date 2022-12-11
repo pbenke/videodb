@@ -141,7 +141,7 @@ function html_entity_decode_all_utf8(string $string)
 
     // replace literal entities
     foreach (get_html_translation_table(HTML_ENTITIES) as $val => $key) {
-        $trans_tbl[$key] = utf8_encode($val);
+        $trans_tbl[$key] = iconv('ISO-8859-1', 'UTF-8', $val);
     }
 
     return strtr($string, $trans_tbl);
