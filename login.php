@@ -13,11 +13,11 @@ require_once './core/session.php';
 require_once './core/functions.php';
 
 /**
- * Remove all session data after login or logout
+ *  Remove all session data after login or logout
  *
  * @author Andreas Goetz    <cpuidle@gmx.de>
  */
-function clear_session()
+function clear_session(): void
 {
     $_SESSION['vdb'] = array();
 

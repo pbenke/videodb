@@ -29,11 +29,15 @@ define('AWS_SECRET_KEY', 'apisecretkey');
 
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (((string|string[])[]|string)[]|int|string)[]
+ *
+ * @psalm-return array{name: 'Amazon (AWS)', stable: 1, php: '5.1.2', capabilities: array{0: 'movie', 1: 'image', 2: 'purchase'}, config: array{0: array{opt: 'locale', name: 'Amazon AWS country selection', values: array{US: 'US', UK: 'UK', DE: 'DE', JP: 'JP'}, desc: 'Select the country site you'd like to use for querying Amazon data.'}, 1: array{opt: 'apikey', name: 'Amazon AWS API access key', desc: 'To use the Amazon search engine you need to obtain your own Amazon AWS API access key <a href="http://aws.amazon.com">here</a>).'}, 2: array{opt: 'apisecretkey', name: 'Amazon AWS API secret access key', desc: 'To use the Amazon search engine you need to obtain your own Amazon AWS API access key <a href="http://aws.amazon.com">here</a>).'}}}
  */
-function amazonawsMeta()
+function amazonawsMeta(): array
 {
     return array('name' => 'Amazon (AWS)', 'stable' => 1, 'php' => '5.1.2', 'capabilities' => array('movie', 'image', 'purchase'),
                  'config' => array(
@@ -48,7 +52,7 @@ function amazonawsMeta()
 }
 
 
-function aws_signed_request($params, $region = null)
+function aws_signed_request($params, $region = null): string
 {
     /*
     Copyright (c) 2009 Ulrich Mierendorff
@@ -128,7 +132,7 @@ function aws_signed_request($params, $region = null)
     return $request;
 }
 
-function awsGetRegion()
+function awsGetRegion(): string
 {
     global $config;
 

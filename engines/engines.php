@@ -225,10 +225,10 @@ function engineGetSearchUrl($find, $engine = 'imdb')
 }
 
 /**
- * This function is used internally by setup and engines to add meta-engine of the engine's capability type
- * e.g. if the youtube engine provides 'trailer' capability, this will add $config[engine][trailer] = (youtube)
+ *  This function is used internally by setup and engines to add meta-engine of the engine's capability type
+ *  e.g. if the youtube engine provides 'trailer' capability, this will add $config[engine][trailer] = (youtube)
  */
-function engine_setup_meta($engine, $meta)
+function engine_setup_meta($engine, $meta): void
 {
     global $config;
 
@@ -355,9 +355,9 @@ function engineActor($name, $id, $engine = 'imdb', $use_cache = true)
 }
 
 /**
- * Callback function for validating if an engine has a certain capability
+ *  Callback function for validating if an engine has a certain capability
  */
-function engine_get_capability($engine, $searchtype)
+function engine_get_capability($engine, $searchtype): bool
 {
     global $config;
     
@@ -399,11 +399,11 @@ function engine_get_capable_engines($searchtype)
 }
 
 /**
- * Clean HTML tags from hierarchical associative array
+ *  Clean HTML tags from hierarchical associative array
  *
- * @param   array	$data	string or hierarchical array to convert
+ * @param array	$data	string or hierarchical array to convert
  */
-function engine_clean_input(&$data)
+function engine_clean_input(&$data): void
 {
     if (is_array($data)) foreach ($data as $key => $val)
 	{

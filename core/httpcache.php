@@ -5,24 +5,26 @@
  * Enable use of HTTP 304 headers for unmodified content to save bandwidth
  *
  * @package Core
- * @author  Andreas Götz    <cpuidle@gmx.de>
+ * @author  Andreas GÃ¶tz    <cpuidle@gmx.de>
  * @version $Id: httpcache.php,v 1.5 2010/11/05 10:38:47 andig2 Exp $
  */
 
 /**
- * Start output buffering
+ *  Start output buffering
  */
-function httpCacheCaptureStart()
+function httpCacheCaptureStart(): void
 {
     ob_start();
 }
 
 /**
- * Stop output buffering
+ *  Stop output buffering
  *
- * @param   string  MD5 hash of content
+ * @param string  MD5 hash of content
+ *
+ * @return false|string
  */
-function httpCacheCaptureEnd()
+function httpCacheCaptureEnd(): string|false
 {
     $content = ob_get_contents();
     ob_end_clean();
@@ -50,8 +52,10 @@ function httpCacheCheckTag($template, $etag)
 }
 
 /**
- * Output 304 Not Modified header
- * Require browser to re-check on next request
+ *  Output 304 Not Modified header
+ *  Require browser to re-check on next request
+ *
+ * @return never
  */
 function httpCacheHeaders($etag, $expires)
 {
@@ -65,11 +69,11 @@ function httpCacheHeaders($etag, $expires)
 }
 
 /**
- * Check if output was modified since last request
- * If unmodifed, output 304 Not Modified header
- * Otherwise add additional ETag and LastModified headers
+ *  Check if output was modified since last request
+ *  If unmodifed, output 304 Not Modified header
+ *  Otherwise add additional ETag and LastModified headers
  */
-function httpCacheOutput($template, $content)
+function httpCacheOutput($template, $content): void
 {
     $etag = '"'.md5($content).'"';
 

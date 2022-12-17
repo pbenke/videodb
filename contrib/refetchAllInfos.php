@@ -24,8 +24,12 @@ permission_or_die(PERM_WRITE);
 
 
 /**
- * Fetch a list of all editable video fields (keys) 
- * and assign 1 (value) if they should be preselected else 0  
+ *  Fetch a list of all editable video fields (keys) 
+ *  and assign 1 (value) if they should be preselected else 0
+ *
+ * @return int[]|null
+ *
+ * @psalm-return array<string, 0|1>|null
  */
 function getFields() {
     $edit_file = file_get_contents('./core/edit.core.php');

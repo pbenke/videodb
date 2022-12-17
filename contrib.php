@@ -17,10 +17,12 @@ permission_or_die(PERM_WRITE);
 
 
 /**
- * Sort multi-dimensional arrays 
- * (thanks to phpdotnet)
+ *  Sort multi-dimensional arrays 
+ *  (thanks to phpdotnet)
+ *
+ * @psalm-return array<0|positive-int, mixed>
  */
-function multidimsort($array_in, $column)
+function multidimsort($array_in, $column): array
 {
     $multiarray = array();
     $array_out  = array();

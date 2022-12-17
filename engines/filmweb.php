@@ -17,11 +17,15 @@ $GLOBALS['filmwebServer']	= 'http://www.filmweb.pl';
 $GLOBALS['filmwebIdPrefix'] = 'filmweb:';
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (int|string)[]
+ *
+ * @psalm-return array{name: 'FilmWeb (pl)', stable: 1}
  */
-function filmwebMeta()
+function filmwebMeta(): array
 {
     return array('name' => 'FilmWeb (pl)', 'stable' => 1);
 }
@@ -298,16 +302,20 @@ function filmwebData($filmwebID)
 }
 
 /**
- * Parses Actor-Details
+ *  Parses Actor-Details
  *
- * Find image and detail URL for actor, not sure if this can be made
- * a one-step process?
+ *  Find image and detail URL for actor, not sure if this can be made
+ *  a one-step process?
  *
- * @author  Victor La <cyridian@users.sourceforge.net>
- * @param  string  $name  Name of the Actor
- * @return array          array with Actor-URL and Thumbnail
+ * @author Victor La <cyridian@users.sourceforge.net>
+ *
+ * @param string  $name  Name of the Actor
+ *
+ * @return null|string[][] array with Actor-URL and Thumbnail
+ *
+ * @psalm-return array{0: array{0: string, 1: string}}|null
  */
-function filmwebActor($name, $actorid)
+function filmwebActor($name, $actorid): array|null
 {
     global $filmwebServer;
 

@@ -14,11 +14,15 @@ $GLOBALS['imdbServer'] = 'https://www.imdb.com';
 $GLOBALS['imdbIdPrefix'] = 'imdb:';
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (int|string|string[])[]
+ *
+ * @psalm-return array{name: 'IMDb', stable: 1, php: '8.1.0', capabilities: array{0: 'movie', 1: 'image'}}
  */
-function imdbMeta() {
+function imdbMeta(): array {
     return array('name' => 'IMDb', 'stable' => 1, 'php' => '8.1.0', 'capabilities' => array('movie', 'image'));
 }
 

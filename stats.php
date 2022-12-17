@@ -14,7 +14,7 @@ require_once './core/functions.php';
 /*
  * Helper function for comparing an associative array by it's 'count' values.
  */
-function compare_count($a, $b)
+function compare_count($a, $b): int
 {
     $diff = strnatcasecmp($b['count'], $a['count']);
     if ($diff == 0) {
@@ -31,7 +31,12 @@ function compare_count($a, $b)
  *
  * @param   array   $langs  array of all languages from 
  */ 
-function collapse_multiple_languages($langs) 
+/**
+ * @return (mixed|string)[][]
+ *
+ * @psalm-return list<array{language: string, count?: mixed}>
+ */
+function collapse_multiple_languages($langs): array 
 {
     $templangs = array();
     

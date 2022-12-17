@@ -51,7 +51,7 @@ else
 <?
 // -------------- Functions follow -------------
 
-function printStartForm()
+function printStartForm(): void
 {
     global $tomeurl;
 ?>
@@ -79,7 +79,12 @@ function printStartForm()
 }
 
 
-function getEpBody($url)
+/**
+ * @return (((string|string[])[]|string)[]|string)[][]
+ *
+ * @psalm-return list<array<array<array<array{number: string, title: string}|string>|string>|string>>
+ */
+function getEpBody($url): array
 {
     $resp = httpClient($url, true);
 
@@ -143,7 +148,7 @@ function getEpBody($url)
 }
 
 
-function fetchTomeInfos($url)
+function fetchTomeInfos($url): void
 {
     if (!stristr($url, 'http://')) $url = 'http://www.tvtome.com/'.ucfirst($url).'/';
 
@@ -252,7 +257,7 @@ function fetchTomeInfos($url)
 }
 
 
-function save()
+function save(): void
 {
 	$scount = $_POST['seasons'];
 	$ecount = $_POST['episodes'];

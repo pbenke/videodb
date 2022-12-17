@@ -20,9 +20,9 @@ require_once './core/functions.php';
 require_once './engines/engines.php';
 
 /**
- * Display template with standard header and footer
+ *  Display template with standard header and footer
  */
-function tpl_display_show($template, $flush = true)
+function tpl_display_show($template, $flush = true): void
 {
     smarty_display('header.tpl');
 
@@ -32,12 +32,12 @@ function tpl_display_show($template, $flush = true)
 }
 
 /**
- * Display page using templates
- * If page content is unmodified, return HTTP 304 Not modified
+ *  Display page using templates
+ *  If page content is unmodified, return HTTP 304 Not modified
  *
- * @param   string  $template Template name for main content
+ * @param string  $template Template name for main content
  */
-function tpl_display($template)
+function tpl_display($template): void
 {
     global $config;
 
@@ -57,9 +57,9 @@ function tpl_display($template)
 }
 
 /**
- * Prepare standard page templates
+ *  Prepare standard page templates
  */
-function tpl_page($help = '', $title = '')
+function tpl_page($help = '', $title = ''): void
 {
     tpl_language();
     tpl_header($help, $title);
@@ -67,9 +67,9 @@ function tpl_page($help = '', $title = '')
 }
 
 /**
- * Assigns language strings and config options to the smarty engine
+ *  Assigns language strings and config options to the smarty engine
  */
-function tpl_language()
+function tpl_language(): void
 {
     global $smarty, $lang, $config;
 
@@ -78,12 +78,12 @@ function tpl_language()
 }
 
 /**
- * Assigns the header urls to the smarty engine
+ *  Assigns the header urls to the smarty engine
  *
  * @param string $help    The helpfile to display (optional, without extension)
  * @param string $title   The text to add to html <title> tag (optional, will be html-encoded)
  */
-function tpl_header($help = '', $title = '')
+function tpl_header($help = '', $title = ''): void
 {
     global $smarty, $lang, $config;
     global $id, $diskid;
@@ -187,9 +187,9 @@ function tpl_header($help = '', $title = '')
 }
 
 /**
- * Assigns the filter options to the smarty engine
+ *  Assigns the filter options to the smarty engine
  */
-function tpl_filters($filter, $showtv)
+function tpl_filters($filter, $showtv): void
 {
     global $smarty, $lang;
     global $filter_expr;
@@ -236,11 +236,11 @@ function tpl_filters($filter, $showtv)
 }
 
 /**
- * Assigns the searchresults/browselist to the smarty engine
+ *  Assigns the searchresults/browselist to the smarty engine
  *
- * @param   array   indexed array containing the item data
+ * @param array   indexed array containing the item data
  */
-function tpl_list($list)
+function tpl_list($list): void
 {
     global $smarty, $config;
     global $listcolumns;
@@ -309,9 +309,9 @@ function tpl_list($list)
 }
 
 /**
- * Assigns debug infos and version to the smarty engine
+ *  Assigns debug infos and version to the smarty engine
  */
-function tpl_footer()
+function tpl_footer(): void
 {
     global $smarty, $config, $SQLtrace;
 
@@ -338,7 +338,9 @@ function tpl_footer()
 }
 
 /**
- * Function combines multiple actor thumbnail queries into single SQL query
+ *  Function combines multiple actor thumbnail queries into single SQL query
+ *
+ * @return void
  */
 function get_actor_thumbnails_batched(&$actors)
 {
@@ -366,9 +368,9 @@ function get_actor_thumbnails_batched(&$actors)
 }
 
 /**
- * Convert textbox/db presentation into actors array
+ *  Convert textbox/db presentation into actors array
  */
-function split_cast_array(&$actor, $key)
+function split_cast_array(&$actor, $key): void
 {
     $ary = explode('::', $actor);
     
@@ -411,11 +413,11 @@ function prepare_cast($cast)
 }
 
 /**
- * Assigns the videoinfos to the smarty engine
+ *  Assigns the videoinfos to the smarty engine
  *
- * @param   array   associative array containing the item data
+ * @param array   associative array containing the item data
  */
-function tpl_show($video)
+function tpl_show($video): void
 {
     global $smarty, $config;
 
@@ -480,9 +482,9 @@ function tpl_show($video)
 }
 
 /**
- * Assigns the videoinfos to the smarty engine
+ *  Assigns the videoinfos to the smarty engine
  */
-function tpl_edit($video)
+function tpl_edit($video): void
 {
 	global $smarty, $config, $lang;
 
@@ -542,9 +544,9 @@ function tpl_edit($video)
 }
 
 /**
- * Prepare lookup template
+ *  Prepare lookup template
  */
-function tpl_lookup($find, $engine, $searchtype)
+function tpl_lookup($find, $engine, $searchtype): void
 {
     global $smarty, $config;
 

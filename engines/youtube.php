@@ -20,24 +20,33 @@ define('YOUTUBE_DEVELOPER_KEY', 'AI39si7znfvxGu-6OfT-PIPHxUJbAy429l63_jnWSThlJ7H
 // http://gdata.youtube.com/feeds/api/videos?client=ytapi-AndreasGoetz-videodb-g7dk2dh6-0&key=AI39si7znfvxGu-6OfT-PIPHxUJbAy429l63_jnWSThlJ7Hitv_gmCpJ9cE_HCnH7PDvSLgthw4wEZ5wSrw139DPLbbmLb50GQ&v=2&start-index=1&max-results=10&q=alien
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
+ *
+ * @return (int|string|string[])[]
+ *
+ * @psalm-return array{name: 'YouTube', stable: 1, php: '5.0', capabilities: array{0: 'trailer'}}
  */
-function youtubeMeta()
+function youtubeMeta(): array
 {
     return array('name' => 'YouTube', 'stable' => 1, 'php' => '5.0', 'capabilities' => array('trailer'));
 }
 
-function youtubeHasTrailer($title)
+function youtubeHasTrailer($title): bool
 {
 	return count(youtubeSearch($title)) > 0;
 }
 
-function normalize($str)
+function normalize($str): string|null
 {
 	return preg_replace('/[^a-zäöüA-ZÄÖÜ0-9\s]/', '', $str);
 }
 
-function youtubeSearch($title)
+/**
+ * @return string[][]
+ *
+ * @psalm-return list<array{id: string, src: string, title: string}>
+ */
+function youtubeSearch($title): array
 {
 	$trailers       = array();
     $title	        = normalize($title);

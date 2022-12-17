@@ -15,11 +15,15 @@ define('IMDB_KEY', 'apikey');
 
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return ((string|string[])[]|int|string)[]
+ *
+ * @psalm-return array{name: 'IMDb API', stable: 1, php: '8.1.0', capabilities: array{0: 'movie', 1: 'image'}, config: array{0: array{opt: 'apikey', name: 'IMDb API key', desc: 'To use the IMDb API search engine you need to obtain your own IMDb API key <a href="https://imdb-api.com">here</a>).'}}}
  */
-function imdbapiMeta() {
+function imdbapiMeta(): array {
     return array('name' => 'IMDb API', 'stable' => 1, 'php' => '8.1.0', 'capabilities' => array('movie', 'image'),
          'config' => array(
                 array('opt' => IMDB_KEY, 'name' => 'IMDb API key',
@@ -291,7 +295,12 @@ function imdbapiData($imdbID) {
 }
 
 
-function splitTitle($input) {
+/**
+ * @return string[]
+ *
+ * @psalm-return array{0: string, 1: string}
+ */
+function splitTitle($input): array {
     list($title, $subtitle) = array_pad(explode(' - ', $input, 2), 2, '');
 
     // no dash, lets try colon

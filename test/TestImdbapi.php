@@ -41,7 +41,7 @@ class TestIMDbApi extends TestCase
         echo '</pre>';
     }
 
-    function testDutchLanguageWithAmericanMovie()
+    function testDutchLanguageWithAmericanMovie(): void
     {
         // get German version.
         global $config;
@@ -86,7 +86,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('/Rund 30 Jahre vor den Ereignissen des ersten Star Wars-Films nimmt die Legende ihren Anfang/', $data['plot']);
     }
 
-    function testEnglishLanguageWithAmericanMovie()
+    function testEnglishLanguageWithAmericanMovie(): void
     {
         // Star Wars: Episode I
         // https://imdb.com/title/tt0120915/
@@ -124,7 +124,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('/Two Jedi escape a hostile blockade to find allies and come across a young boy who may bring balance to the Force/', $data['plot']);
     }
 
-    function testMovie2()
+    function testMovie2(): void
     {
         // Harold & Kumar Escape from Guantanamo Bay
         // https://www.imdb.com/title/tt0481536/
@@ -137,7 +137,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('/After being mistaken for terrorists and thrown into Guantánamo Bay, stoners Harold and Kumar escape and return to the U.S./', $data['plot']);
     }
 
-    function testMovieWithoutImage()
+    function testMovieWithoutImage(): void
     {
         // Can We Talk?
         // https://www.imdb.com/title/tt1486604/
@@ -150,7 +150,7 @@ class TestIMDbApi extends TestCase
         $this->assertNotContains('coverurl', $data);
     }
 
-    function testMovieMultipleDirectors()
+    function testMovieMultipleDirectors(): void
     {
         // Astérix aux jeux olympiques (2008)
         // https://www.imdb.com/title/tt0463872/
@@ -163,7 +163,7 @@ class TestIMDbApi extends TestCase
         $this->assertEquals('Frédéric Forestier, Thomas Langmann', $data['director']);
     }
 
-    function testMoviePlot() {
+    function testMoviePlot(): void {
         // Amélie
         // https://www.imdb.com/title/tt0211915/
         // added for bug #2914077 - charset of plot
@@ -175,7 +175,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('/Amélie is an innocent and naive girl/', $data['plot']);
     }
 
-    function testMovie8() {
+    function testMovie8(): void {
         // Cars (2006)
         // https://www.imdb.com/title/tt0317219/
         // added for bug #3399788 - title & year
@@ -188,7 +188,7 @@ class TestIMDbApi extends TestCase
         $this->assertEquals($data['year'], 2006);
     }
 
-    function testMovieDanish() {
+    function testMovieDanish(): void {
         // Test that Danish language works.
         Global $config;
         $config['imdbApiLanguage'] = 'da';
@@ -210,11 +210,11 @@ class TestIMDbApi extends TestCase
     }
 
     /**
-     * Case added for bug 1675281
+     *  Case added for bug 1675281
      *
-     * https://sourceforge.net/tracker/?func=detail&atid=586362&aid=1675281&group_id=88349
+     *  https://sourceforge.net/tracker/?func=detail&atid=586362&aid=1675281&group_id=88349
      */
-    function testSeries() {
+    function testSeries(): void {
         // Scrubs
         // https://imdb.com/title/tt0285403/
         $data = engineGetData('tt0285403', 'imdbapi');
@@ -227,9 +227,9 @@ class TestIMDbApi extends TestCase
     }
 
     /**
-     * Case added for "24" - php seems to have issues with matching large patterns...
+     *  Case added for "24" - php seems to have issues with matching large patterns...
      */
-    function testSeriesWithALargeCast()
+    function testSeriesWithALargeCast(): void
     {
         // 24
         // https://imdb.com/title/tt0285331/
@@ -241,7 +241,7 @@ class TestIMDbApi extends TestCase
         $this->assertTrue(sizeof(preg_split('/\n/', $data['cast'])) > 400);
     }
 
-    function testSeries3MainPage()
+    function testSeries3MainPage(): void
     {
         // Bis in die Spitzen
         // https://imdb.com/title/tt0461620/
@@ -257,7 +257,7 @@ class TestIMDbApi extends TestCase
         $this->assertEquals('Bis in die Spitzen', $data['title']);
     }
 
-    function testSeriesEpisodeWithoutRuntime()
+    function testSeriesEpisodeWithoutRuntime(): void
     {
         // Bis in die Spitzen: Folge #1.1
         // https://imdb.com/title/tt0872606/
@@ -275,7 +275,7 @@ class TestIMDbApi extends TestCase
         $this->assertEquals('Episode #1.1', $data['subtitle']);
     }
 
-    function testSeriesEpisode()
+    function testSeriesEpisode(): void
     {
         // get German version.
         Global $config;
@@ -316,7 +316,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('/Q tries to prove that Picard needs him as part of their crew by hurling the Enterprise 7,000 light years/', $data['plot']);
     }
 
-    function testSeriesEpisode2()
+    function testSeriesEpisode2(): void
     {
         // The Inspector Lynley Mysteries - Episode: Playing for the Ashes
         // https://www.imdb.com/title/tt0359476
@@ -349,7 +349,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('/Lynley seeks the help of profiler Helen Clyde when he investigates the asphyxiation death of superstar cricketer with a dysfunctional personal life./', $data['plot']);
     }
 
-    function testSeriesEpisode3() {
+    function testSeriesEpisode3(): void {
         // Pushing Daisies - Episode 3
         // https://www.imdb.com/title/tt1039379/
         $data = engineGetData('tt1039379', 'imdbapi');
@@ -362,22 +362,22 @@ class TestIMDbApi extends TestCase
         $this->assertEquals(42, $data['runtime']);
     }
 
-    function testGetActorUrlByName() {
+    function testGetActorUrlByName(): void {
         $url = engineGetActorUrl('Arnold Schwarzenegger', null, 'imdbapi');
         $this->assertEquals('https://www.imdb.com/Name?Arnold+Schwarzenegger', $url);
     }
 
-    function testGetActorUrlById() {
+    function testGetActorUrlById(): void {
         $url = engineGetActorUrl(null, 'nm0000216', 'imdbapi');
         $this->assertEquals('https://www.imdb.com/name/nm0000216/', $url);
     }
 
-    function testGetActorUrlByNameAndId() {
+    function testGetActorUrlByNameAndId(): void {
         $url = engineGetActorUrl('Arnold Schwarzenegger', 'nm0000216', 'imdbapi');
         $this->assertEquals('https://www.imdb.com/name/nm0000216/', $url);
     }
 
-    function testTVSeriesExactOneHourLong()
+    function testTVSeriesExactOneHourLong(): void
     {
         // Terminator: The Sarah Connor Chronicles
         // https://www.imdb.com/title/tt0851851/
@@ -390,7 +390,7 @@ class TestIMDbApi extends TestCase
         $this->assertEmpty($data['runtime']);
     }
 
-    function testActorImageWithNameAndId() {
+    function testActorImageWithNameAndId(): void {
         // William Shatner
         // https://www.imdb.com/name/nm0000638/
         $data = engineActor('William Shatner', 'nm0000638', 'imdbapi');
@@ -399,7 +399,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
     }
 
-    function testActorImageByName() {
+    function testActorImageByName(): void {
         // William Shatner
         // https://www.imdb.com/name/nm0000638/
         $data = engineActor(null, 'nm0000638', 'imdbapi');
@@ -410,7 +410,7 @@ class TestIMDbApi extends TestCase
         $this->assertMatchesRegularExpression('#https://m.media-amazon.com/images/M/.+?.jpg#', $data[0][1]);
     }
 
-    function testActorWithoutImage() {
+    function testActorWithoutImage(): void {
         // Oscar Pearce
         // https://www.imdb.com/name/nm0668994/
         $data = engineActor('Oscar Pearce', 'nm0668994', 'imdbapi');
@@ -420,7 +420,7 @@ class TestIMDbApi extends TestCase
         $this->assertEmpty($data);
     }
 
-    function testSearch()
+    function testSearch(): void
     {
         // Clerks II
         // https://imdb.com/find?q=clerks 2
@@ -437,9 +437,9 @@ class TestIMDbApi extends TestCase
     }
 
     /**
-     * Check fur UTF-8 encoded search and aka search
+     *  Check fur UTF-8 encoded search and aka search
      */
-    function testSearch2()
+    function testSearch2(): void
     {
         // Das Streben nach Glück | The Pursuit of Happyness
         // https://www.imdb.com/find?s=all&q=Das+Streben+nach+Gl%FCck
@@ -464,9 +464,9 @@ class TestIMDbApi extends TestCase
     }
 
     /**
-     * Make sure matching is correct and no HTML tags are included
+     *  Make sure matching is correct and no HTML tags are included
      */
-    function testPartialSearch()
+    function testPartialSearch(): void
     {
         // Serpico
         // https://imdb.com/find?s=all&q=serpico

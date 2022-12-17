@@ -124,9 +124,9 @@ function setup_mkOptions($isprofile = false)
 }
 
 /**
- * Add engine-specific config options for saving
+ *  Add engine-specific config options for saving
  */
-function setup_additionalSettings()
+function setup_additionalSettings(): void
 {
     global $config, $SETUP_GLOBAL;
 
@@ -144,22 +144,22 @@ function setup_additionalSettings()
 }
 
 /**
- * Add a new section to the config options array
+ *  Add a new section to the config options array
  *
  * @param array   $setup      The config array
  * @param string  $section    Name of the new section
  */
-function setup_addSection($section)
+function setup_addSection($section): array
 {
     $option['group']    = $section;
     return $option;
 }
 
 /**
- * Adds an entry for the config option array
+ *  Adds an entry for the config option array
  *
- * returns NULL on global options if $isprofile is true 
- * so global options will not be added to user profile settings
+ *  returns NULL on global options if $isprofile is true 
+ *  so global options will not be added to user profile settings
  *
  * @param array   $setup      The config array
  * @param boolean $isprofile  Do we prepare a profile array?
@@ -169,6 +169,8 @@ function setup_addSection($section)
  * @param string  $set        Default value of this option
  * @param string  $hl         Help text headline
  * @param string  $help       Help text
+ *
+ * @return array|null
  */
 function setup_addOption($isprofile, $name, $type, 
                          $data='', $set=NULL, $hl=NULL, $help=NULL)
@@ -271,9 +273,9 @@ function setup_getTemplates(&$screenshots)
 }
 
 /**
- * Mediatypes
+ *  Mediatypes
  */
-function setup_getMediatypes()
+function setup_getMediatypes(): array
 {
     $SELECT = 'SELECT id, name
                FROM '.TBL_MEDIATYPES.'
@@ -283,10 +285,10 @@ function setup_getMediatypes()
     return array_associate($result, 'id', 'name');
 }
 
-/** 
+/**
  * Genres
  */
-function setup_getGenres()
+function setup_getGenres(): array
 {
     $SELECT = 'SELECT id, name
                  FROM '.TBL_GENRES.'
@@ -297,9 +299,9 @@ function setup_getGenres()
 }
 
 /**
- * Get list of engines for default engine selection
+ *  Get list of engines for default engine selection
  */
-function setup_getEngines($engines_ary)
+function setup_getEngines($engines_ary): array
 {
 	$engines = array();
 	
@@ -312,9 +314,9 @@ function setup_getEngines($engines_ary)
 }
 
 /**
- * Prepare customfields
+ *  Prepare customfields
  */
-function setup_mkCustoms()
+function setup_mkCustoms(): string
 {
     global $config;
     global $allcustomtypes;
@@ -339,11 +341,11 @@ function setup_mkCustoms()
 }
 
 /**
- * Update session variables with configuration values
+ *  Update session variables with configuration values
  *
  * @author Andreas Goetz
  */
-function update_session()
+function update_session(): void
 {
     global $listcolumns, $showtv;
     

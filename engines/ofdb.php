@@ -17,11 +17,15 @@ $GLOBALS['ofdbGW']       = 'http://www.ofdbgw.org';
 $GLOBALS['ofdbIdPrefix'] = 'ofdb:';
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (int|string)[]
+ *
+ * @psalm-return array{name: 'OFDB (de)', stable: 1, supportsEANSearch: 1}
  */
-function ofdbMeta()
+function ofdbMeta(): array
 {
     return array(
         'name' => 'OFDB (de)'
@@ -193,13 +197,17 @@ function ofdbSearch($title, $searchType = 'title')
 }
 
 /**
- * Fetches the data for a given OfDB id
+ *  Fetches the data for a given OfDB id
  *
- * @author  Chinamann <chinamann@users.sourceforge.net>
- * @param   int   OfDB id
- * @return  array Result data
+ * @author Chinamann <chinamann@users.sourceforge.net>
+ *
+ * @param int   OfDB id
+ *
+ * @return (float|mixed|string|string[])[]|false Result data
+ *
+ * @psalm-return array{encoding: 'utf-8', imdbID: mixed|string, title: string, orgtitle: string, year: string, coverurl: string, plot: string, rating: float, cast?: string, director?: string, country?: string, genres: list<string>}|false
  */
-function ofdbData($id)
+function ofdbData($id): array|false
 {
     global $CLIENTERROR;
     global $cache;
@@ -667,7 +675,7 @@ function ofdbActor($name, $id)
     return $ary;
 }
 
-function ofdbGetActorId($name)
+function ofdbGetActorId($name): int|string
 {
     global $ofdbServer;
 

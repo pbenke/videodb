@@ -112,13 +112,14 @@ function getItemGenres($id, $names = false)
 }
 
 /**
- * save genres for a movie
+ *  save genres for a movie
  *
- * @todo                  check if this can be moved to edit.php
+ * @todo check if this can be moved to edit.php
+ *
  * @param integer $id     ID of the video
  * @param array   $genres genre IDs
  */
-function setItemGenres($id, $genres)
+function setItemGenres($id, $genres): void
 {
     if (count($genres))
     {

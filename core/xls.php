@@ -20,11 +20,11 @@ require_once './engines/engines.php';
 require_once 'vendor/autoload.php';
 
 /**
- * Export PDF document
+ *  Export PDF document
  *
- * @param   string  $where  WHERE clause for SQL statement
+ * @param string  $where  WHERE clause for SQL statement
  */
-function xlsexport($WHERE)
+function xlsexport($WHERE): void
 {
     global $config, $lang;
 

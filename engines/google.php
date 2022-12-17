@@ -5,7 +5,7 @@
  * Lookup cover images from Google
  *
  * @package Engines
- * @author  Andreas Götz    <cpuidle@gmx.de>
+ * @author  Andreas GÃ¶tz    <cpuidle@gmx.de>
  *
  * @link    http://images.google.com  Google image search
  * @link    http://code.google.com/apis/ajaxsearch/documentation/   API doc
@@ -14,11 +14,15 @@
  */
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (int|string|string[])[]
+ *
+ * @psalm-return array{name: 'Google', stable: 1, capabilities: array{0: 'image'}}
  */
-function googleMeta()
+function googleMeta(): array
 {
     return array('name' => 'Google', 'stable' => 1, 'capabilities' => array('image'));
 }

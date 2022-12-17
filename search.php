@@ -27,9 +27,11 @@ session_set('genres', $genres = isset($genres) ? $genres : array());
 session_set('listview', 'search.php');
 
 /**
- * Update item list asynchronously
+ *  Update item list asynchronously
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @return never
  */
 function ajax_render()
 {

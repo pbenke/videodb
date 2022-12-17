@@ -17,10 +17,12 @@ require_once './core/functions.php';
 require_once './core/output.php';
 
 /**
- * Update item list asynchronously
+ *  Update item list asynchronously
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- */ 
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @return never
+ */
 function ajax_render()
 {
     global $smarty, $result, $filter;
@@ -43,7 +45,7 @@ function ajax_render()
     exit($content);
 }
 
-function prepareOrder($m) {
+function prepareOrder($m): string {
        switch($m) {
                case 1:
                        $ORDER = "rating desc";
@@ -58,7 +60,7 @@ function prepareOrder($m) {
        return $ORDER;
 }
 
-function get_mediatype_sql($m)
+function get_mediatype_sql($m): string
 {
     switch ($m) {
         case -2:    

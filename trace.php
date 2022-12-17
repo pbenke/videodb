@@ -19,12 +19,12 @@ $urlid      = 'videodburl';
 $striptags  = array('iframe','object','embed','ads','html','head','body','!DOCTYPE');
 
 /**
- * Figures out which part of a given URI is server and path
- * Result in global $base_server and $base_path variables
+ *  Figures out which part of a given URI is server and path
+ *  Result in global $base_server and $base_path variables
  *
- * @param  string  $url      URI
+ * @param string  $url      URI
  */
-function get_base($url)
+function get_base($url): void
 {
 	global $uri;
 
@@ -97,9 +97,9 @@ function array_delete($a, $i, $count = 1)
 }
 
 /**
- * Check if this item is already in the database
+ *  Check if this item is already in the database
  */
-function is_known_item($id, &$sp_id, &$sp_diskid)
+function is_known_item($id, &$sp_id, &$sp_diskid): bool
 {
     $SQL = "SELECT imdbID, id, diskid
               FROM ".TBL_DATA."
@@ -120,7 +120,7 @@ function is_known_item($id, &$sp_id, &$sp_diskid)
     return false;
 }
 
-function _replace_enclosed_tag_traced($matches)
+function _replace_enclosed_tag_traced($matches): string
 {
 	global $urlid, $config, $uri, $page, $iframe;
 
@@ -220,7 +220,7 @@ function _replace_enclosed_tag_traced($matches)
 	return $matches[1].$url.$matches[3].$matches[4].$note.$matches[5].$append;
 }
 
-function _replace_tag($matches)
+function _replace_tag($matches): string
 {
 	global $urlid, $striptags, $iframe;
 
@@ -243,12 +243,12 @@ function _replace_tag($matches)
 	return $matches[1].$url.$parameters.$matches[5].$append;
 }
 
-function _remove_tag($matches)
+function _remove_tag($matches): string
 {
 	return '';
 }
 
-function imdb_replace_title_callback($matches)
+function imdb_replace_title_callback($matches): string
 {
 	global $uri;
 
@@ -426,7 +426,7 @@ function fixup_javascript($html)
     return ($html);
 }
 
-function replace_javascript ($html, $js_page_type, $js_file_name)
+function replace_javascript ($html, $js_page_type, $js_file_name): string|null
 {
     global $iframe;
 

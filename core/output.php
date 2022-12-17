@@ -73,12 +73,15 @@ function out_genres($selected)
 }
 
 /**
- * Generate genres array for use with genre checkboxes
+ *  Generate genres array for use with genre checkboxes
  *
- * @param  array $selected  selected genre IDs
- * @return                  string HTML for genre checkboxes
+ * @param array $selected  selected genre IDs
+ *
+ * @return array HTML for genre checkboxes
+ *
+ * @psalm-return list<mixed>
  */
-function out_genres2($item_genres = null)
+function out_genres2($item_genres = null): array
 {
 	// get detailed genres
     $all_genres = getGenres();
@@ -102,13 +105,15 @@ function out_genres2($item_genres = null)
 }
 
 /**
- * Display selectbox with available Mediatypes
+ *  Display selectbox with available Mediatypes
  *
  * @todo is this still used? can it be replaced by template code?
+ *
  * @author <rob@robvonk.com>
- * @return string   HTML of selectbox
+ *
+ * @return array HTML of selectbox
  */
-function out_mediatypes($prefix = null)
+function out_mediatypes($prefix = null): array
 {
 	global $config;
 
@@ -159,15 +164,17 @@ function out_languageflags($flags)
 }
 
 /**
- * List of owners names/ids with valid permissions for use in edit/index/search templates
+ *  List of owners names/ids with valid permissions for use in edit/index/search templates
  *
- * @author  <cpuidle@gmx.de>
- * @author  Chinamann <chinamann@users.sourceforge.net>
- * @param   string  $prefix         Predefined additional Array entries
- * @param   string  $permission     Honor permissions for selectbox
- * @return  string                  Array with keys=ownernames and values=ownerids
+ * @author <cpuidle@gmx.de>
+ * @author Chinamann <chinamann@users.sourceforge.net>
+ *
+ * @param string  $prefix         Predefined additional Array entries
+ * @param string  $permission     Honor permissions for selectbox
+ *
+ * @return array Array with keys=ownernames and values=ownerids
  */
-function out_owners($prefix = null, $permission = false, $keyIsId = false)
+function out_owners($prefix = null, $permission = false, $keyIsId = false): array
 {
     global $config;
 
@@ -209,11 +216,13 @@ function out_owners($prefix = null, $permission = false, $keyIsId = false)
 }
 
 /**
- * MySQL-compatible list of owner ids with required access permission
+ *  MySQL-compatible list of owner ids with required access permission
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de> 
+ * @author Andreas Goetz   <cpuidle@gmx.de> 
+ *
+ * @psalm-return -1|string
  */
-function get_owner_ids($permission)
+function get_owner_ids($permission): int|string
 {
     foreach($_SESSION['vdb']['permissions']['to_uid'] as $to_uid => $perm)
     {
@@ -241,7 +250,10 @@ function sizetostring($size, $precision = 0)
     return round($size, $precision).$sizes[$total];
 }
 
-function img_avg_color($filename, $format=0)
+/**
+ * @return false|string
+ */
+function img_avg_color($filename, $format=0): string|false
 {
 	// networked file
 	if (preg_match('/^http/i', $imgurl)) return(FALSE);

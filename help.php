@@ -11,7 +11,7 @@
 
 require_once './core/functions.php';
 
-function _replace_anchors_callback($matches)
+function _replace_anchors_callback($matches): string
 {
 	if (!preg_match('=^https?://=',$matches[2])) 
     {

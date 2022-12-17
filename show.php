@@ -15,9 +15,9 @@ require_once './core/custom.php';
 require_once './core/output.php';
 
 /**
- * Play movie on configured Boxee box
+ *  Play movie on configured Boxee box
  */
-function boxeePlay($filename) {
+function boxeePlay($filename): string {
     global $config;
 
     $socket = fsockopen($config['boxeeHost'], $config['boxeePort']);

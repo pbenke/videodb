@@ -11,13 +11,13 @@
 if (!defined('CACHE')) define('CACHE', 'cache');
 
 /**
- * Get the hashed filename
+ *  Get the hashed filename
  *
- * @param  string   url of the item
- * @param  string   $cache_folder  name ob the sub-cache to adress
- * @param  string   ext file extension of the cache file
+ * @param string   url of the item
+ * @param string   $cache_folder  name ob the sub-cache to adress
+ * @param string   ext file extension of the cache file
  */
-function cache_get_filename($url, $cache_folder, $ext = '')
+function cache_get_filename($url, $cache_folder, $ext = ''): string
 {
     $hash       = md5($url) . (($ext) ? '.'.$ext : '');
     $cache_file = cache_get_folder($cache_folder, $hash) . $hash;
@@ -85,15 +85,15 @@ function cache_prune_folder($cache_folder, $cache_max_age, $force_prune = false,
 }
 
 /**
- * Cleanup a cache folder hierarchy
+ *  Cleanup a cache folder hierarchy
  *
- * @TODO  decouple from global config options
+ * @TODO decouple from global config options
  *
  * @param string $cache_folder  path to cache folder
  * @param int    $cache_max_age maximum age of cached items in seconds
  * @param bool   $force_prune   force cache pruning even if not due according to schedule
  */
-function cache_prune_folders($cache_folder, $cache_max_age, $force_prune = false, $simulate = false, $pattern = '*', $levels = 0)
+function cache_prune_folders($cache_folder, $cache_max_age, $force_prune = false, $simulate = false, $pattern = '*', $levels = 0): void
 {
     global $config;
 
@@ -172,7 +172,7 @@ function cache_get($url, $cache_folder, $cache_max_age, $serialize = false)
     return $data;
 }
 
-function cache_put($url, $data, $cache_folder, $cache_max_age, $serialize = false)
+function cache_put($url, $data, $cache_folder, $cache_max_age, $serialize = false): void
 {
     // only put file to cache if caching is enabled
     if ($cache_max_age > 0)

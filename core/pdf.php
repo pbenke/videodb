@@ -7,7 +7,7 @@
  *
  * @package Core
  * @link    http://www.fpdf.org
- * @author  Andreas G�tz    <cpuidle@gmx.de>
+ * @author  Andreas Götz    <cpuidle@gmx.de>
  * @version $Id: pdf.php,v 1.36 2013/03/15 16:42:46 andig2 Exp $
  */
 
@@ -48,7 +48,7 @@ class PDF extends FPDF2File
         $this->HREF = '';
     }
 
-    function GDImage($file, $x, $y, $w, $h, $im, $link = '', $type = 'png')
+    function GDImage($file, $x, $y, $w, $h, GdImage|false $im, $link = '', string $type = 'png'): void
     {
         // ouput the GD image $im
         ob_start();
@@ -125,7 +125,7 @@ class PDF extends FPDF2File
         imagedestroy($im);
     }
 
-    function VerifyFont($font, $mode = '')
+    function VerifyFont($font, string $mode = ''): void
     {
         $default_fonts = array('Arial', 'Courier', 'Helvetica', 'Times');
 
@@ -138,7 +138,7 @@ class PDF extends FPDF2File
         }
     }
 
-    function WriteHTML($html)
+    function WriteHTML(string $html): void
     {
         global $config;
         //HTML parser
@@ -172,7 +172,7 @@ class PDF extends FPDF2File
         }
     }
 
-    function OpenTag($tag, $attr)
+    function OpenTag(string $tag, array $attr): void
     {
         global $config;
 
@@ -188,7 +188,7 @@ class PDF extends FPDF2File
         }
     }
 
-    function CloseTag($tag)
+    function CloseTag(string $tag): void
     {
         //Closing tag
         if ($tag == 'B' or $tag == 'I' or $tag == 'U') {
@@ -199,7 +199,7 @@ class PDF extends FPDF2File
         }
     }
 
-    function SetStyle($tag, $enable)
+    function SetStyle(string $tag, bool $enable): void
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -212,7 +212,7 @@ class PDF extends FPDF2File
         $this->SetFont('', $style);
     }
 
-    function PutLink($URL, $txt)
+    function PutLink($URL, string $txt): void
     {
         global $config;
 
@@ -225,10 +225,13 @@ class PDF extends FPDF2File
     }
 
     /**
-     * @author  Olivier <oliver@fpdf.org>
+     * @author Olivier <oliver@fpdf.org>
+     *
      * @license Freeware
+     *
+     * @psalm-return 0|positive-int
      */
-    function WordWrap(&$text, $maxwidth)
+    function WordWrap(&$text, $maxwidth): int
     {
         $text = trim($text);
         if ($text === '') {
@@ -263,9 +266,9 @@ class PDF extends FPDF2File
 }
 
 /**
- * Return image name for representing the media type
+ *  Return image name for representing the media type
  */
-function getMediaImage($mediatype)
+function getMediaImage($mediatype): string
 {
     if (preg_match("/^(DVD([+-]R)?|DivX|CD|VCD|SVCD|VHS|BLU-RAY|AVCHD|HDD|HD-DVD)/i", $mediatype, $matches)) {
         $type_image = strtolower($matches[1]) . '.png';
@@ -277,11 +280,11 @@ function getMediaImage($mediatype)
 }
 
 /**
- * Export PDF document
+ *  Export PDF document
  *
  * @param string $where WHERE clause for SQL statement
  */
-function pdfexport($WHERE)
+function pdfexport($WHERE): void
 {
     global $config;
 

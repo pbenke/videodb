@@ -101,8 +101,7 @@ function getFileTimeLinux($file)
 }
 
 /**
- *
- * Get all movie files requrcily starting from \$dir.
+ *  Get all movie files requrcily starting from \$dir.
  *
  * @param String $dir
  *            The starting point.
@@ -111,7 +110,7 @@ function getFileTimeLinux($file)
  * @param String $skip
  *            Directories to skip.
  */
-function recurseDir($dir, $ext, $skip)
+function recurseDir($dir, $ext, $skip): void
 {
     // echo "In DIR $dir<br>";
     global $moviesFS, $doubles;

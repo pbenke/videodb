@@ -59,6 +59,9 @@ if (isset($submit) && $submit == "Fetch") {
     echo "Update done<br>";
 }
 
+/**
+ * @return void
+ */
 function FetchSaveMovie($id, $update_genres, $debug, $use_cache) {
     set_time_limit(60);
     // get fields (according to list) from db to be saved later

@@ -36,13 +36,13 @@ function getHTTPcache($url)
 }
 
 /**
- * Saves a HTTP resonse to a cachefile
- * If caching is globally disabled ($config['IMDBage'] <= 0), file is not saved.
+ *  Saves a HTTP resonse to a cachefile
+ *  If caching is globally disabled ($config['IMDBage'] <= 0), file is not saved.
  *
  * @param string $url URL of the response
  * @param mixed $resp HTTP Response
  */
-function putHTTPcache($url, $data)
+function putHTTPcache($url, $data): void
 {
     global $config;
 
@@ -53,9 +53,9 @@ function putHTTPcache($url, $data)
 }
 
 /**
- * Extract source encoding from HTML code or HTTP header otherwise
+ *  Extract source encoding from HTML code or HTTP header otherwise
  */
-function get_response_encoding($response)
+function get_response_encoding($response): string
 {
     $header = $encoding = null;
 
@@ -239,17 +239,18 @@ function addRequestHeader($requestConfig, $para)
 }
 
 /**
- * Print all header info using echo
+ *  Print all header info using echo
+ *
  * @param response    Object homepage Psr7\Response
  */
-function echoHeaders($headers)
+function echoHeaders($headers): void
 {
     foreach ($headers as $name => $values) {
         echo $name . ': ' . implode(', ', $values) . "<br>";
     }
 }
 
-function headers_to_string($headers)
+function headers_to_string($headers): string
 {
     $result = '';
     foreach ($headers as $name => $values) {

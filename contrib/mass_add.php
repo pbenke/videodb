@@ -35,7 +35,7 @@ require_once './core/security.php';
 <?php
 
 //slightly modified VideoDB function that does pretty much the same thing
-function InsertMovie($imdb_id,&$ret_title,$seen,$mediatype){
+function InsertMovie($imdb_id,&$ret_title,$seen,$mediatype): int{
 	
 	$imdb_set_fields    = array('md5','title','subtitle','language','diskid','mediatype','comment','disklabel',
                             'imdbID','year','imgurl','director','actors','runtime','country','plot','filename',

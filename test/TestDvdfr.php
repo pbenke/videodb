@@ -21,7 +21,7 @@ class TestDVDFR extends TestCase
         $this->markTestIncomplete('This engine is broken and tests has been disabled until it is fixed');
     }
 	
-	function testMovie()
+	function testMovie(): void
 	{
 		// Star Wars: Episode I
 		// http://www.dvdfr.com/dvd/f2869_star_wars_-_episode_i_-_la_menace_fantome.html
@@ -65,7 +65,7 @@ Array ( [title] => Star Wars: Episode I [subtitle] => The Phantom Menace [year] 
 */
 	}
 
-	function testSearchStarWars()
+	function testSearchStarWars(): void
 	{
 		// Star Wars
 		//	http://www.dvdfr.com/api/search.php?title=star%20wars

@@ -24,17 +24,17 @@ function session_get($varname, $default=null)
 }    
 
 /**
- * Set session value or specified default
+ *  Set session value or specified default
  */
-function session_set($varname, $value)
+function session_set($varname, $value): void
 {
     $_SESSION['vdb'][$varname] = $value;
 }    
 
 /**
- * Upsert session value with current value of global variable or specified default
+ *  Upsert session value with current value of global variable or specified default
  */
-function session_default($varname, $default=null)
+function session_default($varname, $default=null): void
 {
     global $$varname;
 

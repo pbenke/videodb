@@ -16,12 +16,15 @@ $GLOBALS['allocineServer']	    = 'http://www.allocine.fr';
 $GLOBALS['allocineIdPrefix']    = 'allocine:';
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return string[]
+ *
+ * @psalm-return array{name: 'Allocine (fr)'}
  */
-
-function allocineMeta()
+function allocineMeta(): array
 {
     return array('name' => 'Allocine (fr)');
 }
@@ -567,16 +570,18 @@ function allocineData($imdbID)
 }
 
 /**
- * Parses Actor-Details
+ *  Parses Actor-Details
  *
- * Find image and detail URL for actor, not sure if this can be made
- * a one-step process?  Completion waiting on update of actor
- * functionality to support more than one engine.
+ *  Find image and detail URL for actor, not sure if this can be made
+ *  a one-step process?  Completion waiting on update of actor
+ *  functionality to support more than one engine.
  *
- * @author  Douglas Mayle <douglas@mayle.org>
- * @author                Andreas Goetz <cpuidle@gmx.de>
- * @param  string  $name  Name of the Actor
- * @return array          array with Actor-URL and Thumbnail
+ * @author Douglas Mayle <douglas@mayle.org>
+ * @author Andreas Goetz <cpuidle@gmx.de>
+ *
+ * @param string  $name  Name of the Actor
+ *
+ * @return array|null array with Actor-URL and Thumbnail
  */
 function allocineActor($name, $actorid)
 {

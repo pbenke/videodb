@@ -100,9 +100,13 @@ function removeArticles($field)
 }
 
 /**
- * Prepare item for display based on input data
+ *  Prepare item for display based on input data
+ *
+ * @return array[]
+ *
+ * @psalm-return array{0: array<string, mixed>}
  */
-function echoInput($data)
+function echoInput($data): array
 {
     global $imdb_set_fields;
     
@@ -217,7 +221,9 @@ function updateDB($SQL, $id, $touch=false)
 }
 
 /**
- * Process HTTP file upload
+ *  Process HTTP file upload
+ *
+ * @return void
  */
 function processUpload($id, $file, $mime, $name)
 {

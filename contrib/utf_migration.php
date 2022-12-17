@@ -107,6 +107,9 @@ function sql_native($sql_string)
     return $result;
 }
 
+/**
+ * @return numeric|string
+ */
 function db_encode($s)
 {
 	global $db_native;

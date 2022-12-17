@@ -49,13 +49,15 @@ $allcustomtypes=array('',
                       );
 
 /**
- * Assigns custom field names and values to input object
- * @author                Andreas Goetz <cpuidle@gmx.de>
- * @param  hashref $video Reference to video hash structure
- * @param  string  $inout Either in or out, determines type of control 
+ *  Assigns custom field names and values to input object
+ *
+ * @author Andreas Goetz <cpuidle@gmx.de>
+ *
+ * @param hashref $video Reference to video hash structure
+ * @param string  $inout Either in or out, determines type of control 
  *						  returned (html input control or rendered output)
  */
-function customfields(&$video, $inout)
+function customfields(&$video, $inout): void
 {
 	global $config;
 
@@ -92,11 +94,11 @@ function custom__output($cn,$cv)
 }
 
 /**
- * Custom Type: text
+ *  Custom Type: text
  *
- * Standardinputhandler for custom fields
+ *  Standardinputhandler for custom fields
  */
-function custom_text_input($cn,$cv)
+function custom_text_input($cn,$cv): string
 {
     return '<input type="text" size="45" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" />';
 }
@@ -112,21 +114,21 @@ function custom_text_output($cn,$cv)
 }
 
 /**
- * Custom Type: url
+ *  Custom Type: url
  *
- * Stores an URL in a custom file and shows a clickable link.
+ *  Stores an URL in a custom file and shows a clickable link.
  */
-function custom_url_input($cn,$cv)
+function custom_url_input($cn,$cv): string
 {
     return '<input type="text" size="45" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" />';
 }
 
 /**
- * Custom Type: url
+ *  Custom Type: url
  *
- * Stores an URL in a custom file and shows a clickable link.
+ *  Stores an URL in a custom file and shows a clickable link.
  */
-function custom_url_output($cn,$cv)
+function custom_url_output($cn,$cv): string
 {
     if (!empty($cv))
     {
@@ -137,23 +139,23 @@ function custom_url_output($cn,$cv)
 }
 
 /**
- * Custom Type: ed2k
+ *  Custom Type: ed2k
  *
- * Stores the MD4 sum of the File in a custom file and shows a clickable ed2k
- * Link for the eDonkey2000 client tools.
+ *  Stores the MD4 sum of the File in a custom file and shows a clickable ed2k
+ *  Link for the eDonkey2000 client tools.
  */
-function custom_ed2k_input($cn,$cv)
+function custom_ed2k_input($cn,$cv): string
 {
     return '<input type="text" size="40" maxlength="255" name="'.$cn.'" id="'.$cn.'" value="'.htmlspecialchars($cv).'" /> (MD4)';
 }
 
 /**
- * Custom Type: ed2k
+ *  Custom Type: ed2k
  *
- * Stores the MD4 sum of the File in a custom file and shows a clickable ed2k
- * Link for the eDonkey2000 client tools.
+ *  Stores the MD4 sum of the File in a custom file and shows a clickable ed2k
+ *  Link for the eDonkey2000 client tools.
  */
-function custom_ed2k_output($cn,$cv)
+function custom_ed2k_output($cn,$cv): string
 {
     global $video;
 
@@ -165,12 +167,12 @@ function custom_ed2k_output($cn,$cv)
 }
 
 /**
- * Custom Type: language
+ *  Custom Type: language
  *
- * Language Selection with Quickselectionbuttons configured in 
- * $config['languages']
+ *  Language Selection with Quickselectionbuttons configured in 
+ *  $config['languages']
  */
-function custom_language_input($cn,$cv)
+function custom_language_input($cn,$cv): string
 {
     global $config;
 
@@ -293,15 +295,14 @@ function custom_orgtitle_output($cn,$cv)
 }
 
 /**
- * Custom Type: Movix
+ *  Custom Type: Movix
  *
- * Allows you to indicate if a movie is stored in a cd/dvd
- * with movix (http://movix.sourceforge.net/)
+ *  Allows you to indicate if a movie is stored in a cd/dvd
+ *  with movix (http://movix.sourceforge.net/)
  *
  * @author Antonio Giungato <antonio_giungato@libero.it>
  */
-
-function custom_movix_input($cn,$cv)
+function custom_movix_input($cn,$cv): string
 {
     $output ='<select name="'.$cn.'">
                 <option selected value=""></option>
@@ -318,13 +319,13 @@ function custom_movix_output($cn,$cv)
 }
 
 /**
- * Custom Type: MPAA
+ *  Custom Type: MPAA
  *
- * Show the MPAA rating of a movie
+ *  Show the MPAA rating of a movie
  *
  * @author Tim M. Sanders <tsanders@thesanders.org>
  */
-function custom_mpaa_input($cn,$cv)
+function custom_mpaa_input($cn,$cv): string
 {
     global $config;
     global $imdbdata;
@@ -378,14 +379,14 @@ function custom_mpaa_output($cn,$cv)
 }
 
 /**
- * Custom Type: BBFC
+ *  Custom Type: BBFC
  *
- * Show the BBFC rating of a movie
- * Based on the MPAA ratings above
+ *  Show the BBFC rating of a movie
+ *  Based on the MPAA ratings above
  *
  * @author Colin Ogilvie <csogilvie@users.sourceforge.net>
  */
-function custom_bbfc_input($cn,$cv)
+function custom_bbfc_input($cn,$cv): string
 {
     global $config;
     global $imdbdata;

@@ -17,11 +17,15 @@ $GLOBALS['dvdfrServer']	  = 'http://www.dvdfr.com';
 $GLOBALS['dvdfrIdPrefix'] = 'dvdfr:';
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (int|string)[]
+ *
+ * @psalm-return array{name: 'Dvdfr (fr)', stable: 0}
  */
-function dvdfrMeta()
+function dvdfrMeta(): array
 {
     return array('name' => 'Dvdfr (fr)', 'stable' => 0);
 }
@@ -313,16 +317,17 @@ function dvdfrData($imdbID)
 }
 
 /**
- * Parses Actor-Details
+ *  Parses Actor-Details
  *
- * Find image and detail URL for actor, not sure if this can be made
- * a one-step process?  Completion waiting on update of actor
- * functionality to support more than one engine.
+ *  Find image and detail URL for actor, not sure if this can be made
+ *  a one-step process?  Completion waiting on update of actor
+ *  functionality to support more than one engine.
  *
- * @param  string  $name  Name of the Actor
- * @return array          array with Actor-URL and Thumbnail
+ * @param string  $name  Name of the Actor
+ *
+ * @return void array with Actor-URL and Thumbnail
  */
-function dvdfrActor($name, $actorengineid)
+function dvdfrActor($name, $actorengineid): void
 {
     global $dvdfrServer;
 

@@ -24,9 +24,9 @@ require_once './core/httpclient.php';
 session_write_close();
 
 /**
- * amazon workaround for 1 pixel transparent images
+ *  amazon workaround for 1 pixel transparent images
  */
-function checkAmazonSmallImage($url, $ext, $file)
+function checkAmazonSmallImage($url, $ext, $file): void
 {
 	if (preg_match('/^(.+)L(Z{7,}.+)$/', $url, $m)) 
     {

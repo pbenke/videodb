@@ -15,17 +15,20 @@
  */
 
 if (!function_exists('errorpage')) {
-	function errorpage($title = 'An error occured', $body = '', $stacktrace = false) {
+	function errorpage($title = 'An error occured', $body = '', $stacktrace = false): void {
 	}
 }
 
 /**
- * Output debug info
+ *  Output debug info
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- * @param   mixed   $var    Variable to dump
- * @param   bool    $ret    Return result instead of outputting
- * @param   bool    $plain  Indicate that \n separator is used
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @param mixed   $var    Variable to dump
+ * @param bool    $ret    Return result instead of outputting
+ * @param bool    $plain  Indicate that \n separator is used
+ *
+ * @return null|string
  */
 function dump($var, $ret = false, $plain = false)
 {
@@ -48,13 +51,14 @@ function dump($var, $ret = false, $plain = false)
 }
 
 /**
- * Write variable to file
+ *  Write variable to file
  *
  * @author Chinamann <chinamann@users.sourceforge.net>
- * @param   string	$filename   Filename to dump to
- * @param   var		$var        Variable to dump
+ *
+ * @param string	$filename   Filename to dump to
+ * @param var		$var        Variable to dump
  */
-function file_append($filename, $var, $append = true)
+function file_append($filename, $var, $append = true): void
 {
     $log = fopen($filename, $append ? 'a' : 'w');
     fwrite($log, dump($var, true, true));
@@ -62,24 +66,25 @@ function file_append($filename, $var, $append = true)
 }
 
 /**
- * Write to debug log
+ *  Write to debug log
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- * @param   mixed   $var    Variable to dump
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @param mixed   $var    Variable to dump
  */
-function dlog($var)
+function dlog($var): void
 {
     file_append(LOG_FILE, $var);
 }
 
 /**
- * Used to remove magic quotes from the $_GET, $_POST, $_COOKIE and
- * $_SESSION super global arrays. It's automatically called in
- * functions.php
+ *  Used to remove magic quotes from the $_GET, $_POST, $_COOKIE and
+ *  $_SESSION super global arrays. It's automatically called in
+ *  functions.php
  *
  * @param array &$array Reference to an array
  */
-function remove_magic_quotes(&$array)
+function remove_magic_quotes(&$array): void
 {
 	foreach (array_keys($array) as $key)
 	{
@@ -92,22 +97,22 @@ function remove_magic_quotes(&$array)
 }
 
 /**
- * Get high resolution time
+ *  Get high resolution time
  *
- * @return integer  current time in microseconds
+ * @return float current time in microseconds
  */
-function getmicrotime()
+function getmicrotime(): float
 {
 	list($usec, $sec) = explode(' ', microtime());
 	return ((float)$usec + (float)$sec);
 }
 
 /**
- * Return mysqli db connection object
+ *  Return mysqli db connection object
  *
- * @return resource database handle
+ * @return false|mysqli database handle
  */
-function getConnection()
+function getConnection(): mysqli|false
 {
     global $config, $dbh;
 
@@ -202,29 +207,31 @@ function runSQL($sql_string, $verify = true)
 }
 
 /**
- * Checks if the page is accessed from within the local net.
+ *  Checks if the page is accessed from within the local net.
  *
- * @return  bool  true if localnet
+ * @return false|int true if localnet
+ *
+ * @psalm-return 0|1|false
  */
-function localnet()
+function localnet(): int|false
 {
 	global $config;
 	return (preg_match('/'.$config['localnet'].'/', $_SERVER['REMOTE_ADDR']));
 }
 
 /**
- * checks if the page is accessed from within the local net.
- * If not, displays a simple error page and exits
+ *  checks if the page is accessed from within the local net.
+ *  If not, displays a simple error page and exits
  */
-function localnet_or_die()
+function localnet_or_die(): void
 {
 	if (!localnet()) errorpage('Forbidden', 'You are not allowed to access this page');
 }
 
 /**
- * Set connection encoding according to config file or language specification
+ *  Set connection encoding according to config file or language specification
  */
-function db_set_encoding()
+function db_set_encoding(): void
 {
     global $config, $lang;
 
@@ -240,11 +247,15 @@ function db_set_encoding()
 }
 
 /**
- * Redirect to new location
+ *  Redirect to new location
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- * @param   string  $dest   Redirect destination
- * @todo    Read somewhere that according to RFC redirects need to specify full URI
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @param string  $dest   Redirect destination
+ *
+ * @todo Read somewhere that according to RFC redirects need to specify full URI
+ *
+ * @return never
  */
 function redirect($dest)
 {

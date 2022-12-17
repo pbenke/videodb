@@ -22,7 +22,7 @@ class TestAllocine extends TestCase
         $this->markTestIncomplete('This engine is broken and tests has been disabled until it is fixed');
     }
 
-	function testMovie()
+	function testMovie(): void
 	{
 		// Star Wars: Episode I
 		// http://www.allocine.fr/film/fichefilm_gen_cfilm=20754.html
@@ -60,7 +60,7 @@ class TestAllocine extends TestCase
   */
 	}
 
-	function testMovie2()
+	function testMovie2(): void
 	{
 		// Star Wars: Episode III
 		// http://www.allocine.fr/film/fichefilm_gen_cfilm=40623.html
@@ -98,7 +98,7 @@ class TestAllocine extends TestCase
 	}
 
     // check search
-    function testSearch()
+    function testSearch(): void
     {
         // Clerks 2
         $data = allocineSearch('Clerks 2');
@@ -116,7 +116,7 @@ class TestAllocine extends TestCase
     }
 
     // check for utf8 search
-    function testSearch2()
+    function testSearch2(): void
     {
         // Cette femme là
         $data = allocineSearch('cette femme là');
@@ -134,7 +134,7 @@ class TestAllocine extends TestCase
     }
 
     // check for partial search
-    function testSearch3()
+    function testSearch3(): void
     {
         // Chacun cherche son chat
         $data = allocineSearch('chacun cherche son');

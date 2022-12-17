@@ -14,11 +14,15 @@ $GLOBALS['ofdbscraperServer']   = 'http://www.ofdb.de';
 $GLOBALS['ofdbscraperIdPrefix'] = 'ofdbscraper:';
 
 /**
- * Get meta information about the engine
+ *  Get meta information about the engine
  *
- * @todo    Include image search capabilities etc in meta information
+ * @todo Include image search capabilities etc in meta information
+ *
+ * @return (int|string)[]
+ *
+ * @psalm-return array{name: 'OFDB (de) Scraper', stable: 1, supportsEANSearch: 0}
  */
-function ofdbscraperMeta()
+function ofdbscraperMeta(): array
 {
     return array(
         'name' => 'OFDB (de) Scraper'
@@ -530,7 +534,7 @@ function ofdbscraperActor($name, $id)
     return $ary;
 }
 
-function ofdbscraperGetActorId($name)
+function ofdbscraperGetActorId($name): int|string
 {
     global $ofdbscraperServer;
 

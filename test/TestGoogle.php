@@ -21,7 +21,7 @@ class TestGoogle extends TestCase
         $this->markTestIncomplete('This engine is broken and tests has been disabled until it is fixed');
     }
 
-    function testSearch()
+    function testSearch(): void
     {
         // http://images.google.com/images?q=terminator
         $id = 'Terminator';
@@ -33,7 +33,7 @@ class TestGoogle extends TestCase
 #       dump($data);
     }
     
-    function testSearch2()
+    function testSearch2(): void
     {
         // http://images.google.com/images?q=Out+of+Time
         $id = 'Out of Time';

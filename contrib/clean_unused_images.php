@@ -96,7 +96,10 @@ if ($unused) {
     }
 }
 
-function findCacheFileName($dbResult) {
+/**
+ * @psalm-return list<mixed>
+ */
+function findCacheFileName($dbResult): array {
     $cache_files = [];
 
     // find images in cache
@@ -118,7 +121,10 @@ function findCacheFileName($dbResult) {
     return $cache_files;
 }
 
-function listAllFiles($dir) {
+/**
+ * @psalm-return list<mixed>
+ */
+function listAllFiles($dir): array {
     $di = new RecursiveDirectoryIterator($dir, RecursiveDirectoryIterator::SKIP_DOTS);
     $it = new RecursiveIteratorIterator($di);
 

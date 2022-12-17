@@ -5,7 +5,7 @@
  * Lets you browse through your movie collection
  *
  * @package Core
- * @author  Andreas G�tz    <cpuidle@gmx.de>
+ * @author  Andreas Götz    <cpuidle@gmx.de>
  * @author	Kokanovic Branko    <branko.kokanovic@gmail.com>
  * @version $Id: xml.php,v 1.34 2013/03/10 16:25:35 andig2 Exp $
  */
@@ -15,11 +15,11 @@ require_once './core/export.core.php';
 require_once './core/xml.core.php';
 
 /**
- * Export XML data
+ *  Export XML data
  *
- * @param   string  $where  WHERE clause for SQL statement
+ * @param string  $where  WHERE clause for SQL statement
  */
-function xmlexport($WHERE)
+function xmlexport($WHERE): void
 {
     global $config;
     
@@ -104,11 +104,11 @@ function xmlexport($WHERE)
 }
 
 /**
- * Update RSS File
+ *  Update RSS File
  *
- * @author  Mike Clark    <mike.clark@cinven.com>
+ * @author Mike Clark    <mike.clark@cinven.com>
  */
-function rssexport($WHERE)
+function rssexport($WHERE): void
 {
     global $config, $rss_timestamp_format, $filter;
 

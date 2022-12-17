@@ -12,11 +12,11 @@
 require_once './core/functions.php';
 
 /**
- * Remove image from cache
+ *  Remove image from cache
  *
  * @author Andreas Goetz <cpuidle@gmx.de>
  */
-function removeCacheFile($url)
+function removeCacheFile($url): void
 {
     // get extension
     if (preg_match("/\.(jpe?g|gif|png)$/i", $url, $matches)) 

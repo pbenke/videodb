@@ -10,9 +10,13 @@
  */
 
 /**
- * Check if string contains unicode characters
+ *  Check if string contains unicode characters
+ *
+ * @return bool|int
+ *
+ * @psalm-return 0|1|bool
  */
-function is_utf8($str)
+function is_utf8($str): int|bool
 {
 	// array handling
     if (is_array($str)) {
@@ -37,13 +41,17 @@ function is_utf8($str)
 }
 
 /**
- * @author   "Sebastián Grignoli" <grignoli@framework2.com.ar>
- * @package  Encoding
- * @version  1.1
- * @link     http://www.framework2.com.ar/dzone/forceUTF8-es/
- * @example  http://www.framework2.com.ar/dzone/forceUTF8-es/
-  */
-function fix_utf8($text)
+ * @author "Sebastián Grignoli" <grignoli@framework2.com.ar>
+ *
+ * @package Encoding
+ *
+ * @version 1.1
+ *
+ * @link http://www.framework2.com.ar/dzone/forceUTF8-es/
+ *
+ * @example http://www.framework2.com.ar/dzone/forceUTF8-es/
+ */
+function fix_utf8($text): array|string
 {
 	$utf8ToWin1252 = array(
        "\xe2\x82\xac" => "\x80",
@@ -148,10 +156,11 @@ function html_entity_decode_all_utf8(string $string)
 }
 
 /**
- * Returns the utf-8 encoding corresponding to the unicode character value 
- * @author  from php.net, courtesy - romans@void.lv
+ *  Returns the utf-8 encoding corresponding to the unicode character value
+ *
+ * @author from php.net, courtesy - romans@void.lv
  */
-function code2utf($num)
+function code2utf($num): string
 {
     if ($num < 128) return chr($num);
     if ($num < 2048) return chr(($num >> 6) + 192) . chr(($num & 63) + 128);
@@ -215,9 +224,11 @@ function iconv_array($source_encoding, $target_encoding, $data)
 }
 
 /**
- * Convert HTML to plain text for some common entities
+ *  Convert HTML to plain text for some common entities
+ *
+ * @return null|string
  */
-function html_to_text($str)
+function html_to_text($str): string|null
 {
     // create list items
     $str = preg_replace("#<li.*?>#i", "\n-", $str ?? '');
@@ -240,16 +251,16 @@ function _get_only_match_from_callback($matches) {
 }
 
 /**
- * apply chr on the only match of a preg_replace_callback
+ *  apply chr on the only match of a preg_replace_callback
  */
-function _callback_chr($matches) {
+function _callback_chr($matches): string {
     return chr(_get_only_match_from_callback($matches));
 }
 
 /**
- * apply hexdec and chr on the only match of a preg_replace_callback
+ *  apply hexdec and chr on the only match of a preg_replace_callback
  */
-function _callback_chr_hexdec($matches) {
+function _callback_chr_hexdec($matches): string {
     return chr(hexdec(_get_only_match_from_callback($matches)));
 }
 

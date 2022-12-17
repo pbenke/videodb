@@ -25,7 +25,7 @@ error_reporting(E_WARNING);
   <body>
 <?php
 
-function printlang($missing, $code, $type)
+function printlang($missing, $code, $type): void
 {
     $c = count($missing);
     print '<b>'.$code.'</b> ';

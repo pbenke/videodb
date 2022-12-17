@@ -16,10 +16,12 @@ require_once './engines/imdb.php';
 require_once './engines/imdbapi.php';
 
 /**
- * Update item list asynchronously
+ *  Update item list asynchronously
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- */ 
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @return never
+ */
 function ajax_render()
 {
     global $smarty, $result;

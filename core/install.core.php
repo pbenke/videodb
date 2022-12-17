@@ -11,13 +11,13 @@
 
 
 /**
- * Build formatted message string for html output
+ *  Build formatted message string for html output
  *
  * @param string    $msg    Message to print
  * @param string    $color  Color code for <div> tag
  * @param boolean   $print  If true, output directly, else append to message string
  */
-function showmessage($msg, $color, $print = false)
+function showmessage($msg, $color, $print = false): void
 {
     global $message;
     
@@ -35,47 +35,47 @@ function showmessage($msg, $color, $print = false)
 }
 
 /**
- * Prepare formatted error message for output
+ *  Prepare formatted error message for output
  *
  * @param string    $msg    Message to print
  * @param boolean   $print  If true, output directly, else append to message string
  */
-function error($msg, $print = false)
+function error($msg, $print = false): void
 {
     showmessage($msg, 'red', $print);
 }
 
 /**
- * Prepare formatted warning message for output
+ *  Prepare formatted warning message for output
  *
  * @param string    $msg    Message to print
  * @param boolean   $print  If true, output directly, else append to message string
  */
-function warn($msg, $print = false)
+function warn($msg, $print = false): void
 {
     showmessage($msg, 'orange', $print);
 }
 
 /**
- * Prepare formatted info message for output
+ *  Prepare formatted info message for output
  *
  * @param string    $msg    Message to print
  * @param boolean   $print  If true, output directly, else append to message string
  */
-function info($msg, $print = false)
+function info($msg, $print = false): void
 {
     showmessage($msg, 'green', $print);
 }
 
 
 /**
- * Recursively delete files from directory
- * used for Smarty cache cleanup during installation
+ *  Recursively delete files from directory
+ *  used for Smarty cache cleanup during installation
  *
  * @param string    $dir        Directory name
  * @param boolean   $recursive  Recurse into subfolders
  */
-function delete_files($dir, $recursive = false)
+function delete_files($dir, $recursive = false): void
 {
 	if ($dh = @opendir($dir))
 	{
@@ -102,12 +102,12 @@ function delete_files($dir, $recursive = false)
 }
 
 /**
- * Parse config file and replace settings according
- * to associate array parameter
+ *  Parse config file and replace settings according
+ *  to associate array parameter
  *
- * @param   array   new parameter values
+ * @param array   new parameter values
  */
-function parse_config($vars)
+function parse_config($vars): string
 {
     $raw = null;
 
@@ -184,11 +184,11 @@ function parse_upgrades($upgrade_file)
 }
 
 /**
- * Callback function for adding prefix to table name in FROM clauses- extended to include sub queries
+ *  Callback function for adding prefix to table name in FROM clauses- extended to include sub queries
  *
- * $match[2] is table
+ *  $match[2] is table
  */
-function sql_add_prefix($match)
+function sql_add_prefix($match): string
 {
     global $db_prefix;
 

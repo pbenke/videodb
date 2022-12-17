@@ -83,7 +83,12 @@ echo "</body></html>";
 $config['debug'] = $origDebug;
 
 // Find files that either starts with or ends with test.
-function findTestClasses(string $dir, string $pattern = null) {
+/**
+ * @return string[]
+ *
+ * @psalm-return array<string, string>
+ */
+function findTestClasses(string $dir, string $pattern = null): array {
     $res = array();
 
     if ($dh = @opendir($dir)) {

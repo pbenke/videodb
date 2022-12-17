@@ -21,7 +21,7 @@ class TestAmazonAWS extends TestCase
         $this->markTestIncomplete('This engine is broken and tests has been disabled until it is fixed');
     }
 
-    function testData()
+    function testData(): void
     {
         // Star Wars: Episode 1
         // http://www.amazon.de/Star-Wars-Episode-Bedrohung-Einzel-DVD/dp/B0009HBEHW/ref=sr_1_2/303-6664842-9566627?ie=UTF8&s=dvd&qid=1185389090&sr=1-2
@@ -47,7 +47,7 @@ class TestAmazonAWS extends TestCase
         $this->assertMatchesRegularExpression('/Naboo/', $data['plot']);
     }
 
-    function testSearch()
+    function testSearch(): void
     {
         $id = 'Star Wars: Episode 1';
 

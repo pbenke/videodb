@@ -63,7 +63,7 @@ else
 <?php
 // -------------- Functions follow -------------
 
-function fetchConfiguration()
+function fetchConfiguration(): void
 {
 	global $cfg_rating_col;
 
@@ -78,7 +78,7 @@ function fetchConfiguration()
 }
 
 
-function printStartForm()
+function printStartForm(): void
 {
   global $tomeshowid;
   global $tomeseason;
@@ -158,6 +158,9 @@ function printStartForm()
   <?php
 }
 
+/**
+ * @return void
+ */
 function printEpisodes()
 {
     global $tomeshowid;
@@ -309,7 +312,7 @@ function printEpisodes()
   <?php
 }
 
-function similarity($string1,$string2)
+function similarity($string1,$string2): int|string
 {
   $string1 = preg_replace('/[^a-zA-Z ]/','',$string1);
   $string2 = preg_replace('/[^a-zA-Z ]/','',$string2);
@@ -321,7 +324,7 @@ function similarity($string1,$string2)
   return number_format($sim, 0);
 }
 
-function showSelect($videos,$select)
+function showSelect($videos,$select): void
 {
 
   print '<option value=""></option>';
@@ -351,7 +354,7 @@ function showSelect($videos,$select)
   }
 }
 
-function save()
+function save(): void
 {
   global $form_eps;
   global $form_tvcomid;
@@ -445,7 +448,10 @@ function getVideoIDs($title, $subtitle, $language)
   return $result;
 }
 
-function fetchTomeSeasonInfos($url)
+/**
+ * @psalm-return array{1?: empty}
+ */
+function fetchTomeSeasonInfos($url): array
 {
   $response = httpClient($url, true);
   if (!$response['success']) $CLIENTERROR .= $resp['error']."\n";

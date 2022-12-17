@@ -13,7 +13,7 @@ use PHPUnit\Framework\TestCase;
 
 class TestEngines extends TestCase {
 
-    function testGetEngineFromId() {
+    function testGetEngineFromId(): void {
         $engineName = engineGetEngine('imdb:tt1234567');
         $this->assertEquals('imdb', $engineName);
 
@@ -27,7 +27,7 @@ class TestEngines extends TestCase {
         $this->assertEquals('imdb', $engineName);
     }
 
-    function testEngineGetActorEngine() {
+    function testEngineGetActorEngine(): void {
         $engineName = engineGetActorEngine('imdb:nm1234567');
         $this->assertEquals('imdb', $engineName);
 

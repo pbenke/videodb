@@ -22,7 +22,7 @@ class TestOFDB extends TestCase
         $this->markTestIncomplete('This engine is broken and tests has been disabled until it is fixed');
     }
 
-	function testMovie()
+	function testMovie(): void
 	{
 		// Star Wars: Episode I - Die dunkle Bedrohung / Star Wars: Episode I - The Phantom Menace (1999)
 		$id = '3129,Star-Wars-Episode-I---Die-dunkle-Bedrohung';
@@ -52,7 +52,7 @@ Array ( [title] => Star Wars: Episode I [subtitle] => Die dunkle Bedrohung [orgt
 */
 	}
 
-    function testMovie2()
+    function testMovie2(): void
     {
         // Boogie Nights
         // http://www.ofdb.de/film/1545,Boogie-Nights
@@ -65,7 +65,7 @@ Array ( [title] => Star Wars: Episode I [subtitle] => Die dunkle Bedrohung [orgt
         $this->assertMatchesRegularExpression('/Luis Guzmán/s', $data['cast']);
     }
 
-    function testSearch()
+    function testSearch(): void
     {
         // Clerks 2
         // http://www.ofdb.de/film/102676,Clerks-2---Die-Abh%C3%A4nger

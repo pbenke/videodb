@@ -90,18 +90,20 @@ if (basename($_SERVER['PHP_SELF']) != 'login.php') auth_check();
  */
 
 /**
- * Global exception handler
+ *  Global exception handler
  */
-function exception_handler($exception)
+function exception_handler($exception): void
 {
     errorpage('An exception occured: ', $exception->getMessage(), true);
 }
 
 /**
- * Checks if the cache directories exist and are writable by the webserver.
- * If they don't exist it tries to create them. If this fails, too a simple
- * error page is displayed.
- * The function checks if the MySQL PHP extensions is loaded, too.
+ *  Checks if the cache directories exist and are writable by the webserver.
+ *  If they don't exist it tries to create them. If this fails, too a simple
+ *  error page is displayed.
+ *  The function checks if the MySQL PHP extensions is loaded, too.
+ *
+ * @return null|string
  */
 function verify_installation($return = false)
 {
@@ -138,14 +140,15 @@ function verify_installation($return = false)
 }
 
 /**
- * Load config options from config.inc.php and database and
- * setup sane defaults.
- * Return configuration in global $config array variable
+ *  Load config options from config.inc.php and database and
+ *  setup sane defaults.
+ *  Return configuration in global $config array variable
  *
- * @todo    Add security check if install.php is still available
- * @param   boolean force reload of configuration data
+ * @todo Add security check if install.php is still available
+ *
+ * @param boolean force reload of configuration data
  */
-function load_config($force_reload = false)
+function load_config($force_reload = false): void
 {
 	global $config, $lang, $smarty;
     // configuration cached and not outdated?
@@ -303,10 +306,12 @@ function load_config($force_reload = false)
 }
 
 /**
- * Displays an errorpage and exits
+ *  Displays an errorpage and exits
  *
  * @param string $title   The pages headline
  * @param string $body    An additional message
+ *
+ * @return never
  */
 function errorpage($title = 'An error occured', $body = '', $stacktrace = false)
 {
@@ -338,13 +343,14 @@ function errorpage($title = 'An error occured', $body = '', $stacktrace = false)
 }
 
 /**
- * Verify variable is valid according to validation function
+ *  Verify variable is valid according to validation function
  *
  * @author Andreas Goetz <cpuidle@gmx.de>
- * @param  string   $var                variable to validate (e.g. $id)
- * @param  string   $validation_func    validation function name (e.g. is_numeric)
+ *
+ * @param string   $var                variable to validate (e.g. $id)
+ * @param string   $validation_func    validation function name (e.g. is_numeric)
  */
-function validate_input(&$var, $validation_func = 'is_numeric')
+function validate_input(&$var, $validation_func = 'is_numeric'): void
 {
     if (function_exists($validation_func))
     {
@@ -356,14 +362,16 @@ function validate_input(&$var, $validation_func = 'is_numeric')
 }
 
 /**
- * Display template with Smarty
- * If Smarty caching is enabled and cache id present, then cache will be used
+ *  Display template with Smarty
+ *  If Smarty caching is enabled and cache id present, then cache will be used
  *
  * @author Andreas Goetz <cpuidle@gmx.de>
- * @param   string  $template   Template file name for display
- * @parem   string  $id         Cache id
+ *
+ * @param string  $template   Template file name for display
+ *
+ * @parem string  $id         Cache id
  */
-function smarty_display($template, $id = null)
+function smarty_display($template, $id = null): void
 {
     global $smarty, $config;
 
@@ -446,7 +454,7 @@ function getActorThumbnail($name, $actorid = 0, $idSearchAllowed = true)
 	return($imgurl);
 }
 
-function cleanFilename($filename) {
+function cleanFilename($filename): string|null {
     return preg_replace('/[^a-z0-9-_ ]/', '_', strtolower($filename));
 }
 
@@ -499,11 +507,11 @@ function getThumbnail($imgurl, $name = '')
  */
 
 /**
- * Perform login as selected user. Sets session cookies accordingly.
+ *  Perform login as selected user. Sets session cookies accordingly.
  *
  * @author Andreas Goetz <cpuidle@gmx.de>
  */
-function login_as($userid, $permanent = false)
+function login_as($userid, $permanent = false): void
 {
     global $config;
 
@@ -533,9 +541,11 @@ function login_as($userid, $permanent = false)
 }
 
 /**
- * Create a user specific hash value to be used as the RememberMe cookie code
+ *  Create a user specific hash value to be used as the RememberMe cookie code
+ *
+ * @return false|string
  */
-function get_user_hash($userid)
+function get_user_hash($userid): string|false
 {
     $res = runSQL("SELECT name,passwd,email FROM ".TBL_USERS." WHERE id=$userid");
     if(count($res)) {
@@ -544,15 +554,15 @@ function get_user_hash($userid)
     return false;
 }
 /**
- * Checks if the user was authenticated and if the received auth cookie is valid.
- * Function is called for every page except login.php!
+ *  Checks if the user was authenticated and if the received auth cookie is valid.
+ *  Function is called for every page except login.php!
  *
- * TODO Check if guest login shouldn't also be effective if disable public access is enabled
- *      Currently userid returned is 0 in that case
+ *  TODO Check if guest login shouldn't also be effective if disable public access is enabled
+ *       Currently userid returned is 0 in that case
  *
- * @param  string $redirect  Redirect to login page if authentication check unsuccessful
+ * @param string $redirect  Redirect to login page if authentication check unsuccessful
  */
-function auth_check($redirect = true)
+function auth_check($redirect = true): bool
 {
     global $config;
 
@@ -646,11 +656,11 @@ function auth_check($redirect = true)
  */
 
 /**
- * Setup clean permission cache. Triggers reading database on next permission access
+ *  Setup clean permission cache. Triggers reading database on next permission access
  *
  * @author Andreas Goetz    <cpuidle@gmx.de>
  */
-function clear_permission_cache()
+function clear_permission_cache(): void
 {
     $_SESSION['vdb']['permissions'] = null;
 }
@@ -733,14 +743,15 @@ function check_permission($permission, $destUserId = null)
 }
 
 /**
- * Check permissions on a user for a page and display error message on failure
+ *  Check permissions on a user for a page and display error message on failure
  *
- * @author  unknown
- * @author  Chinamann <chinamann@users.sourceforge.net>
- * @param   integer $permission  Permission to check (admin,write,writeall)
- * @param   String  $destUserId UserId to access
+ * @author unknown
+ * @author Chinamann <chinamann@users.sourceforge.net>
+ *
+ * @param integer $permission  Permission to check (admin,write,writeall)
+ * @param String  $destUserId UserId to access
  */
-function permission_or_die($permission, $destUserId = false)
+function permission_or_die($permission, $destUserId = false): void
 {
     if (!check_permission($permission, $destUserId))
     {
@@ -836,19 +847,23 @@ function adultcheck($id)
 }
 
 /**
- * Checks if the given movie was already seen by the logged in user. If no
- * user is logged in the $seen value is returned
+ *  Checks if the given movie was already seen by the logged in user. If no
+ *  user is logged in the $seen value is returned
  *
- * Gets username from cookie
+ *  Gets username from cookie
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- * @param  integer $id    video id
- * @param  boolean $seen  seen
- * @return boolean        True if seen
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @param integer $id    video id
+ * @param boolean $seen  seen
+ *
+ * @return int True if seen
  *
  * @deprecated
+ *
+ * @psalm-return 0|1
  */
-function get_userseen($id)
+function get_userseen($id): int
 {
     $user_id= $_COOKIE['VDBuserid'];
 
@@ -866,15 +881,16 @@ function get_userseen($id)
 }
 
 /**
- * Sets the status in userseen accordingly to the given seen value
+ *  Sets the status in userseen accordingly to the given seen value
  *
- * Gets username from cookie
+ *  Gets username from cookie
  *
- * @author  Andreas Goetz   <cpuidle@gmx.de>
- * @param  integer $id    video id
- * @param  boolean $seen  seen
+ * @author Andreas Goetz   <cpuidle@gmx.de>
+ *
+ * @param integer $id    video id
+ * @param boolean $seen  seen
  */
-function set_userseen($id, $seen)
+function set_userseen($id, $seen): void
 {
     $user_id = get_current_user_id();
     
@@ -909,13 +925,18 @@ function set_userseen($id, $seen)
 }
 
 /**
- * Return id of the currently logged in user. 
- * The value returned is safe to use in SQL statements.
+ *  Return id of the currently logged in user. 
+ *  The value returned is safe to use in SQL statements.
  *
- * @author  Andreas Goetz <cpuidle@gmx.de>
- * @result  integer user id
+ * @author Andreas Goetz <cpuidle@gmx.de>
+ *
+ * @result integer user id
+ *
+ * @return int|numeric-string
+ *
+ * @psalm-return 0|numeric-string
  */
-function get_current_user_id()
+function get_current_user_id(): int|string
 {
     // make sure userid is numeric- preventing SQL injection attacs
     if (!is_numeric($userid = $_COOKIE['VDBuserid'])) $userid = 0;

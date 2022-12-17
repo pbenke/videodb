@@ -10,7 +10,12 @@
 
 require_once './core/genres.php';
 
-function listExports($link, $omit = array('rss'))
+/**
+ * @return (mixed|string)[][]
+ *
+ * @psalm-return list<array{type: string, title: string, link: mixed}>
+ */
+function listExports($link, $omit = array('rss')): array
 {
     global $config;
 

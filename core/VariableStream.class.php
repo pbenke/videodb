@@ -22,7 +22,7 @@ class VariableStream
     private $varname;
     private $position;
 
-    function stream_open($path, $mode, $options, &$opened_path)
+    function stream_open($path, $mode, $options, &$opened_path): bool
     {
         $url = parse_url($path);
         $this->varname = $url['host'];
@@ -34,14 +34,14 @@ class VariableStream
         return true;
     }
 
-    function stream_read($count)
+    function stream_read($count): string
     {
         $ret = substr($GLOBALS[$this->varname], $this->position, $count);
         $this->position += strlen($ret);
         return $ret;
     }
 
-    function stream_eof()
+    function stream_eof(): bool
     {
         return $this->position >= strlen($GLOBALS[$this->varname]);
     }
@@ -51,7 +51,7 @@ class VariableStream
         return $this->position;
     }
 
-    function stream_seek($offset, $whence)
+    function stream_seek($offset, $whence): bool
     {
         if ($whence == SEEK_SET) {
             $this->position = $offset;
@@ -60,7 +60,10 @@ class VariableStream
         return false;
     }
 
-    function stream_stat()
+    /**
+     * @psalm-return array<empty, empty>
+     */
+    function stream_stat(): array
     {
         return array();
     }
