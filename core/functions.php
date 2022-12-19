@@ -29,11 +29,6 @@ if (@$config['offline'])
     errorpage('Maintenance', 'videoDB is currently offline for maintenance. Please check back later.');
 }
 
-
-// Uncomment the following line to enable phpIDS
-// requires phpIDS to be installed in lib/IDS
-// require_once './core/ids.php';
-
 require_once './core/functions.core.php';
 require_once './core/constants.php';
 require_once './core/session.php';
