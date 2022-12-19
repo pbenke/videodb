@@ -52,13 +52,13 @@ function getDiskId()
 
     // get all DiskIds ordered from DB
     $SQL = "SELECT LPAD(TRIM(LEADING '0' FROM diskid), 10, '0') AS id 
-              FROM ".TBL_DATA.' 
-             WHERE diskid NOT REGEXP "[^0-9]" AND
-                   owner_id = '.get_current_user_id().'
-             ORDER BY id';
-             // sql looks strange but fixes problems with users who change their
-             // diskid_digits while they have already movies in their DB.
-             // added owner_id as fix for https://github.com/andig/videodb/issues/6
+            FROM ".TBL_DATA.'
+            WHERE diskid NOT REGEXP "[^0-9]"
+                AND owner_id = '.get_current_user_id().'
+            ORDER BY id';
+            // sql looks strange but fixes problems with users who change their
+            // diskid_digits while they have already movies in their DB.
+            // added owner_id as fix for https://github.com/andig/videodb/issues/6
     $results = runSQL($SQL);
 
     // find first 'free' diskId
@@ -70,7 +70,7 @@ function getDiskId()
     }
 
     // return the found id
-    return str_pad($lastid + 1, $digits, '0', STR_PAD_LEFT);
+    return str_pad(intval($lastid) + 1, $digits, '0', STR_PAD_LEFT);
 }
 
 /**
