@@ -142,7 +142,7 @@ if (isset($q) &! (isset($default) && empty($q)))
         foreach ($tokens as $token)
         {
             // escape search token
-            $token['token'] = addslashes($token['token']);
+            $token['token'] = escapeSQL($token['token']);
 
             // concatenate tokens with token operator
             $WHERES .= $token['ops'].' (';
@@ -192,7 +192,7 @@ if (isset($q) &! (isset($default) && empty($q)))
         }
 
         // further limit to single owner
-        if ($owner && $owner != $all) $WHERES .= " AND ".TBL_USERS.".name = '".addslashes($owner)."'";
+        if ($owner && $owner != $all) $WHERES .= " AND ".TBL_USERS.".name = '".escapeSQL($owner)."'";
     }
 
     // XML / PDF export

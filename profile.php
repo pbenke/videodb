@@ -33,7 +33,7 @@ if ($save)
 	foreach ($SETUP_USER as $opt) 
     {
         $SQL = "REPLACE INTO ".TBL_USERCONFIG." (user_id, opt, value) 
-                      VALUES ('".addslashes($user_id)."', '$opt', '".addslashes($$opt)."')";
+                      VALUES ('".escapeSQL($user_id)."', '$opt', '".escapeSQL($$opt)."')";
 		runSQL($SQL);
 	}
 

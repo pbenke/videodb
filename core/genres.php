@@ -77,7 +77,7 @@ function mapGenres($genres)
  */
 function getGenreId($name)
 {
-	$name   = addslashes($name);
+	$name   = escapeSQL($name);
     $result = runSQL("SELECT id FROM ".TBL_GENRES." WHERE LCASE(name) = LCASE('".$name."')");
 	return $result[0]['id'];
 }

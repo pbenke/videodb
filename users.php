@@ -35,10 +35,10 @@ function create_user($user, $pass, $perm, $email)
     
     $SQL = "INSERT INTO ".TBL_USERS."
                SET id = ".$nextid.",
-               	   name = '".addslashes($user)."',
+               	   name = '".escapeSQL($user)."',
                    passwd = '".md5($pass)."',
                    permissions = $perm,
-                   email = '".addslashes($email)."'";
+                   email = '".escapeSQL($email)."'";
     $res = runSQL($SQL, false);
 
     // set default read/write permissions for own data
@@ -83,7 +83,7 @@ if ($newuser)
 elseif ($id && $name)
 {
     runSQL("UPDATE ".TBL_USERS."
-               SET name = '".addslashes($name)."', permissions = $perm, email = '".addslashes($email)."'
+               SET name = '".escapeSQL($name)."', permissions = $perm, email = '".escapeSQL($email)."'
 			 WHERE id = $id");
 	// new password?
 	if (!empty($password))

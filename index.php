@@ -165,7 +165,7 @@ if ($config['multiuser'])
     }
         
     // further limit to single owner
-    if ($owner != $lang['filter_any']) $WHERES .= " AND ".TBL_USERS.".name = '".addslashes($owner)."'";
+    if ($owner != $lang['filter_any']) $WHERES .= " AND ".TBL_USERS.".name = '".escapeSQL($owner)."'";
 }
 
 // searching?

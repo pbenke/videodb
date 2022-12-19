@@ -230,7 +230,7 @@ if (!empty($id))
 	{
         $SELECT = 'SELECT who
                      FROM '.TBL_LENT."
-                    WHERE diskid = '".addslashes($diskid)."'";
+                    WHERE diskid = '".escapeSQL($diskid)."'";
         $result = runSQL($SELECT);
 
         if (isset($result[0]['who']))

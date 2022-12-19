@@ -274,7 +274,7 @@ function custom_orgtitle_input($cn,$cv)
         // we need to save our self here!
         if (!empty($id) && $cv != '')
         {
-            $qcv = addslashes($cv);
+            $qcv = escapeSQL($cv);
             $UPDATE = "UPDATE ".TBL_DATA." SET $cn = '$qcv' WHERE id = $id";
             runSQL($UPDATE);
         }
@@ -339,7 +339,7 @@ function custom_mpaa_input($cn,$cv): string
         //we need to save our self here!
         if(!empty($id) && $cv != '')
         {
-            $qcv = addslashes($cv);
+            $qcv = escapeSQL($cv);
             $UPDATE = "UPDATE ".TBL_DATA." SET $cn = '$qcv' WHERE id = $id";
             runSQL($UPDATE);
         }
@@ -400,7 +400,7 @@ function custom_bbfc_input($cn,$cv): string
         //we need to save our self here!
         if(!empty($id) && $cv != '')
         {
-            $qcv = addslashes($cv);
+            $qcv = escapeSQL($cv);
             $UPDATE = "UPDATE ".TBL_DATA." SET $cn = '$qcv' WHERE id = $id";
             runSQL($UPDATE);
         }

@@ -152,7 +152,7 @@ function awsGetRegion(): string
  */
 function awsGetMediatypeId($name)
 {
-    $name   = addslashes($name);
+    $name   = escapeSQL($name);
     $result = runSQL("SELECT id FROM ".TBL_MEDIATYPES." WHERE LCASE(name) = LCASE('".$name."')");
     return (count($result) > 0) ? $result[0]['id'] : null;
 }

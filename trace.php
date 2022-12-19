@@ -103,7 +103,7 @@ function is_known_item($id, &$sp_id, &$sp_diskid): bool
 {
     $SQL = "SELECT imdbID, id, diskid
               FROM ".TBL_DATA."
-             WHERE imdbID = '".addslashes($id)."'
+             WHERE imdbID = '".escapeSQL($id)."'
              ORDER BY diskid DESC";
     $result = runSQL($SQL);
 

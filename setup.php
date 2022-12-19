@@ -27,7 +27,7 @@ if ($quicksave)
     // insert data
     foreach ($SETUP_QUICK as $opt)
     {
-        $SQL = 'REPLACE INTO '.TBL_CONFIG." (opt,value) VALUES ('$opt','".addslashes($$opt)."')";
+        $SQL = 'REPLACE INTO '.TBL_CONFIG." (opt,value) VALUES ('$opt','".escapeSQL($$opt)."')";
         runSQL($SQL);
     }
 
@@ -49,7 +49,7 @@ elseif ($save)
 	// insert data
 	foreach ($SETUP_GLOBAL as $opt)
 	{
-		$SQL = 'REPLACE INTO '.TBL_CONFIG." (opt,value) VALUES ('$opt','".addslashes($$opt)."')";
+		$SQL = 'REPLACE INTO '.TBL_CONFIG." (opt,value) VALUES ('$opt','".escapeSQL($$opt)."')";
         runSQL($SQL);
     }
     
@@ -64,7 +64,7 @@ elseif ($save)
     foreach ($config['engines'] as $engine => $meta)
     {
         $opt    = 'engine'.$engine;
-        $SQL    = 'REPLACE INTO '.TBL_CONFIG." (opt,value) VALUES ('$opt','".addslashes($$opt)."')";
+        $SQL    = 'REPLACE INTO '.TBL_CONFIG." (opt,value) VALUES ('$opt','".escapeSQL($$opt)."')";
         runSQL($SQL);
 
         // mark engine as available
@@ -81,7 +81,7 @@ elseif ($save)
     $user_id = get_current_user_id();
 	if (!empty($user_id))
 	{  
-        $SQL = "DELETE FROM ".TBL_USERCONFIG." WHERE user_id = '".addslashes($user_id)."'";
+        $SQL = "DELETE FROM ".TBL_USERCONFIG." WHERE user_id = '".escapeSQL($user_id)."'";
         runSQL($SQL);
 	}
 

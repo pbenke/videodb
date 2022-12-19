@@ -443,10 +443,10 @@ function getActorThumbnail($name, $actorid = 0, $idSearchAllowed = true)
 
 	// identify actor by unique actor id, of by name
     if ($actorid && $idSearchAllowed) {
-        $result = runSQL($SQL." WHERE actorid='".addslashes($actorid)."'");
+        $result = runSQL($SQL." WHERE actorid='".escapeSQL($actorid)."'");
 	}
     if (!$actorid || !isset($result) || count($result) == 0) {
-        $result = runSQL($SQL . " WHERE name='" . addslashes(html_entity_decode($name)) . "'");
+        $result = runSQL($SQL . " WHERE name='" . escapeSQL(html_entity_decode($name)) . "'");
     }
 
     $imgurl = get_actor_image_from_cache($result[0], $name, $actorid);
@@ -955,7 +955,7 @@ function get_userid($userName)
 {
     $SELECT = "SELECT id
                  FROM ".TBL_USERS."
-                WHERE name='".addslashes($userName)."'";
+                WHERE name='".escapeSQL($userName)."'";
     $result = runSQL($SELECT);
     return $result[0]['id'];
 }

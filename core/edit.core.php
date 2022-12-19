@@ -173,7 +173,7 @@ function prepareSQL($data, $setonly = false)
             }
         }
 
-        $SET = "$name = '".addslashes($$name)."'";
+        $SET = "$name = '".escapeSQL($$name)."'";
 
         // special null/zero handling
         if (empty($$name))
