@@ -91,36 +91,27 @@ if ($ajax_check_duplicate)
 }
 
 // XML import
-if ($config['xml'] && ($import == 'xml'))
-{
+if ($config['xml'] && $import == 'xml') {
     require_once './core/xml.php';
 
     // xml file upload
-    if (isset($_FILES['xmlfile']) && is_uploaded_file($_FILES['xmlfile']['tmp_name']))
-    {
-        $file    = $_FILES['xmlfile']['tmp_name'];
+    if (isset($_FILES['xmlfile']) && is_uploaded_file($_FILES['xmlfile']['tmp_name'])) {
+        $file = $_FILES['xmlfile']['tmp_name'];
         $xmldata = file_get_contents($file);
         unlink($file);
     }
 
     // uploading XML data directly or loaded from file
-    if (!empty($xmldata))
-    {
-        $error      = '';
-        $item_id    = 0;
+    if (!empty($xmldata)) {
+        $error = '';
+        $xmlitems = xmlimport($xmldata, $error);
 
-	    require_once './core/xmlimport.php';
-
-        if (($xmlitems = xmlimport($xmldata, $error)) !== false)
-        {
-            // multiple items imported
-            if ($xmlitems === true)
-            {
+        if ($xmlitems !== false) {
+            if ($xmlitems === true) {
+                // multiple items imported
                 redirect('index.php?filter=new');
-            }
-            // exactly one movie imported?
-            else
-            {
+            } else {
+                // exactly one movie imported?
                 redirect('show.php?id='.$xmlitems);
             }
         }
