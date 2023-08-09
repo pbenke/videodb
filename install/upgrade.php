@@ -35,7 +35,7 @@ foreach ($tables as $table) {
     $enc = $res[0]['Collation'];
 
     if (!preg_match('/UTF8.+?/i', $enc)) {
-        $sql .= "\nALTER TABLE ".{$db_prefix}{$table}." CONVERT TO CHARACTER SET UTF8;";
+        $sql .= "\nALTER TABLE ".{$db_prefix}.{$table}." CONVERT TO CHARACTER SET UTF8;";
     }
 }
 
