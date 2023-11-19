@@ -86,9 +86,8 @@ function imdbapiContentUrl($id) {
 function imdbapiRecommendations($id, $required_rating, $required_year)
 {
     global $CLIENTERROR;
-dlog($id);
+
     $url = imdbapiContentUrl2($id);
-dlog($url);
     $resp = httpClient($url, true);
 
     $recommendations = array();
