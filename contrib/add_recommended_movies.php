@@ -83,7 +83,7 @@ if ($submit) {
         $engine = strtoupper(engineGetEngine($video['imdbID']));
         echo "Fetching recommendations for <b>{$video['title']}</b> ($engine Id {$video['imdbID']})<br/>";
 
-        $data = engineGetRecommendations($video['imdbID'], $required_rating, $required_year, 'imdb');
+        $data = engineGetRecommendations($video['imdbID'], $required_rating, $required_year, $engine);
         if (!empty($CLIENTERROR)) {
             echo $CLIENTERROR."<br/>";
             continue;
@@ -122,7 +122,7 @@ if ($submit) {
             echo "<td align=right width=\"15%\">{$recommended['id']}</td>";
             echo "</tr>";
 
-            if ($download && !$available) {
+            if (!empty($download) && !$available) {
                 engineGetData($movieId);
             }
         }

@@ -189,7 +189,7 @@ class TestIMDb extends TestCase
         $this->assertNotEmpty($data);
         // $this->printData($data);
 
-        $this->assertMatchesRegularExpression('/Amélie is an innocent and naive girl/', $data['plot']);
+        $this->assertMatchesRegularExpression('/Despite being caught in her imaginative world, Amelie, a young waitress, decides to help people find happiness./', $data['plot']);
     }
 
     function testMovie8(): void {
@@ -226,6 +226,25 @@ class TestIMDb extends TestCase
 
         $this->assertEquals('Biler', $data['title']);
         $this->assertEquals(2006, $data['year']);
+    }
+
+    function testMovie10(): void {
+        // Battleship Potemkin (1925)
+        // https://www.imdb.com/title/tt0015648/
+
+        Global $config;
+        $config['http_header_accept_language'] = 'en-US;q=0.9';
+
+        $id = '0015648';
+        $data = engineGetData($id, 'imdb', false);
+
+//        $this->printData($data);
+        $this->assertNotEmpty($data);
+
+        $this->assertEquals('Battleship Potemkin', $data['title']);
+        $this->assertEquals(1925, $data['year']);
+        $this->assertEquals("In the midst of the Russian Revolution of 1905, the crew of the battleship Potemkin mutiny against the brutal, tyrannical regime of the vessel's officers. The resulting street demonstration in Odessa brings on a police massacre.",
+            $data['plot']);
     }
 
     /**
@@ -335,7 +354,7 @@ class TestIMDb extends TestCase
         $this->assertTrue($data['rating'] <= 9);
         $this->assertEquals('Vereinigte Staaten', $data['country']);
         $this->assertEquals('englisch', $data['language']);
-        $this->assertEquals('Action, Abenteuer, Science-Fiction', join(', ', $data['genres']));
+        $this->assertEquals('Action, Abenteuer, Drama', join(', ', $data['genres']));
 
         $cast = explode("\n", $data['cast']);
 
@@ -470,8 +489,6 @@ class TestIMDb extends TestCase
         $this->assertEmpty($data);
     }
 
-
-
     function testGetSearchUrl(): void
     {
         $url = engineGetSearchUrl('Clerks 2', 'imdb');
@@ -481,12 +498,16 @@ class TestIMDb extends TestCase
 
     function testSearch(): void
     {
-        // Clerks 2
-        // https://imdb.com/find?q=clerks 2
-        $data = engineSearch('Clerks 2', 'imdb');
-        $this->assertNotEmpty($data);
+        // get english version.
+        Global $config;
+        $config['http_header_accept_language'] = 'en-US,en;q=0.9';
 
-        // $this->printData($data);
+        // Clerks 2
+        // https://imdb.com/find?s=tt&q=clerks 2
+        $data = engineSearch('Clerks 2', 'imdb');
+//        $this->printData($data);
+
+        $this->assertNotEmpty($data);
         $data = $data[0];
 
         $this->assertEquals('imdb:0424345', $data['id']);
@@ -524,11 +545,46 @@ class TestIMDb extends TestCase
 
         $data = engineSearch('Serpico', 'imdb');
         // $this->printData($data);
+        $this->assertNotEmpty($data);
 
         foreach ($data as $item) {
             $t = strip_tags($item['title']);
             $this->assertEquals($item['title'], $t);
         }
+    }
+
+    function testEngineGetRecommendations(): void
+    {
+        // get english version.
+        Global $config;
+        $config['http_header_accept_language'] = 'en-US,en;q=0.9';
+
+        // Star Wars: Episode I - The Phantom Menace
+        $data = engineGetRecommendations('imdb:0120915', 8, 1980, 'imdb');
+        sort($data);
+//        $this->printData($data);
+
+        $this->assertEquals(4, count($data));
+
+        $this->assertEquals('0080684', $data[0]['id']);
+        $this->assertEquals('8.7', $data[0]['rating']);
+        $this->assertEquals('Star Wars: Episode V - The Empire Strikes Back', $data[0]['title']);
+        $this->assertEquals('1980', $data[0]['year']);
+
+        $this->assertEquals('0086190', $data[1]['id']);
+        $this->assertEquals('8.3', $data[1]['rating']);
+        $this->assertEquals('Star Wars: Episode VI - Return of the Jedi', $data[1]['title']);
+        $this->assertEquals('1983', $data[1]['year']);
+
+        $this->assertEquals('0458290', $data[2]['id']);
+        $this->assertEquals('8.4', $data[2]['rating']);
+        $this->assertEquals('Star Wars: The Clone Wars', $data[2]['title']);
+        $this->assertEquals('2020', $data[2]['year']);
+
+        $this->assertEquals('8924990', $data[3]['id']);
+        $this->assertEquals('8.8', $data[3]['rating']);
+        $this->assertEquals('Star Wars: Episode V - The Empire Strikes Back: Deleted Scenes', $data[3]['title']);
+        $this->assertEquals('2011', $data[3]['year']);
     }
 }
 

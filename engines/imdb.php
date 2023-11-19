@@ -76,11 +76,15 @@ function imdbRecommendations($id, $required_rating, $required_year)
     $resp = httpClient($url, true);
 
     $recommendations = array();
-    preg_match_all('/<a class="ipc-lockup-overlay ipc-focusable" href="\/title\/tt(\d+)\/\?ref_=tt_sims_tt_i_\d+" aria-label="View title page for.+?">/si', $resp['data'], $ary, PREG_SET_ORDER);
+
+    // get sections of recommendation
+    preg_match('/<section data-testid="MoreLikeThis"(.+?)<\/section>/si', $resp['data'], $rec_block);
+    preg_match_all('/<a class="ipc-lockup-overlay ipc-focusable" href="\/title\/tt(\d+)\/\?ref_=tt_sims_tt_i_\d+" aria-label="View title page for.+?">/si', $rec_block[1], $ary, PREG_SET_ORDER);
 
     foreach ($ary as $recommended_id) {
-        $rec_resp = getRecommendationData($recommended_id[1]);
         $imdbId = $recommended_id[1];
+
+        $rec_resp = getRecommendationData($imdbId);
         $title  = $rec_resp['title'];
         $year   = $rec_resp['year'];
         $rating = $rec_resp['rating'];
@@ -107,8 +111,6 @@ function getRecommendationData($imdbID) {
     global $imdbIdPrefix;
     global $CLIENTERROR;
 
-    $imdbID = preg_replace('/^'.$imdbIdPrefix.'/', '', $imdbID);
-
     // fetch mainpage
     $resp = httpClient($imdbServer.'/title/tt'.$imdbID.'/', true);     // added trailing / to avoid redirect
     if (!$resp['success']) {
@@ -117,7 +119,7 @@ function getRecommendationData($imdbID) {
 
     // Titles and Year
     // See for different formats. https://contribute.imdb.com/updates/guide/title_formats
-    if ($data['istv']) {
+    if (isset($data['istv'])) {
         if (preg_match('/<title>&quot;(.+?)&quot;(.+?)\(TV Episode (\d+)\) - IMDb<\/title>/si', $resp['data'], $ary)) {
             # handles one episode of a TV serie
             $data['title'] = trim($ary[1]);
@@ -127,14 +129,15 @@ function getRecommendationData($imdbID) {
             $data['year'] = trim($ary[2]);
         }
     } else {
-        preg_match('/<title>(.+?)\((\d+)\).+?<\/title>/si', $resp['data'], $ary);
+        preg_match('/<title>(.+?)\(.*?(\d+)\).+?<\/title>/si', $resp['data'], $ary);
         $data['title'] = trim($ary[1]);
         $data['year'] = trim($ary[2]);
     }
 
     // Rating
-    preg_match('/<div data-testid="hero-rating-bar__aggregate-rating__score" class="sc-.+?"><span class="sc-.+?">(.+?)<\/span><span>\/<!-- -->10<\/span><\/div>/si', $resp['data'], $ary);
-    $data['rating'] = trim($ary[1]);
+    if (preg_match('/<div data-testid="hero-rating-bar__aggregate-rating__score" class="sc-.+?"><span class="sc-.+?">(.+?)<\/span><span>\/<!-- -->10<\/span><\/div>/si', $resp['data'], $ary)) {
+        $data['rating'] = trim($ary[1]);
+    }
 
     return $data;
 }
@@ -176,26 +179,27 @@ function imdbSearch($title, $aka=null)
 
     // direct match (redirecting to individual title)?
     if (preg_match('/^'.preg_quote($imdbServer,'/').'\/[Tt]itle(\?|\/tt)([0-9?]+)\/?/', $resp['url'], $single)) {
-        $info       = array();
+        $info = array();
         $info['id'] = $imdbIdPrefix.$single[2];
 
         // Title
         preg_match('/<title>(.*?) \([1-2][0-9][0-9][0-9].*?\)<\/title>/i', $resp['data'], $m);
-        list($t, $s)        = explode(' - ', trim($m[1]), 2);
-        $info['title']      = trim($t);
-        $info['subtitle']   = trim($s);
+        list($t, $s) = explode(' - ', trim($m[1]), 2);
+        $info['title'] = trim($t);
+        $info['subtitle'] = trim($s);
 
-        $data[]     = $info;
+        $data[] = $info;
     }
-
     // multiple matches
-    elseif (preg_match_all('/<a class="ipc-metadata-list-summary-item__t" role="button" tabindex=".+?" aria-disabled="false" href="\/title\/tt(\d+)\/\?.+?">(.+?)<\/a>.+?>(\d+)<\/span>/si', $resp['data'], $rows, PREG_SET_ORDER)) {
-        foreach ($rows as $row) {
-            $info = [];
-            $info['id'] = $imdbIdPrefix.$row[1];
-            $info['title'] = $row[2];
-            $info['year'] = $row[3];
-            $data[] = $info;
+    elseif (preg_match('/<section data-testid="find-results-section-title"(.+?)<\/section>/si', $resp['data'], $match)) {
+        if (preg_match_all('/<a class="ipc-metadata-list-summary-item__t" role="button" tabindex=".+?" aria-disabled="false" href="\/title\/tt(\d+)\/\?.+?">(.+?)<\/a>.+?>(\d+)<\/span><\/li>/i', $match[0], $rows, PREG_SET_ORDER)) {
+            foreach ($rows as $row) {
+                $info = [];
+                $info['id'] = $imdbIdPrefix.$row[1];
+                $info['title'] = $row[2];
+                $info['year'] = $row[3];
+                $data[] = $info;
+            }
         }
     }
 

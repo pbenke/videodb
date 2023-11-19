@@ -485,6 +485,41 @@ class TestIMDbApi extends TestCase
             $this->assertEquals($item['title'], $t);
         }
     }
+
+    function testEngineGetRecommendations(): void
+    {
+        // get english version.
+        Global $config;
+        $config['http_header_accept_language'] = 'en-US,en;q=0.9';
+
+        // Star Wars: Episode I - The Phantom Menace
+        $data = engineGetRecommendations('imdbapi:0120915', 8, 1980, 'imdbapi');
+        sort($data);
+//        $this->printData($data);
+
+        $this->assertEquals(4, count($data));
+
+        $this->assertEquals('0080684', $data[0]['id']);
+        $this->assertEquals('8.7', $data[0]['rating']);
+        $this->assertEquals('Star Wars: Episode V - The Empire Strikes Back', $data[0]['title']);
+        $this->assertEquals('1980', $data[0]['year']);
+
+        $this->assertEquals('0086190', $data[1]['id']);
+        $this->assertEquals('8.3', $data[1]['rating']);
+        $this->assertEquals('Star Wars: Episode VI - Return of the Jedi', $data[1]['title']);
+        $this->assertEquals('1983', $data[1]['year']);
+
+        $this->assertEquals('0458290', $data[2]['id']);
+        $this->assertEquals('8.4', $data[2]['rating']);
+        $this->assertEquals('Star Wars: The Clone Wars', $data[2]['title']);
+        $this->assertEquals('2020', $data[2]['year']);
+
+        $this->assertEquals('8924990', $data[3]['id']);
+        $this->assertEquals('8.8', $data[3]['rating']);
+        $this->assertEquals('Star Wars: Episode V - The Empire Strikes Back: Deleted Scenes', $data[3]['title']);
+        $this->assertEquals('2011', $data[3]['year']);
+    }
+
 }
 
 ?>

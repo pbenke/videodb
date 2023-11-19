@@ -86,16 +86,21 @@ function imdbapiContentUrl($id) {
 function imdbapiRecommendations($id, $required_rating, $required_year)
 {
     global $CLIENTERROR;
-
-    $url = imdbContentUrl($id);
+dlog($id);
+    $url = imdbapiContentUrl2($id);
+dlog($url);
     $resp = httpClient($url, true);
 
     $recommendations = array();
-    preg_match_all('/<a class="ipc-lockup-overlay ipc-focusable" href="\/title\/tt(\d+)\/\?ref_=tt_sims_tt_i_\d+" aria-label="View title page for.+?">/si', $resp['data'], $ary, PREG_SET_ORDER);
+
+    // get sections of recommendation
+    preg_match('/<section data-testid="MoreLikeThis"(.+?)<\/section>/si', $resp['data'], $rec_block);
+    preg_match_all('/<a class="ipc-lockup-overlay ipc-focusable" href="\/title\/tt(\d+)\/\?ref_=tt_sims_tt_i_\d+" aria-label="View title page for.+?">/si', $rec_block[1], $ary, PREG_SET_ORDER);
 
     foreach ($ary as $recommended_id) {
-        $rec_resp = getApiRecommendationData($recommended_id[1]);
         $imdbId = $recommended_id[1];
+
+        $rec_resp = getRecommendationData($imdbId);
         $title  = $rec_resp['title'];
         $year   = $rec_resp['year'];
         $rating = $rec_resp['rating'];
@@ -117,12 +122,20 @@ function imdbapiRecommendations($id, $required_rating, $required_year)
     return $recommendations;
 }
 
+function imdbapiContentUrl2($id)
+{
+    global $imdbServer;
+    global $imdbApiIdPrefix;
+
+    $id = preg_replace('/^'.$imdbApiIdPrefix.'/', '', $id);
+
+    return $imdbServer.'/title/'.$id.'/';
+}
+
 function getApiRecommendationData($imdbID) {
     global $imdbServer;
     global $imdbApiIdPrefix;
     global $CLIENTERROR;
-
-    $imdbID = preg_replace('/^'.$imdbApiIdPrefix.'/', '', $imdbID);
 
     // fetch mainpage
     $resp = httpClient($imdbServer.'/title/'.$imdbID.'/', true);     // added trailing / to avoid redirect
@@ -132,24 +145,25 @@ function getApiRecommendationData($imdbID) {
 
     // Titles and Year
     // See for different formats. https://contribute.imdb.com/updates/guide/title_formats
-    if ($data['istv']) {
+    if (isset($data['istv'])) {
         if (preg_match('/<title>&quot;(.+?)&quot;(.+?)\(TV Episode (\d+)\) - IMDb<\/title>/si', $resp['data'], $ary)) {
-            # handles one episode of a TV serie
-            $data['title'] = trim($ary[1]);
-            $data['year'] = $ary[3];
+           # handles one episode of a TV serie
+           $data['title'] = trim($ary[1]);
+           $data['year'] = $ary[3];
         } else if (preg_match('/<title>(.+?)\(TV Series (\d+).+?<\/title>/si', $resp['data'], $ary)) {
-            $data['title'] = trim($ary[1]);
-            $data['year'] = trim($ary[2]);
+           $data['title'] = trim($ary[1]);
+           $data['year'] = trim($ary[2]);
         }
     } else {
-        preg_match('/<title>(.+?)\((\d+)\).+?<\/title>/si', $resp['data'], $ary);
+        preg_match('/<title>(.+?)\(.*?(\d+)\).+?<\/title>/si', $resp['data'], $ary);
         $data['title'] = trim($ary[1]);
         $data['year'] = trim($ary[2]);
     }
 
     // Rating
-    preg_match('/<div data-testid="hero-rating-bar__aggregate-rating__score" class="sc-.+?"><span class="sc-.+?">(.+?)<\/span><span>\/<!-- -->10<\/span><\/div>/si', $resp['data'], $ary);
-    $data['rating'] = trim($ary[1]);
+    if (preg_match('/<div data-testid="hero-rating-bar__aggregate-rating__score" class="sc-.+?"><span class="sc-.+?">(.+?)<\/span><span>\/<!-- -->10<\/span><\/div>/si', $resp['data'], $ary)) {
+       $data['rating'] = trim($ary[1]);
+    }
 
     return $data;
 }
