@@ -42,6 +42,22 @@ $config['debug'] = 0;
                 list-style: none;
                 margin-bottom: 1em;
             }
+
+            .success:before {
+                color: #4e9a06;
+                content: '✓';
+                padding-right: 0.5rem;
+            }
+
+            .defect {
+                color: #a40000;
+            }
+
+            .defect:before {
+                color: #a40000;
+                content: '✗';
+                padding-right: 0.5rem;
+            }
         </style>
     </head>
     <body>
