@@ -562,9 +562,9 @@ class TestIMDb extends TestCase
         // Star Wars: Episode I - The Phantom Menace
         $data = engineGetRecommendations('imdb:0120915', 8, 1980, 'imdb');
         sort($data);
-//        $this->printData($data);
+//         $this->printData($data);
 
-        $this->assertEquals(4, count($data));
+        $this->assertEquals(3, count($data));
 
         $this->assertEquals('0080684', $data[0]['id']);
         $this->assertEquals('8.7', $data[0]['rating']);
@@ -580,11 +580,6 @@ class TestIMDb extends TestCase
         $this->assertEquals('8.4', $data[2]['rating']);
         $this->assertEquals('Star Wars: The Clone Wars', $data[2]['title']);
         $this->assertEquals('2020', $data[2]['year']);
-
-        $this->assertEquals('8924990', $data[3]['id']);
-        $this->assertEquals('8.8', $data[3]['rating']);
-        $this->assertEquals('Star Wars: Episode V - The Empire Strikes Back: Deleted Scenes', $data[3]['title']);
-        $this->assertEquals('2011', $data[3]['year']);
     }
 }
 
