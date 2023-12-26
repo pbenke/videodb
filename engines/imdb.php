@@ -400,6 +400,9 @@ function imdbData($imdbID)
 
         // sometimes appearing in series (e.g. Scrubs)
         $data['cast'] = preg_replace('#/ ... #', '', $data['cast']);
+
+        // replace U+0092 : <control> PRIVATE USE TWO [PU2] with single quote
+        $data['cast'] = preg_replace('/[\x00\x92]/u', "&#039;", $data['cast']);
     }
 
     return $data;

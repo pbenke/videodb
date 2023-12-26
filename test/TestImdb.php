@@ -267,6 +267,25 @@ class TestIMDb extends TestCase
     }
 
     /**
+     *  verify that the character () is chanded to '
+     */
+    function testCastWithControlChar(): void {
+        // Focus
+        // https://imdb.com/title/tt2381941/
+
+        $id = '2381941';
+        $data = engineGetData($id, 'imdb', false);
+
+        $this->assertNotEmpty($data);
+        // $this->printData($data);
+
+        // Unicode \U0092 is 
+        $this->assertDoesNotMatchRegularExpression("//", $data['cast']);
+        $this->assertDoesNotMatchRegularExpression("/[\x00\x93]/u", $data['cast']);
+        $this->assertMatchesRegularExpression("/Steve Kim::Liyuan's Bodyguard::imdb:nm1212115/i", $data['cast']);
+    }
+
+    /**
      *  Case added for "24" - php seems to have issues with matching large patterns...
      */
     function testSeries2(): void
@@ -564,7 +583,7 @@ class TestIMDb extends TestCase
         sort($data);
 //         $this->printData($data);
 
-        $this->assertEquals(3, count($data));
+        $this->assertEquals(4, count($data));
 
         $this->assertEquals('0080684', $data[0]['id']);
         $this->assertEquals('8.7', $data[0]['rating']);
