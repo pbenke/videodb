@@ -390,19 +390,25 @@ function imdbData($imdbID)
             for ($i = 0; $i < sizeof($ary[0]); $i++) {
                 $actorid = trim(strip_tags($ary[1][$i]));
                 $actor = trim(strip_tags($ary[2][$i]));
-                $character = trim( preg_replace('/\s+/', ' ', strip_tags( preg_replace('/&nbsp;/', ' ', $ary[3][$i]))));
+
+                // make spaces, tabs and newlines into spaces
+                $character = preg_replace('/\s/', ' ', $ary[3][$i]);
+                // change HTML brake space into space.
+                $character = preg_replace('/&nbsp;/', ' ', $character);
+                // make multiple spaces into a single space
+                $character = preg_replace('/\s+/', ' ', $character);
+                // replace U+0092 : <control> PRIVATE USE TWO [PU2] with single quote
+                $character = preg_replace('/[\x00\x92]/u', '&#039;', $character);
+                // sometimes appearing in series (e.g. Scrubs)
+                $character = preg_replace('#/ ... #', '', $character);
+                $character = trim(strip_tags($character));
+
                 $cast .= "$actor::$character::$imdbIdPrefix$actorid\n";
             }
         }
 
         // remove html entities and replace &nbsp; with simple space
         $data['cast'] = html_clean_utf8($cast);
-
-        // sometimes appearing in series (e.g. Scrubs)
-        $data['cast'] = preg_replace('#/ ... #', '', $data['cast']);
-
-        // replace U+0092 : <control> PRIVATE USE TWO [PU2] with single quote
-        $data['cast'] = preg_replace('/[\x00\x92]/u', "&#039;", $data['cast']);
     }
 
     return $data;
