@@ -163,6 +163,7 @@ function FetchSaveMovie($id, $update_genres, $debug, $use_cache) {
     }
 
     // set seen for currently logged in user
+    $seen = get_userseen($id);
     set_userseen($id, $seen);
 }
 

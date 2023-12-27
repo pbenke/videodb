@@ -133,7 +133,8 @@ if (!check_permission(PERM_ADMIN)) {
                 }
             }
 
-            $url = $baseUrl."/edit.php?id=".$id."&engine=".$engine."&save=1&lookup=".$lookup.$fieldlist;
+            $seen = get_userseen($id);
+            $url = $baseUrl."/edit.php?id=".$id."&engine=".$engine."&save=1&lookup=".$lookup.$fieldlist."&seen=".$seen;
             $resp = httpClient($url, false, array('cookies' => $_COOKIE, 'no_proxy' => true, 'no_redirect' => true));
             if (!$resp['success']) {
                 $CLIENTERRORS[] = $video['title'].' ('.$video['diskid'].'/'.$engine.'): '.$resp['error'];
