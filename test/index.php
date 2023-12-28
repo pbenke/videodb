@@ -66,7 +66,6 @@ $config['debug'] = 0;
         </style>
     </head>
     <body>
-
 <?php
 
 $testClasses = findTestClasses('./test', $_REQUEST['test']);
@@ -103,30 +102,33 @@ echo "</body></html>";
 // Set debug back to the original value.
 $config['debug'] = $origDebug;
 
-// Find files that either starts with or ends with test.
 /**
- * @return string[]
+ * Find files that either starts with or ends with test.
  *
+ * @param string    rootDir Look for test files in here
+ * @param string    pattern If set then only test containing this pattern will be executed
  * @psalm-return array<string, string>
  */
-function findTestClasses(string $dir, string $pattern = null): array {
-    $res = array();
+function findTestClasses(string $rootDir, string $pattern = null): array {
+    $result = array();
 
-    if ($dh = @opendir($dir)) {
-        while (($file = readdir($dh)) !== false) {
-            if (preg_match("/^(test(.+?))\.php$/i", $file, $matches) || preg_match("/^((.+?)test)\.php$/i", $file, $matches)) {
-                if ($pattern && (stristr($file, $pattern) == false)) {
-                    continue;
-                }
+    $directory = new \RecursiveDirectoryIterator($rootDir);
+    $iterator = new \RecursiveIteratorIterator($directory);
 
-                $res[$matches[1]] = $matches[2];
-                require_once($file);
-            }
+    foreach ($iterator as $info) {
+        $fileName = $info->getFilename();
+
+        if ($pattern && stristr($fileName, $pattern) == false) {
+            continue;
         }
-        closedir($dh);
+
+        if (preg_match("/^(test(.+?))\.php$/i", $fileName, $matches) || preg_match("/^((.+?)test)\.php$/i", $fileName, $matches)) {
+            $result[$matches[1]] = $matches[2];
+            require_once($info->getPathname());
+        }
     }
 
-    return $res;
+    return $result;
 }
 
 ?>
