@@ -1,4 +1,4 @@
-<?php
+<?php declare(strict_types=1);
 /**
  * Dvdfr Parser
  *
@@ -13,13 +13,11 @@
 
 require_once './core/compatibility.php';
 
-$GLOBALS['dvdfrServer']	  = 'http://www.dvdfr.com';
+$GLOBALS['dvdfrServer']	= 'https://www.dvdfr.com';
 $GLOBALS['dvdfrIdPrefix'] = 'dvdfr:';
 
 /**
  *  Get meta information about the engine
- *
- * @todo Include image search capabilities etc in meta information
  *
  * @return (int|string)[]
  *
@@ -27,9 +25,8 @@ $GLOBALS['dvdfrIdPrefix'] = 'dvdfr:';
  */
 function dvdfrMeta(): array
 {
-    return array('name' => 'Dvdfr (fr)', 'stable' => 0);
+    return array('name' => 'Dvdfr (fr)', 'stable' => 0, 'capabilities' => array('movie', 'image'));
 }
-
 
 /**
  * Clean a string
@@ -37,13 +34,13 @@ function dvdfrMeta(): array
  * @param   string    The string to clean
  * @return  string    The cleaned string
  */
-function dvdfrCleanStr($str)
+function dvdfrCleanStr(string $str): string
 {
     // Remove spaces
     $str = trim($str);
 
     // Translate strange (MS-Word?) quotes
-    $str = preg_replace( '/&#039;/', '\'', $str );
+    $str = preg_replace('/&#039;/', "'", $str);
 
     // Remove HTML entities
     $str = html_entity_decode($str);
@@ -51,17 +48,6 @@ function dvdfrCleanStr($str)
     return $str;
 }
 
-/**
- * Get Url to search Dvdfr for a movie
- *
- * @param   string    The search string
- * @return  string    The search URL (GET)
- */
-function dvdfrSearchUrl($title)
-{
-	global $dvdfrServer;
-	return $dvdfrServer.'/api/search.php?title='.urlencode(mb_convert_encoding($title,'ISO-8859-15','UTF-8'));
-}
 
 /**
  * Get Url to visit Dvdfr for a specific movie
@@ -69,12 +55,27 @@ function dvdfrSearchUrl($title)
  * @param   string	$id	The movie's external id
  * @return  string		The visit URL
  */
-function dvdfrContentUrl($id)
+function dvdfrContentUrl($id): string
 {
-    list($engineword, $dvdfrID) = explode(':',$id,2);
-	global $dvdfrServer;
-	return $dvdfrServer.'/api/dvd.php?id='.$dvdfrID;
-	#return 'http://koocotte.org/DVDMARK';
+    global $dvdfrServer;
+
+    list($engineword, $dvdfrID) = explode(':', $id, 2);
+
+    return $dvdfrServer.'/api/dvd.php?id='.$dvdfrID;
+}
+
+
+/**
+ * Get Url to search Dvdfr for a movie
+ *
+ * @param   string    The search string
+ * @return  string    The search URL (GET)
+ */
+function dvdfrSearchUrl(string $title): string
+{
+    global $dvdfrServer;
+
+    return $dvdfrServer.'/api/search.php?title='.urlencode($title);
 }
 
 /**
@@ -85,77 +86,39 @@ function dvdfrContentUrl($id)
  *
  * @return  array     Associative array with id and title
  */
-function dvdfrSearch($title)
+function dvdfrSearch($title): array
 {
     global $dvdfrServer;
+    global $dvdfrIdPrefix;
+    global $cache;
     global $CLIENTERROR;
 
-    $para['useragent'] = 'VideoDB (http://www.videodb.net/)';
+//    dlog("search for title: ".$title);
 
-    $resp = httpClient(dvdfrSearchUrl($title), 1, $para);
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
+    $para['useragent'] = 'VideoDB (http://www.videodb.net/)';
+    $resp = httpClient(dvdfrSearchUrl($title), $cache, $para);
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
 
     // Encoding
-    $ary['encoding'] = $resp['encoding'];
+    $data['encoding'] = $resp['encoding'];
 
-/* No more direct match with XLM API
+    $results = new SimpleXMLElement($resp['data']);
 
-    // direct match (redirecting to individual title)?
-    $single = array();
-    if (preg_match('/\/dvd\/dvd\.php\?id=(\d+)/', $resp['url'], $single))
-    {
-        $ary[0]['id']   = 'dvdfr:'.$single[1];
-        preg_match('/<td><div class=\"dvd_title\">([^<]+)<\/div>[^<]*<div class=\"dvd_titlevo\">([^<]+)<\/div>[^<]*<div class=\"dvd_titleinfo\">([^<]+)</is', $resp['data'], $single);
-        $ary[0]['title']= $single[1].' ('.$single[2].'/'.$single[3].')';
-        return $ary;
+    foreach ($results->dvd as $result) {
+        $title = dvdfrSplitTitle((string) $result->titres->fr);
+
+        $row['id']       = $dvdfrIdPrefix.$result->id;
+        $row['title']    = $title['title'];
+        $row['subtitle'] = $title['subtitle'];
+        $row['year']     = $result->annee;
+        $row['imgsmall'] = $result->cover;
+//        $data['details'] = null;
+
+        $data[] = $row;
     }
-*/
-    // multiple matches
-  /*
-          <dvd>
-            <id>16892</id>					<= $1
-            <media>DVD</media>					<= $2
-            <titres>
-              <fr>Star Wars - Clone Wars - Vol. 1</fr>		<= $3
-              <vo>Star Wars: Clone Wars</vo>			<= $4
-              <alternatif></alternatif>
-              <alternatif_vo></alternatif_vo>
-            </titres>
-            <annee>2003</annee>					<= $5
-            <edition></edition>					<= $6
-            <editeur>20th Century Fox</editeur>			<= $7
-            <stars>
-              <star type="Réalisateur" id="49661">Genndy Tartakovsky</star>
-            </stars>
-          </dvd>
-  */
-
-    preg_match_all('#<dvd>\s*<id>(\d+)</id>\s*<media>(\w+)</media>\s*<titres>\s*<fr>(.+?)</fr>\s*<vo>(.*?)</vo>.*?<annee>(.*?)</annee>\s*<edition>(.*?)</edition>\s*<editeur>(.*?)</editeur>\s*.*?</dvd>#is', $resp['data'], $data, PREG_SET_ORDER);
-    foreach ($data as $row)
-    {
-        $info['id']     = 'dvdfr:'.$row[1];
-        $title  = dvdfrCleanStr($row[3]);
-        // add native title
-        if( !empty($row[4]) ) $title .= " / " . dvdfrCleanStr($row[4]);
-
-        if( !empty($row[5]) and !empty($row[6]) and !empty($row[7]) ) {
-          $title .= ' (';
-          // add year (helpful in case of multiple matches)
-          if( !empty($row[5]) ) $title .= dvdfrCleanStr($row[5]);
-          $title .= '/';
-        // add edition and editor
-          if( !empty($row[6]) ) $title .= dvdfrCleanStr($row[6]);
-          $title .= '/';
-          if( !empty($row[7]) ) $title .= dvdfrCleanStr($row[7]);
-          $title .=')';
-        }
-
-        // Add record
-        $info['title']  = $title;
-        $ary[]          = $info;
-    }
-
-    return $ary;
+    return $data;
 }
 
 /**
@@ -164,156 +127,216 @@ function dvdfrSearch($title)
  * @param   int   IMDB-ID
  * @return  array Result data
  */
-function dvdfrData($imdbID)
+function dvdfrData($imdbID): array
 {
     global $dvdfrServer;
     global $CLIENTERROR;
+    global $cache;
 
-    $data= array();	// result
-    $ary = array();	// temp
+    $data = array(); // result
 
     $para['useragent'] = 'VideoDB (http://www.videodb.net/)';
 
     // fetch mainpage
-    $resp = httpClient(dvdfrContentUrl($imdbID), 1, $para);		// added trailing / to avoid redirect
-    if (!$resp['success']) $CLIENTERROR .= $resp['error']."\n";
+    $resp = httpClient(dvdfrContentUrl($imdbID), $cache, $para);
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
 
     // add encoding
     $data['encoding'] = $resp['encoding'];
 
     // See http://www.dvdfr.com/api/dvd.php?id=2869 for output
+    $movie = new SimpleXMLElement($resp['data']);
+//    dlog(var_dump($movie, true));
 
-    // Titles
-    preg_match('#<titres>\s*<fr>(.+?)</fr>\s*<vo>(.+?)</vo>#is', $resp['data'], $ary);
-    $data['title']    = mb_convert_case(dvdfrCleanStr($ary[1]), MB_CASE_TITLE, $data['encoding']);
-    $data['subtitle'] = mb_convert_case(dvdfrCleanStr($ary[2]), MB_CASE_TITLE, $data['encoding']);
+    $title = dvdfrSplitTitle((string) $movie->titres->fr);
+    $data['title']      = $title['title'];
+    $data['subtitle']   = $title['subtitle'];
+    $data['origtitle']  = $movie->titres->vo;
 
-    // I found: <div class="dvd_titleinfo">USA, Royaume-Uni , 2004<br />R&D TV, Sky TV, USA Cable Entertainment</div>
-    preg_match('#<listePays>\s*<pays.*?>(.+?)</pays>#is', $resp['data'], $ary);
-    $data['country'] = dvdfrCleanStr($ary[1]);
-    preg_match('#<annee>(\d+)</annee>#is', $resp['data'], $ary);
-    $data['year'] = dvdfrCleanStr($ary[1]);
+//    $data['language'] = does not exist on dvdfr
+    $data['year']      = $movie->annee;
+    $data['coverurl']  = $movie->cover;
+    $data['runtime']   = $movie->duree;
+    $data['rating']    = $movie->critiques->public;
+    $data['plot']      = $movie->synopsis;
 
-    // Cover URL
-    preg_match('#<cover>(.*?)</cover>#i', $resp['data'], $ary);
-    $data['coverurl'] = trim($ary[1]);
-
-    // Runtime
-    preg_match('#<duree>(\d+)</duree>#i', $resp['data'], $ary);
-    $data['runtime']  = $ary[1];
-
-    // Director (only the first one)
-    preg_match('#<star type="R.*?alisateur" id="\d+">(.*?)</star>#i', $resp['data'], $ary);
-    $data['director'] = dvdfrCleanStr($ary[1]);
-
-    // Plot
-    preg_match('#<synopsis>(.*?)</synopsis>#is', $resp['data'], $ary);
-    if (!empty($ary[1])) {
-      $data['plot'] = $ary[1];
-      // And cleanup
-      $data['plot'] = preg_replace('/[\n\r]/',' ', $data['plot']);
-      $data['plot'] = preg_replace('/\s+/',' ', $data['plot']);
-      $data['plot'] = dvdfrCleanStr($data['plot']);
+    $countries = [];
+    foreach ($movie->listePays->pays as $country) {
+        $countries[] = $country;
     }
+    $data['country'] = implode(', ', $countries);
+
+    $directors = [];
+    $actors = [];
+    foreach ($movie->stars->star as $star) {
+        if ($star['type'] == 'Réalisateur') {
+            $directors[] = $star;
+        } else if ($star['type'] == 'Acteur') {
+            $actors[] = $star . '::::dvdfr' . $star['id'];
+        }
+    }
+    $data['director'] = implode(', ', $directors);
+    $data['cast'] = implode("\n", $actors);
 
     // maps dvdfr category ids to videodb category names
-    $category_map = array
-    (
-        "1" => "Action",
-        "2" => "Animation",
-        "61" => "", //  "Autres s�ries"
-        "3" => "Adventure",
-        "72" => "", //"Beaux-Arts"
-        "81" => "Musical", //"Bollywood"
-        "4" => "Comedy",
-        "5" => "Drama", // "Com�die dramatique"
-        "6" => "Musical", //"Com�die musicale"
-        "74" => "Romance", // "Com�die romantique"
-        "7" => "Music", //"Concert"
-        "8" => "" , //"Conte"
-        "9" => "Short", //"Court-M�trage"
-        "10" => "Documentary", //"Culture"
-        "78" => "Documentary", //"Culture Gay"
-        "11" => "Music", //"Danse"
-        "12" => "", //"Divers"
-        "13" => "Documentary", //"Documentaire"
-        "14" => "Drama", //"Drame"
-        "73" => "Drama", //"Emotion"
-        "15" => "Adult", //"Erotique"
-        "16" => "Action", //"Espionnage"
-        "17" => "Sci-Fi", //"Fantastique"
-        "30" => "Musical", //"Film musical"
-        "83" => "Sport", //"Freefight"
-        "18" => "War", //"Guerre"
-        "19" => "Musical", //"Hard-rock"
-        "20" => "History", //"Historique"
-        "21" => "Horror", //"Horreur"
-        "22" => "Comedy", //"Humour"
-        "23" => "Animation", //"Japanimation"
-        "24" => "Adult", //"Japanimation �rotique"
-        "25" => "Music", //"Jazz &amp; Blues"
-        "79" => "", //"Jeux"
-        "26" => "Music", //"Karaoke"
-        "27" => "Action", //"Kung Fu"
-        "28" => "", //"M�thode"
-        "57" => "", //"Mini-series / Feuilletons"
-        "29" => "Documentary", //"Muet"
-        "32" => "Music", //"Musique Classique"
-        "71" => "Music", //"Musiques du monde"
-        "31" => "Music", //"Op�ra"
-        "33" => "War", //"P�plum"
-        "34" => "Crime", //"Policier"
-        "54" => "", //"Pour enfants"
-        "76" => "Music", //"R&amp;B &amp; Soul"
-        "55" => "Music", //"Rap"
-        "56" => "Sci-Fi", //"Science Fiction"
-        "60" => "", //"S�rie Anime / OAV"
-        "75" => "", //"S�rie d'animation enfants"
-        "58" => "", //"S�rie TV"
-        "59" => "", //"Sitcom"
-        "62" => "", //"Spectacle"
-        "63" => "Sport",
-        "82" => "Sport", //"Sports m�caniques"
-        "64" => "Music", //"Techno / Electro"
-        "65" => "", //"Theatre"
-        "66" => "Thriller",
-        "67" => "Music", //"Vari�t� fran�aise"
-        "68" => "Music", //"Vari�t� internationale"
-        "69" => "Documentary", //"Voyages"
-        "70" => "Western",
-        "Science Fiction" => "Sci-Fi",
-    );
+    /*
+     Modify	id	name
+     edit	1	Action
+     edit	2	Adventure
+     edit	3	Animation
+     edit	4	Comedy
+     edit	5	Crime
+     edit	6	Documentary
+     edit	7	Drama
+     edit	8	Family
+     edit	9	Fantasy
+     edit	10	Film-Noir
+     edit	11	Horror
+     edit	12	Musical
+     edit	13	Mystery
+     edit	14	Romance
+     edit	15	Sci-Fi
+     edit	16	Short
+     edit	17	Thriller
+     edit	18	War
+     edit	19	Western
+     edit	20	Adult
+     edit	21	Music
+     edit	22	Biography
+     edit	23	History
+     edit	24	Sport
+    */
 
-    // Genres (as Array)
-    if (preg_match_all('#<categorie>(.*?)</categorie>#i', $resp['data'], $ary, PREG_PATTERN_ORDER) > 0)
-    {
-        $count = 0;
-    	while (isset($ary[1][$count]))
-    	{
-              $data['genres'][]  = $category_map[dvdfrCleanStr($ary[1][$count])];
-              $count ++;
-        }
+    $category_map = [
+        1  =>  "Action",
+        2  =>  "Animation",
+        3  =>  "Adventure", //"Aventure",
+        4  =>  "Comedy", //"Comédie",
+        5  =>  "Comedy", //"Comédie dramatique",
+        6  =>  "Comedy", //"Comédie musicale",
+        7  =>  "Music", //"Concert",
+        8  =>  "Conte",
+        9  =>  "Court métrage",
+        10  => "Culture",
+        11  => "Danse",
+        12  => "Divers",
+        13  => "Documentaire",
+        14  => "Drame",
+        15  => "Adult", //"Erotique",
+        16  => "Espionnage",
+        17  => "Fantastique",
+        18  => "Guerre",
+        19  => "Music", //"Hard Rock / Métal",
+        20  => "Historique",
+        21  => "Horreur",
+        22  => "Comedy", //"Humour",
+        23  => "Japanimation",
+        24  => "Adult", //"Hentai / Japanimation érotique",
+        25  => "Music", //"Jazz / Blues",
+        26  => "Music", //"Karaoké",
+        27  => "Kung Fu",
+        28  => "Méthode",
+        29  => "Muet",
+        30  => "Musical",
+        31  => "Music", //"Opéra",
+        32  => "Music", //"Musique classique",
+        33  => "Péplum",
+        34  => "Policier",
+        54  => "Enfants / Famille",
+        55  => "Music", //"Rap",
+        56  => "Sci-Fi", //"Science-fiction",
+        57  => "Mini-series / Feuilletons",
+        58  => "Série TV",
+        59  => "Sitcom",
+        60  => "Série anime / OAV",
+        61  => "Autres séries",
+        62  => "Spectacle",
+        63  => "Sport",
+        64  => "Music", //"Techno / Electro",
+        65  => "Theatre",
+        66  => "Thriller",
+        67  => "Variété française",
+        68  => "Variété internationale",
+        69  => "Voyages",
+        70  => "Western",
+        71  => "Musiques du monde",
+        72  => "Beaux-arts",
+        73  => "Emotion",
+        74  => "Comédie romantique",
+        75  => "Série d'animation enfants",
+        76  => "Music", //"R&amp;B / Soul",
+        78  => "Univers LGBT",
+        79  => "Jeux",
+        81  => "Bollywood",
+        82  => "Sports mécaniques",
+        83  => "Catch",
+        85  => "Santé / Bien-être",
+        86  => "Animaux",
+        87  => "Culture urbaine",
+        88  => "Société",
+        89  => "Ambiance / Relaxation",
+        90  => "Science / Découvertes",
+        91  => "Cuisine / Jardinage / Déco",
+        92  => "Chasse / Pêche",
+        93  => "Nature",
+        94  => "Football",
+        95  => "Documentaire-fiction",
+        96  => "Kickboxing / Freefight",
+        97  => "Fan Service",
+        98  => "Gore",
+        99  => "Biopic / Biographie / Histoire vraie",
+        100 => "Série format court",
+        101 => "Musique de films",
+        102 => "Catastrophe",
+        103 => "Romance",
+        104 => "Anime Yaoi",
+        105 => "Documentaire musical",
+        106 => "Emissions TV",
+        107 => "Telenovela",
+        108 => "Série documentaire",
+        111 => "Cinéma expérimental",
+        112 => "Super-héros",
+        114 => "Parodie",
+        117 => "Spiritualité / Religion",
+        109 => "Caritatif",
+        110 => "Moyen métrage",
+        113 => "Fantasy",
+        115 => "Court et moyen métrage documentaire"];
+
+    foreach ($movie->categories->categorie as $category) {
+        $data['genres'][] = $category_map[(int) $category['id']];
     }
-
-    // Cast
-    if( preg_match('#<stars>(.*)</stars>#is', $resp['data'], $Section) ) {
-      preg_match_all('#<star type="Acteur" id="(\d+)">(.*?)</star>#i', $Section[1], $ary,PREG_PATTERN_ORDER);
-
-        for ($i=0; $i < sizeof($ary[0]); $i++)
-        {
-          $cast .= dvdfrCleanStr($ary[2][$i]) . '::::dvdfr' . dvdfrCleanStr($ary[1][$i]) . "\n";
-          #$cast  .= "$actor::$character::$imdbIdPrefix$actorid\n";
-        }
-        $data['cast'] = dvdfrCleanStr($cast);
-    }
-
-    #// Convert ISO to UTF8
-    #$encoding = $data['encoding'];
-    #foreach( $data as $k => $v ) {
-    #  $data[$k] = mb_convert_encoding(trim($v),'UTF-8',$encoding);
-    #}
 
     return $data;
+}
+
+function dvdfrSplitTitle(string $title): array
+{
+    // split title - subtitle
+    list($t, $s) = array_pad(explode(': ', $title, 2), 2, '');
+
+    // no dash, lets try colon
+    if (empty($s)) {
+        list($t, $s) = array_pad(explode(' - ', $title, 2), 2, '');
+    }
+    $data['title'] = trim($t);
+    $data['subtitle'] = trim($s);
+    return $data;
+}
+
+function dvdfrActorUrl(string $name, string $id): string
+{
+    global $dvdfrServer;
+    global $dvdfrIdPrefix;
+
+    $name = str_replace(' ', '-', $name);
+    $name = mb_strtolower($name, 'UTF-8');
+
+    $id = str_replace($dvdfrIdPrefix, "", $id);
+
+    return $dvdfrServer.'/stars/s'.$id."-".$name.'.html';
 }
 
 /**
@@ -327,11 +350,27 @@ function dvdfrData($imdbID)
  *
  * @return void array with Actor-URL and Thumbnail
  */
-function dvdfrActor($name, $actorengineid): void
+function dvdfrActor($name, $actorengineid): array
 {
-    global $dvdfrServer;
+    global $cache;
 
-    return;
+    $url = dvdfrActorUrl($name, $actorengineid);
+
+    $resp = httpClient($url, $cache, $para);
+    if (!$resp['success']) {
+        $CLIENTERROR .= $resp['error']."\n";
+    }
+
+    // add encoding
+    $data['encoding'] = $resp['encoding'];
+
+    $ary = [];
+    if (preg_match('/<div id="starPicture" .+? src="(.+?)"/si', $resp['data'], $m)) {
+        $ary[0][0] = '/stars/s4028-scarlett-johansson.html';
+        $ary[0][1] = $m[1]; // img url
+    }
+
+    return $ary;
 }
 
 ?>

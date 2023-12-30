@@ -34,6 +34,9 @@ class TestEngines extends TestCase {
         $engineName = engineGetActorEngine('imdbapi:nm1234567');
         $this->assertEquals('imdbapi', $engineName);
 
+        $engineName = engineGetActorEngine('dvdfr:4028');
+        $this->assertEquals('dvdfr', $engineName);
+
         $engineName = engineGetActorEngine('default to imdb');
         $this->assertEquals('imdb', $engineName);
     }

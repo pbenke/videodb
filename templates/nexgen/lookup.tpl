@@ -73,7 +73,7 @@
 
 						{if $match.details || $match.imgsmall}
 						<font size="-2">
-							{if $match.imgsmall}<img src="{$match.imgsmall}" align="left" width="25" height="35" />{/if}
+							{if $match.imgsmall}<img src="{$match.imgsmall}" align="left" width="25" height="35" /><br><br>{/if}
 							{$match.details}
 						</font>
 						{/if}
