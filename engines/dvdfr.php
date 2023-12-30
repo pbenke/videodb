@@ -93,8 +93,6 @@ function dvdfrSearch($title): array
     global $cache;
     global $CLIENTERROR;
 
-//    dlog("search for title: ".$title);
-
     $para['useragent'] = 'VideoDB (http://www.videodb.net/)';
     $resp = httpClient(dvdfrSearchUrl($title), $cache, $para);
     if (!$resp['success']) {
@@ -130,6 +128,7 @@ function dvdfrSearch($title): array
 function dvdfrData($imdbID): array
 {
     global $dvdfrServer;
+    global $dvdfrIdPrefix;
     global $CLIENTERROR;
     global $cache;
 
@@ -148,7 +147,6 @@ function dvdfrData($imdbID): array
 
     // See http://www.dvdfr.com/api/dvd.php?id=2869 for output
     $movie = new SimpleXMLElement($resp['data']);
-//    dlog(var_dump($movie, true));
 
     $title = dvdfrSplitTitle((string) $movie->titres->fr);
     $data['title']      = $title['title'];
@@ -174,7 +172,7 @@ function dvdfrData($imdbID): array
         if ($star['type'] == 'Réalisateur') {
             $directors[] = $star;
         } else if ($star['type'] == 'Acteur') {
-            $actors[] = $star . '::::dvdfr' . $star['id'];
+            $actors[] = $star . '::::' . $dvdfrIdPrefix . $star['id'];
         }
     }
     $data['director'] = implode(', ', $directors);
@@ -356,7 +354,7 @@ function dvdfrActor($name, $actorengineid): array
 
     $url = dvdfrActorUrl($name, $actorengineid);
 
-    $resp = httpClient($url, $cache, $para);
+    $resp = httpClient($url, $cache);
     if (!$resp['success']) {
         $CLIENTERROR .= $resp['error']."\n";
     }
@@ -367,7 +365,9 @@ function dvdfrActor($name, $actorengineid): array
     $ary = [];
     if (preg_match('/<div id="starPicture" .+? src="(.+?)"/si', $resp['data'], $m)) {
         $ary[0][0] = '/stars/s4028-scarlett-johansson.html';
-        $ary[0][1] = $m[1]; // img url
+        if (!strstr($m[1], 'nophoto.jpg')) {
+            $ary[0][1] = $m[1]; // img url
+        }
     }
 
     return $ary;
