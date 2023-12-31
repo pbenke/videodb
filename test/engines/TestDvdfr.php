@@ -55,18 +55,59 @@ class TestDVDFR extends TestCase
 		$this->assertEquals('4,53', $data['rating']);
 		$this->assertEquals('George Lucas', $data['director']);
 		$this->assertEquals('USA', $data['country']);
+		$this->assertArrayNotHasKey('istv', $data);
+
+		$this->assertCount(2, $data['genres']);
 		$this->assertContains('Sci-Fi', $data['genres']);
 		$this->assertContains('Adventure', $data['genres']);
 
-		$this->assertMatchesRegularExpression('/Liam Neeson.*Ewan McGregor.*Natalie Portman/s', $data['cast']);
+		$this->assertStringContainsString('Liam Neeson::::dvdfr:10977', $data['cast']);
+		$this->assertStringContainsString('Ewan McGregor::::dvdfr:9192', $data['cast']);
+		$this->assertStringContainsString('Natalie Portman::::dvdfr:6177', $data['cast']);
+
 		$this->assertMatchesRegularExpression("/Bloqués sur la planète Tatooine après avoir secouru la Reine Amidala \(Natalie Portman\), l'apprenti Jedi Obi-Wan Kenobi \(Ewan McGregor\)/", $data['plot']);
+	}
+
+	function testTvSerie(): void
+	{
+		// Terminator - The Sarah Connor Chronicles - Saison 1 (2008) - Blu-ray
+		// https://www.dvdfr.com/dvd/f151323-terminator-the-sarah-connor-chronicles-saison-1.html
+		// https://www.dvdfr.com/dvd/dvd.php?id=151323
+		$id = 'dvdfr:151323';
+
+		$data = engineGetData($id, 'dvdfr', false);
+
+		$this->assertNotCount(0, $data);
+
+//		var_dump($data);
+
+		$this->assertEquals('Terminator', $data['title']);
+		$this->assertEquals('The Sarah Connor Chronicles - Saison 1', $data['subtitle']);
+		$this->assertEquals('Terminator: The Sarah Connor Chronicles', $data['origtitle']);
+		$this->assertArrayNotHasKey('language', $data);
+		$this->assertEquals(2008, $data['year']);
+		$this->assertEquals('https://www.dvdfr.com/images/dvd/covers/100x140/c336f6fca8cf8bab696dcdef453a80f0/151323/old-terminator_the_sarah_connor_chronicles_saison_1_br.0.jpg', $data['coverurl']);
+		$this->assertEquals(487, $data['runtime']);
+		$this->assertEquals('4,00', $data['rating']);
+		$this->assertStringContainsString('David Nutter', $data['director']);
+		$this->assertEquals('USA', $data['country']);
+		$this->assertEquals(1, $data['istv']);
+
+		$this->assertCount(1, $data['genres']);
+		$this->assertContains('Sci-Fi', $data['genres']);
+
+		$this->assertStringContainsString('Thomas Dekker::::dvdfr:47911', $data['cast']);
+		$this->assertStringContainsString('Summer Glau::::dvdfr:70828', $data['cast']);
+		$this->assertStringContainsString('Lena Headey::::dvdfr:13572', $data['cast']);
+
+		$this->assertMatchesRegularExpression("/Après être venus à bout du Terminator, Sarah Connor et son fils John/", $data['plot']);
 	}
 
 	function testMovieWithSubTitle(): void
 	{
-		// Star Wars: Episode I
-		// https://www.dvdfr.com/dvd/f2869_star_wars_-_episode_i_-_la_menace_fantome.html
-		// https://www.dvdfr.com/dvd/dvd.php?id=2869
+		// Mobile Fighter G Gundam
+		// https://www.dvdfr.com/dvd/f171716-mobile-fighter-g-gundam-premiere-partie.html
+		// https://www.dvdfr.com/dvd/dvd.php?id=171716
 		$id = 'dvdfr:171716';
 
 		$data = engineGetData($id, 'dvdfr', false);
@@ -78,6 +119,8 @@ class TestDVDFR extends TestCase
 		$this->assertEquals('Mobile Fighter G Gundam', $data['title']);
 		$this->assertEquals('Première partie', $data['subtitle']);
 		$this->assertEquals('Kidô butôden ji Gandamu', $data['origtitle']);
+		$this->assertEquals(1994, $data['year']);
+		$this->assertEquals(625, $data['runtime']);
 	}
 
 	function testMovieWithMultipleCounties(): void
@@ -96,6 +139,7 @@ class TestDVDFR extends TestCase
 		$this->assertEmpty($data['origtitle']);
 		$this->assertArrayNotHasKey('language', $data);
 		$this->assertEmpty($data['rating']);
+		$this->assertCount(1, $data['genres']);
 		$this->assertContains('Comedy', $data['genres']);
 		$this->assertEquals('Nouvelle-Zélande, USA, République tchèque', $data['country']);
 	}
@@ -142,6 +186,16 @@ class TestDVDFR extends TestCase
 
         $this->assertEquals('/stars/s4028-scarlett-johansson.html', $data[0][0]);
         $this->assertEquals("https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Scarlett_Johansson_by_Gage_Skidmore_2_%28cropped%29.jpg/600px-Scarlett%20Johansson%20by%20Gage%20Skidmore%202%20%28cropped%29.jpg", $data[0][1]);
+	}
+
+	function testEngineActorWithoutImage(): void
+	{
+	    $name = 'Tintrinai Thikhasuk';
+	    $id = 'dvdfr:201155';
+	    $data = engineActor($name, $id, 'dvdfr');
+
+        $this->assertEquals('/stars/s201155-tintrinai-thikhasuk.html', $data[0][0]);
+        $this->assertEmpty($data[0][1]);
 	}
 }
 
