@@ -323,10 +323,7 @@ function imdbData($imdbID)
     $data['language'] = trim(strtolower(join(', ', $ary[1])));
 
     // Genres (as Array)
-    preg_match_all('/<a class=".+?" href="\/search\/title\?genres=.+?"><span class="i.+?">(.+?)<\/span><\/a>/si', $resp['data'], $ary, PREG_PATTERN_ORDER);
-    foreach($ary[1] as $genre) {
-        $data['genres'][] = trim($genre);
-    }
+    $data['genres'] = imdbGetGenres($resp['data']);
 
     // for Episodes - try to get some missing stuff from the main series page
     if ($data['istv'] ?? false and (!$data['runtime'] or !$data['country'] or !$data['language'] or !$data['coverurl'])) {
@@ -429,6 +426,27 @@ function imdbFixEncoding($data, $resp)
     }
 
     return $result;
+}
+
+function imdbGetGenres($data) {
+/*
+<a href="show.php?id=1048" class="th radius">
+					<!-- Uncomment this if you want to use lazy-load together with image thumbnails - suited for mobile access -->
+					</a>
+*/
+    $genres = [];
+    if (preg_match_all('/<a class=".+?" href="\/search\/title\?genres=.+?"><span class="i.+?">(.+?)<\/span><\/a>/si', $data, $ary, PREG_PATTERN_ORDER)) {
+        foreach($ary[1] as $genre) {
+            $genres[] = trim($genre);
+        }
+        return $genres;
+    } elseif (preg_match('/<script .+?>.+?"genre":\[(.+?)].+<\/script>/si', $data, $ary)) {
+        $genreStr = str_replace('"', '', $ary[1]);
+        $genres = explode(',', $genreStr);
+        return $genres;
+    }
+
+    return null;
 }
 
 /**
