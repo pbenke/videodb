@@ -54,7 +54,7 @@ class TestDVDFR extends TestCase
 		$this->assertEquals(130, $data['runtime']);
 		$this->assertEquals('4,53', $data['rating']);
 		$this->assertEquals('George Lucas', $data['director']);
-		$this->assertEquals('USA', $data['country']);
+		$this->assertEquals('États-Unis', $data['country']);
 		$this->assertArrayNotHasKey('istv', $data);
 
 		$this->assertCount(2, $data['genres']);
@@ -90,7 +90,7 @@ class TestDVDFR extends TestCase
 		$this->assertEquals(487, $data['runtime']);
 		$this->assertEquals('4,00', $data['rating']);
 		$this->assertStringContainsString('David Nutter', $data['director']);
-		$this->assertEquals('USA', $data['country']);
+		$this->assertEquals('États-Unis', $data['country']);
 		$this->assertEquals(1, $data['istv']);
 
 		$this->assertCount(1, $data['genres']);
@@ -141,7 +141,7 @@ class TestDVDFR extends TestCase
 		$this->assertEmpty($data['rating']);
 		$this->assertCount(1, $data['genres']);
 		$this->assertContains('Comedy', $data['genres']);
-		$this->assertEquals('Nouvelle-Zélande, USA, République tchèque', $data['country']);
+		$this->assertEquals('Nouvelle-Zélande, États-Unis, République tchèque', $data['country']);
 	}
 
 	function testSearchStarWars(): void
