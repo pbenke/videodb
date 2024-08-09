@@ -271,8 +271,11 @@ function allocineData($imdbID)
       Director
     */
     if (preg_match('/<span class="light">De<\/span>(.+?)<\/div>/is', $resp['data'], $dirMatch)) {
-        preg_match_all('/<span class=".+? blue-link">(.+?)<\/span>/is', $dirMatch[1], $directors, PREG_PATTERN_ORDER);
-        $data['director'] = join(', ', $directors[1]);
+        if (preg_match_all('/<a class=".+?">(.+?)<\/a>/is', $dirMatch[1], $directors, PREG_PATTERN_ORDER)) {
+            $data['director'] = join(', ', $directors[1]);
+        } elseif (preg_match_all('/<span class=".+?">(.+?)<\/span>/is', $dirMatch[1], $directors, PREG_PATTERN_ORDER)) {
+            $data['director'] = join(', ', $directors[1]);
+        }
     }
 
     /*
@@ -328,11 +331,15 @@ function allocineData($imdbID)
 		$data['plot'] = preg_replace('/\s\s+/',' ', $data['plot']);
     }
 
-
-    if (preg_match('/<div class="meta-body.+?">(.+?)<\/div>/si', $resp['data'], $meta)) {
-        preg_match_all('#<span class=".+?==">(.+?)<\/span>#si', $meta[1], $ary, PREG_PATTERN_ORDER);
-        foreach ($ary[1] as $genre) {
-            $data['genres'][] = allocineGetGenre($genre);
+    if (preg_match('/<div class="meta-body-item meta-body-info">(.+?)<\/div>/si', $resp['data'], $meta)) {
+        if (preg_match_all('#<span class=".+?== dark-grey-link">(.+?)<\/span>#si', $meta[1], $ary, PREG_PATTERN_ORDER)) {
+            foreach ($ary[1] as $genre) {
+                $data['genres'][] = allocineGetGenre($genre);
+            }
+        } elseif (preg_match_all('#<a class="xXx dark-grey-link" href="\/films\/genre-\d+\/">(.+?)<\/a>#si', $meta[1], $ary, PREG_PATTERN_ORDER)) {
+            foreach ($ary[1] as $genre) {
+                $data['genres'][] = allocineGetGenre($genre);
+            }
         }
     }
 
@@ -420,9 +427,10 @@ function allocineGetGenre(string $genre): string {
 function allocineGetCountry(array $countries): string {
 
     $map_countries = [
+  		'France'            => 'France',
+  		'U.S.A.'            => 'USA',
   		'allemand'			=> 'Germany',
   		'américain'			=> 'USA',
-  		'U.S.A.'            => 'USA',
   		'argentin'      	=> 'Argentina',
   		'arménien'      	=> 'Armenia',
   		'belge'				=> 'Belgium',
@@ -462,6 +470,10 @@ function allocineGetCountry(array $countries): string {
   		'ukrainien'			=> 'Ukraine',
   		'vietnamien'		=> 'Vietnam',
       	'australien'		=> 'Australia',
+        'Allemagne'         => 'Germany',
+        'Belgique'          => 'Belgium',
+        'Espagne'           => 'Spain',
+        'Italie'            => 'Italy',
     ];
 
     $englishVersion = '';

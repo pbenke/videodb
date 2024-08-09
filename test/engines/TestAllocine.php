@@ -15,7 +15,7 @@ class TestAllocine extends TestCase
 	function testMovie(): void
 	{
 		// Star Wars: Episode I
-		// http://www.allocine.fr/film/fichefilm_gen_cfilm=20754.html
+		// https://www.allocine.fr/film/fichefilm_gen_cfilm=20754.html
 		$id = '20754';
 
 		$data = engineGetData($id, 'allocine', false);
@@ -31,7 +31,7 @@ class TestAllocine extends TestCase
 		$this->assertEquals('La Menace fantôme', $data['subtitle']);
 		$this->assertEquals('Star Wars: Episode I - The Phantom Menace', $data['origtitle']);
 		$this->assertEquals(1999, $data['year']);
-		$this->assertEquals("https://fr.web.img6.acsta.net/c_310_420/medias/nmedia/18/35/83/29/20017378.jpg", $data['coverurl']);
+		$this->assertEquals('https://fr.web.img6.acsta.net/c_310_420/pictures/24/02/19/14/31/0585421.jpg', $data['coverurl']);
 		$this->assertEquals(133, $data['runtime']);
 		$this->assertEquals('George Lucas', $data['director']);
 		$this->assertTrue($data['rating'] >= 5);
@@ -53,7 +53,7 @@ class TestAllocine extends TestCase
 	function testMovieMultipleDirectors(): void
     {
         // Astérix aux jeux olympiques (2008)
-        // https://www.imdb.com/title/tt0463872/
+        // https://www.allocine.fr/film/fichefilm_gen_cfilm=61259.html
 
         $id = '61259';
         $data = engineGetData($id, 'allocine');
@@ -72,7 +72,7 @@ class TestAllocine extends TestCase
 	function testMovie2(): void
 	{
 		// Star Wars: Episode III
-		// http://www.allocine.fr/film/fichefilm_gen_cfilm=40623.html
+		// https://www.allocine.fr/film/fichefilm_gen_cfilm=40623.html
 		$id = "40623";
 
 		$data = engineGetData($id, 'allocine');
