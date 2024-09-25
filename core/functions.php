@@ -168,7 +168,7 @@ function load_config($force_reload = false): void
             && session_get('config_timestamp') == filemtime(CONFIG_FILE)) {
         // load from cache
         $config = session_get('config');
-        dlog("Load config from session");
+//        dlog("Load config from session");
     } else {
         dlog("Verify installation");
         // check MySQL extension and cache directories
