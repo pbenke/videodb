@@ -251,6 +251,24 @@ class TestIMDb extends TestCase
             $data['plot']);
     }
 
+    function testMovieGenre1(): void {
+        // Public Enemies (2009)
+        // https://www.imdb.com/title/tt1152836/
+
+        Global $config;
+        $config['http_header_accept_language'] = 'en-US;q=0.9';
+
+        $id = '1152836';
+        $data = engineGetData($id, 'imdb', false);
+
+//        $this->printData($data);
+        $this->assertNotEmpty($data);
+
+        $this->assertEquals('Public Enemies', $data['title']);
+        $this->assertEquals(2009, $data['year']);
+        $this->assertEquals('Action, Biography, Crime', join(', ', $data['genres']));
+    }
+
     /**
      *  Case added for bug 1675281
      *
