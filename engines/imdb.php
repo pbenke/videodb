@@ -164,7 +164,7 @@ function imdbSearch($title, $aka=null)
     $url = imdbSearchUrl($title);
 
     if ($aka) {
-        $url .= '&s=tt&site=aka';
+        $url .= '&site=aka';
     }
 
     $resp = httpClient($url, $cache);
@@ -192,7 +192,7 @@ function imdbSearch($title, $aka=null)
     }
     // multiple matches
     elseif (preg_match('/<section data-testid="find-results-section-title"(.+?)<\/section>/si', $resp['data'], $match)) {
-        if (preg_match_all('/<a class="ipc-metadata-list-summary-item__t" role="button" tabindex=".+?" aria-disabled="false" href="\/title\/tt(\d+)\/\?.+?">(.+?)<\/a>.+?>(\d+)<\/span><\/li>/i', $match[0], $rows, PREG_SET_ORDER)) {
+        if (preg_match_all('/<a .+? href="\/title\/tt(\d+)\/.+?">(.+?)<\/a><ul .+?"><li .+?><span .+?>(\d+)<\/span><\/li>/i', $match[0], $rows, PREG_SET_ORDER)) {
             foreach ($rows as $row) {
                 $info = [];
                 $info['id'] = $imdbIdPrefix.$row[1];
